@@ -27,19 +27,26 @@ resource "ise_user_identity_group" "this" {
   description = "Device-admin identity group from tacacs_authz.csv"
 }
 
-# Names only. CSVs have no IOS command contents.
+# Names only. CSVs have no IOS command contents. Empty + deny-unmatched is invalid on ISE.
 resource "ise_tacacs_command_set" "this" {
   for_each         = local.command_sets
-  name             = each.value
+  name             = local.ise_tacacs_name[each.value]
   description      = "Name from tacacs_authz.csv. Command contents were not provided."
-  permit_unmatched = false
+  permit_unmatched = true
 }
 
-# Names only. CSVs have no shell-profile attributes.
+# Minimal valid ISE TACACS profile (priv-lvl 1 stub). Empty name-only is invalid on ISE 3.5.
 resource "ise_tacacs_profile" "this" {
   for_each    = local.shell_profiles
-  name        = each.value
-  description = "Name from tacacs_authz.csv. Profile contents were not provided."
+  name        = local.ise_tacacs_name[each.value]
+  description = "Name from tacacs_authz.csv. Privilege 1 lab stub; no full shell attributes."
+  session_attributes = [
+    {
+      type  = "MANDATORY"
+      name  = "priv-lvl"
+      value = "1"
+    }
+  ]
 }
 
 resource "ise_allowed_protocols_tacacs" "tacacs" {
