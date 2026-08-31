@@ -1,0 +1,14 @@
+repos:
+  - repo: https://github.com/netascode/nac-validate
+    rev: v2.0.0
+    hooks:
+      - id: nac-validate
+        files: '^(nac|sites)\.yaml$'
+        pass_filenames: false
+        args:
+          - "-s"
+          - ".schema.yaml"
+          - "-r"
+          - ".rules"
+          - "nac.yaml"
+          - "sites.yaml"
