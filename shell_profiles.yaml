@@ -1,27 +1,53 @@
 # TACACS shell profiles. Source for Terraform and nac.yaml.
-# auditor_* and T1 are priv-lvl 1. T2/T3/T4/vendor/contractor are priv-lvl 15.
+# CiscoDevNet/ise 0.3.4 ise_tacacs_profile session_attributes:
+#   type MANDATORY|OPTIONAL, name, value (strings).
+# T1 and auditor_* priv-lvl 1. T2/T3/T4/vendor/contractor priv-lvl 15.
 shell_profiles:
   - name: T1
     description: Read-only device admin (privilege 1).
-    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"
   - name: T2
     description: Access-switch interface admin (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: T3
     description: Access-switch VLAN and spanning-tree admin (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: T4
     description: Full device-admin (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: vendor
     description: Vendor interface-description admin (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: contractor
     description: Contractor interface admin, same as T2 (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: auditor_internal
     description: Internal auditor read-only (privilege 1).
-    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"
   - name: auditor_external
     description: External auditor read-only (privilege 1).
-    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"

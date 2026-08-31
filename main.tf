@@ -5,6 +5,23 @@ provider "ise" {
   # Password: ISE_PASSWORD from the environment / .env (never from git).
 }
 
+# GUI canary. TARS owns the NAC; Terraform creates this. Do not click ISE to make it.
+# Apply only this object: terraform apply -target=ise_tacacs_command_set.test
+# ISE name is exactly "test". ISE-legal: show / version / PERMIT. No regex.
+# May 400 until Device Admin / TACACS is licensed; still ship the resource.
+resource "ise_tacacs_command_set" "test" {
+  name             = "test"
+  description      = "TARS GUI canary. show version only."
+  permit_unmatched = false
+  commands = [
+    {
+      grant     = "PERMIT"
+      command   = "show"
+      arguments = "version"
+    }
+  ]
+}
+
 # New NDG type "Access" — who may administer which NADs. Not a site tree.
 resource "ise_network_device_group" "access_root" {
   name        = "Access#All Access"
@@ -42,16 +59,18 @@ resource "ise_tacacs_command_set" "this" {
   ]
 }
 
-# Shell profiles from shell_profiles.yaml (priv-lvl 1 for T1/auditor_*; 15 otherwise).
+# Shell profiles from shell_profiles.yaml. CiscoDevNet/ise 0.3.4:
+# session_attributes = [{ type = "MANDATORY"|"OPTIONAL", name, value }].
+# T1/auditor_* priv-lvl 1; everyone else 15. Empty profiles 400 on ISE 3.5.
 resource "ise_tacacs_profile" "this" {
   for_each    = local.shell_profiles
   name        = local.ise_tacacs_name[each.value]
   description = try(local.shell_profile_by_name[local.ise_tacacs_name[each.value]].description, "TACACS shell profile ${local.ise_tacacs_name[each.value]}")
   session_attributes = [
-    {
-      type  = "MANDATORY"
-      name  = "priv-lvl"
-      value = tostring(local.shell_profile_by_name[local.ise_tacacs_name[each.value]].priv_lvl)
+    for a in local.shell_profile_by_name[local.ise_tacacs_name[each.value]].session_attributes : {
+      type  = a.type
+      name  = a.name
+      value = tostring(a.value)
     }
   ]
 }

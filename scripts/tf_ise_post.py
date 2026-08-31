@@ -167,18 +167,63 @@ def command_set_resource() -> dict[str, Any]:
         "uses_command_sets_yaml": "command_sets.yaml" in tf_all,
         "path": "main.tf:ise_tacacs_command_set",
     }
+    # Skip the GUI canary (ise_tacacs_command_set.test). Inspect the ladder.
+    chosen = None
+    first_ladder = None
     for m in _RESOURCE.finditer(text):
         if m.group(1) != "ise_tacacs_command_set":
             continue
+        if m.group(2) == "test":
+            continue
+        if first_ladder is None:
+            first_ladder = m
+        if m.group(2) == "this":
+            chosen = m
+            break
+    m = chosen or first_ladder
+    if m is None:
+        return result
+    block = _brace_block(text, m.end() - 1)
+    pm = re.search(r"permit_unmatched\s*=\s*(true|false)", block)
+    if pm:
+        result["permit_unmatched"] = pm.group(1) == "true"
+    elif re.search(r"permit_unmatched\s*=", block):
+        result["permit_unmatched"] = "per-set"
+    result["has_commands"] = bool(
+        re.search(r"\bcommands\s*=", block) or re.search(r"\bcommand\s*\{", block)
+    )
+    result["path"] = f"main.tf:resource.ise_tacacs_command_set.{m.group(2)}"
+    return result
+
+
+def profile_resource() -> dict[str, Any]:
+    """Attributes of resource ise_tacacs_profile that Terraform POSTs.
+
+    CiscoDevNet/ise 0.3.4 session_attributes nested schema:
+    type (MANDATORY|OPTIONAL), name, value.
+    """
+    text = MAIN_TF.read_text(encoding="utf-8") if MAIN_TF.is_file() else ""
+    tf_all = _tf_text()
+    result: dict[str, Any] = {
+        "has_session_attributes": False,
+        "type_mandatory": False,
+        "name_priv_lvl": False,
+        "uses_shell_profiles_yaml": "shell_profiles.yaml" in tf_all,
+        "path": "main.tf:ise_tacacs_profile",
+    }
+    for m in _RESOURCE.finditer(text):
+        if m.group(1) != "ise_tacacs_profile":
+            continue
         block = _brace_block(text, m.end() - 1)
-        pm = re.search(r"permit_unmatched\s*=\s*(true|false)", block)
-        if pm:
-            result["permit_unmatched"] = pm.group(1) == "true"
-        elif re.search(r"permit_unmatched\s*=", block):
-            result["permit_unmatched"] = "per-set"
-        result["has_commands"] = bool(
-            re.search(r"\bcommands\s*=", block) or re.search(r"\bcommand\s*\{", block)
+        result["has_session_attributes"] = bool(
+            re.search(r"\bsession_attributes\s*=", block)
         )
-        result["path"] = f"main.tf:resource.ise_tacacs_command_set.{m.group(2)}"
+        result["type_mandatory"] = bool(
+            re.search(r'type\s*=\s*"MANDATORY"|type\s*=\s*a\.type', block)
+        )
+        result["name_priv_lvl"] = bool(
+            re.search(r'name\s*=\s*"priv-lvl"|name\s*=\s*a\.name', block)
+        )
+        result["path"] = f"main.tf:resource.ise_tacacs_profile.{m.group(2)}"
         break
     return result

@@ -58,9 +58,10 @@ auditor-external (time-bound, read-only). Identity groups keep hyphens.
 `command_set` and `shell_profile` use ISE-legal names (`auditor_internal`,
 `auditor_external`); no hyphens. IOS-XE command contents live in
 `command_sets.yaml` (Terraform `ise_tacacs_command_set` commands blocks).
+ISE ERS arguments are literal tokens plus optional `*` (not PCRE).
 T4 may permit unmatched; every other set lists real commands and denies
-unmatched. Shell privilege is in `shell_profiles.yaml`. Country is not a
-condition.
+unmatched. Shell privilege is `session_attributes` in `shell_profiles.yaml`
+(`type=MANDATORY`, `name=priv-lvl`). Country is not a condition.
 
 No passwords, admin accounts, or lab management addresses.
 
