@@ -27,7 +27,8 @@ locals {
   #                 auditor_external test
   #   profiles:     T1_shell T2_shell T3_shell T4_shell vendor_shell
   #                 contractor_shell auditor_internal_shell auditor_external_shell
-  # CSV keys stay T1. Identity groups / NDGs / authz rule names are not this map.
+  # CSV keys stay T1. YAML profile name: is T1_shell (the ISE POST name).
+  # Identity groups / NDGs / authz rule names are not this map.
   ise_tacacs_shell_profile_name = {
     for n in local.shell_profiles : n => "${local.ise_tacacs_name[n]}_shell"
   }

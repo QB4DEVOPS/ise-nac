@@ -63,13 +63,13 @@ resource "ise_tacacs_command_set" "this" {
 # Shell profiles from shell_profiles.yaml. CiscoDevNet/ise 0.3.4:
 # session_attributes = [{ type = "MANDATORY"|"OPTIONAL", name, value }].
 # T1/auditor_* priv-lvl 1; everyone else 15. Empty profiles 400 on ISE 3.5.
-# ISE name is T1_shell (not T1): ERS shares a namespace with command sets.
+# ISE name is T1_shell (YAML name: and Terraform POST). CSV keys stay T1.
 resource "ise_tacacs_profile" "this" {
   for_each    = local.shell_profiles
   name        = local.ise_tacacs_shell_profile_name[each.value]
-  description = try(local.shell_profile_by_name[local.ise_tacacs_name[each.value]].description, "TACACS shell profile ${local.ise_tacacs_shell_profile_name[each.value]}")
+  description = try(local.shell_profile_by_name[local.ise_tacacs_shell_profile_name[each.value]].description, "TACACS shell profile ${local.ise_tacacs_shell_profile_name[each.value]}")
   session_attributes = [
-    for a in local.shell_profile_by_name[local.ise_tacacs_name[each.value]].session_attributes : {
+    for a in local.shell_profile_by_name[local.ise_tacacs_shell_profile_name[each.value]].session_attributes : {
       type  = a.type
       name  = a.name
       value = tostring(a.value)

@@ -54,37 +54,49 @@ _LOCKED_PROFILES = frozenset(
 _NAME_RE = re.compile(r"^[A-Za-z0-9_]+$")
 
 
-def _collect_command_set_ise_names() -> list[tuple[str, str]]:
-    """ISE names Terraform POSTs for command sets, including the test canary."""
+def _collect_command_set_ise_names(data: dict[str, Any]) -> list[tuple[str, str]]:
+    """ISE names for command sets: Terraform POSTs, YAML, nac.yaml, test canary."""
     seen: set[str] = set()
     out: list[tuple[str, str]] = []
+
+    def add(name: str, path: str) -> None:
+        if not name or name in seen:
+            return
+        seen.add(name)
+        out.append((name, path))
+
     for name, path in _tf.posted_names("command_set"):
-        if name in seen:
-            continue
-        seen.add(name)
-        out.append((name, path))
+        add(name, path)
     for name, path in _tf.literal_resource_names("ise_tacacs_command_set"):
-        if name in seen:
-            continue
-        seen.add(name)
-        out.append((name, path))
+        add(name, path)
+    for name in _tf.command_set_defs():
+        add(name, f"command_sets.yaml[name={name}].name")
+    for item in data.get("command_sets") or []:
+        if isinstance(item, dict) and isinstance(item.get("name"), str):
+            add(item["name"], f"command_sets[name={item['name']}].name")
     return out
 
 
-def _collect_profile_ise_names() -> list[tuple[str, str]]:
+def _collect_profile_ise_names(data: dict[str, Any]) -> list[tuple[str, str]]:
+    """ISE names for profiles: Terraform POSTs, YAML, nac.yaml."""
     seen: set[str] = set()
     out: list[tuple[str, str]] = []
-    for rec in _tf.posted_records("shell_profile"):
-        name = rec["ise_name"]
-        if name in seen:
-            continue
-        seen.add(name)
-        out.append((name, rec["path"]))
-    for name, path in _tf.literal_resource_names("ise_tacacs_profile"):
-        if name in seen:
-            continue
+
+    def add(name: str, path: str) -> None:
+        if not name or name in seen:
+            return
         seen.add(name)
         out.append((name, path))
+
+    for rec in _tf.posted_records("shell_profile"):
+        add(rec["ise_name"], rec["path"])
+    for name, path in _tf.literal_resource_names("ise_tacacs_profile"):
+        add(name, path)
+    for name in _tf.shell_profile_defs():
+        add(name, f"shell_profiles.yaml[name={name}].name")
+    for item in data.get("shell_profiles") or []:
+        if isinstance(item, dict) and isinstance(item.get("name"), str):
+            add(item["name"], f"shell_profiles[name={item['name']}].name")
     return out
 
 
@@ -104,12 +116,13 @@ Command-set ISE names: T1 T2 T3 T4 vendor contractor auditor_internal
 auditor_external test.
 Profile ISE names: T1_shell T2_shell T3_shell T4_shell vendor_shell
 contractor_shell auditor_internal_shell auditor_external_shell.
-Underscore only (no hyphens). CSV/YAML keys may stay T1. Identity groups,
-NDGs, and authz rule names are unchanged and are not this check."""
+Underscore only (no hyphens). CSV keys stay T1. YAML profile name: values
+are the ISE names (T1_shell). Identity groups, NDGs, and authz rule names
+are unchanged and are not this check."""
     recommendation = """\
 POST exactly the locked lists. Keep command-set ISE names unsuffixed.
-Set local.ise_tacacs_shell_profile_name to {CSV key}_shell and wire
-ise_tacacs_profile.this name to that map. Keep CSV keys as T1.
+shell_profiles.yaml name: must be T1_shell (not T1). Keep CSV keys as T1.
+Wire ise_tacacs_profile.this name to local.ise_tacacs_shell_profile_name.
 Do not rename identity groups, NDGs, or authz rule names for this."""
     references = [
         "https://github.com/netascode/nac-validate",
@@ -154,8 +167,8 @@ Do not rename identity groups, NDGs, or authz rule names for this."""
                 )
             )
 
-        command_sets = _collect_command_set_ise_names()
-        profiles = _collect_profile_ise_names()
+        command_sets = _collect_command_set_ise_names(data)
+        profiles = _collect_profile_ise_names(data)
         command_set_names = {name: path for name, path in command_sets}
         profile_names = {name: path for name, path in profiles}
 

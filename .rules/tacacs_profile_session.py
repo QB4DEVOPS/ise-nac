@@ -26,8 +26,8 @@ _tf = importlib.util.module_from_spec(_spec)
 sys.modules["tf_ise_post"] = _tf
 _spec.loader.exec_module(_tf)
 
-_PRIV1 = frozenset({"T1", "auditor_internal", "auditor_external"})
-_PRIV15 = frozenset({"T2", "T3", "T4", "vendor", "contractor"})
+_PRIV1 = frozenset({"T1", "T1_shell", "auditor_internal", "auditor_internal_shell", "auditor_external", "auditor_external_shell"})
+_PRIV15 = frozenset({"T2", "T2_shell", "T3", "T3_shell", "T4", "T4_shell", "vendor", "vendor_shell", "contractor", "contractor_shell"})
 
 
 def _attrs(entry: dict[str, Any] | None) -> list[dict[str, Any]]:

@@ -2479,55 +2479,53 @@ command_sets:
 # TACACS shell profiles. Source for Terraform and nac.yaml.
 # CiscoDevNet/ise 0.3.4 ise_tacacs_profile session_attributes:
 #   type MANDATORY|OPTIONAL, name, value (strings).
-# YAML/CSV tier keys stay T1, T2, T3, T4, vendor, contractor, auditor_*.
-# ISE ERS POST names are T1_shell, T2_shell, … (locals.ise_tacacs_shell_profile_name).
-# Command sets and profiles share one ERS name namespace; they cannot both be T1.
-# T1 and auditor_* priv-lvl 1. T2/T3/T4/vendor/contractor priv-lvl 15.
-# No profile named test — that name is the command-set GUI canary.
+# YAML name: is the ISE POST name. Command sets keep T1; profiles are T1_shell.
+# CSV keys stay T1. No two ISE names may match. No profile named test.
+# T1_shell and auditor_*_shell priv-lvl 1. Everyone else priv-lvl 15.
 shell_profiles:
-  - name: T1
+  - name: T1_shell
     description: Read-only device admin (privilege 1).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "1"
-  - name: T2
+  - name: T2_shell
     description: Access-switch interface admin (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: T3
+  - name: T3_shell
     description: Access-switch VLAN and spanning-tree admin (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: T4
+  - name: T4_shell
     description: Full device-admin (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: vendor
+  - name: vendor_shell
     description: Vendor interface-description admin (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: contractor
+  - name: contractor_shell
     description: Contractor interface admin, same as T2 (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: auditor_internal
+  - name: auditor_internal_shell
     description: Internal auditor read-only (privilege 1).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "1"
-  - name: auditor_external
+  - name: auditor_external_shell
     description: External auditor read-only (privilege 1).
     session_attributes:
       - type: MANDATORY
