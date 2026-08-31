@@ -78,3 +78,5 @@ two `/16` blocks (`country_id` 1 and 2); other countries use one `/16`.
 
 Access switches only. No core, distribution, WAN, WLC, firewalls, or ISE
 nodes. No passwords or 192.168.1.90.
+
+`nac.yaml` is generated from the CSVs by `scripts/generate_nac.py` (ISE-as-code feed; CSV stays what Excel opens).
