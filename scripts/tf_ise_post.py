@@ -167,20 +167,32 @@ def command_set_resource() -> dict[str, Any]:
         "uses_command_sets_yaml": "command_sets.yaml" in tf_all,
         "path": "main.tf:ise_tacacs_command_set",
     }
+    # Skip the GUI canary (ise_tacacs_command_set.test). Inspect the ladder.
+    chosen = None
+    first_ladder = None
     for m in _RESOURCE.finditer(text):
         if m.group(1) != "ise_tacacs_command_set":
             continue
-        block = _brace_block(text, m.end() - 1)
-        pm = re.search(r"permit_unmatched\s*=\s*(true|false)", block)
-        if pm:
-            result["permit_unmatched"] = pm.group(1) == "true"
-        elif re.search(r"permit_unmatched\s*=", block):
-            result["permit_unmatched"] = "per-set"
-        result["has_commands"] = bool(
-            re.search(r"\bcommands\s*=", block) or re.search(r"\bcommand\s*\{", block)
-        )
-        result["path"] = f"main.tf:resource.ise_tacacs_command_set.{m.group(2)}"
-        break
+        if m.group(2) == "test":
+            continue
+        if first_ladder is None:
+            first_ladder = m
+        if m.group(2) == "this":
+            chosen = m
+            break
+    m = chosen or first_ladder
+    if m is None:
+        return result
+    block = _brace_block(text, m.end() - 1)
+    pm = re.search(r"permit_unmatched\s*=\s*(true|false)", block)
+    if pm:
+        result["permit_unmatched"] = pm.group(1) == "true"
+    elif re.search(r"permit_unmatched\s*=", block):
+        result["permit_unmatched"] = "per-set"
+    result["has_commands"] = bool(
+        re.search(r"\bcommands\s*=", block) or re.search(r"\bcommand\s*\{", block)
+    )
+    result["path"] = f"main.tf:resource.ise_tacacs_command_set.{m.group(2)}"
     return result
 
 

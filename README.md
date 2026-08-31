@@ -69,6 +69,17 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 Then paste the block above.
 
+## GUI canary (do not click ISE)
+
+TARS owns the NAC. Terraform creates the GUI test. Robert does not click ISE to make it.
+
+```
+. .\load-env.ps1
+terraform apply -target=ise_tacacs_command_set.test
+```
+
+That address is `ise_tacacs_command_set.test`. ISE name is exactly `test`: one command, `show` / `version` / `PERMIT`, `permit_unmatched=false`. No regex. If this 400s, Device Admin / TACACS may not be licensed yet.
+
 If you already ran apply once, pull this folder first, then apply again:
 
 ```
