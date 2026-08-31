@@ -28,12 +28,12 @@ pip install nac-validate
 nac-validate nac.yaml sites.yaml -s .schema.yaml -r .rules
 ```
 
-That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml`. `.rules/` also reads `tacacs_authz.csv` and Terraform — the names apply POSTs to ISE (`local.ise_tacacs_name`), not only `nac.yaml`:
+That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml`. `.rules/` also reads `tacacs_authz.csv` and Terraform (`local.ise_tacacs_name` in `locals.tf`, `permit_unmatched` in `main.tf`) — the names apply POSTs to ISE, not only `nac.yaml` (those drifted once):
 
 1. TACACS **command-set** and **profile** names may only use letters, digits, underscore, and space. Hyphens fail. NDG hyphens (`access-marketing`) stay.
 2. Empty command sets with `permit_unmatched = false` are invalid (Terraform resource and YAML).
 
-If `nac-validate` prints errors, do not apply. Exit 0 means the YAML passed schema and these rules.
+If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed.
 
 Optional git hook (same check on commit):
 
