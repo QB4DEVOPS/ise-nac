@@ -23,7 +23,7 @@ resource "ise_tacacs_command_set" "test" {
   ]
 }
 
-# New NDG type "Access" — who may administer which NADs. Not a site tree.
+# New NDG type "Access" — who may administer which NADs.
 resource "ise_network_device_group" "access_root" {
   name        = "Access#All Access"
   description = "Device-admin access groups. Who may log into which NADs."
@@ -38,7 +38,19 @@ resource "ise_network_device_group" "ndg" {
   depends_on  = [ise_network_device_group.access_root]
 }
 
+# ISE already has Location / All Locations. Do not recreate that root.
+# Type-level children only (regional, branch, hq, dc). No per-city NDGs.
+resource "ise_network_device_group" "location" {
+  for_each    = local.location_ndgs
+  name        = "Location#All Locations#${each.value.ndg}"
+  description = each.value.description
+  root_group  = "Location"
+}
+
 # Empty identity groups. No users and no passwords.
+# Names stay as applied (T1, auditor-internal). They are not in the TACACS
+# command-set + profile ISE name bag (T1_cs, T1_shell, …). Suffix only if
+# an identity group string later equals a command-set or profile ISE name.
 resource "ise_user_identity_group" "this" {
   for_each    = local.identity_groups
   name        = each.value
