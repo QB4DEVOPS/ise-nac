@@ -1,7 +1,7 @@
 """Resolve TACACS names Terraform actually POSTs to ISE.
 
-nac.yaml can drift from apply. Terraform csvdecodes tacacs_authz.csv and
-sets ise_tacacs_command_set / ise_tacacs_profile name = each.value.
+nac.yaml can drift from apply. Terraform csvdecodes tacacs_authz.csv, then
+sets resource name = local.ise_tacacs_name[each.value] (hyphen → underscore).
 NDG and identity-group hyphens are out of scope.
 """
 
@@ -66,22 +66,56 @@ def local_csv_columns() -> dict[str, str]:
     }
 
 
+def _maps_hyphen_to_underscore() -> bool:
+    """True when locals.tf maps CSV names through replace(n, "-", "_")."""
+    return bool(
+        re.search(
+            r"ise_tacacs_name\s*=\s*\{[^}]*replace\(\s*n\s*,\s*\"-\"\s*,\s*\"_\"\s*\)",
+            _tf_text(),
+            re.S,
+        )
+    )
+
+
+def _resource_posts_mapped_name(resource_type: str) -> bool:
+    """True when the resource name attribute uses local.ise_tacacs_name."""
+    text = MAIN_TF.read_text(encoding="utf-8") if MAIN_TF.is_file() else ""
+    for m in _RESOURCE.finditer(text):
+        if m.group(1) != resource_type:
+            continue
+        block = _brace_block(text, m.end() - 1)
+        return bool(re.search(r"name\s*=\s*local\.ise_tacacs_name\[", block))
+    return False
+
+
 def posted_names(kind: str) -> list[tuple[str, str]]:
-    """Unique names Terraform POSTs.
+    """Unique names Terraform POSTs to ISE.
 
     kind is ``command_set`` or ``shell_profile``.
     Returns (name, source_path) in first-seen order.
+    Applies locals.ise_tacacs_name (hyphen → underscore) when Terraform does.
     """
     cols = local_csv_columns()
     column = cols["command_sets"] if kind == "command_set" else cols["shell_profiles"]
+    resource_type = (
+        "ise_tacacs_command_set" if kind == "command_set" else "ise_tacacs_profile"
+    )
+    mapped = _maps_hyphen_to_underscore() and _resource_posts_mapped_name(resource_type)
     seen: set[str] = set()
     out: list[tuple[str, str]] = []
     for i, row in enumerate(read_authz_csv(), start=2):
-        name = (row.get(column) or "").strip()
-        if not name or name in seen:
+        raw = (row.get(column) or "").strip()
+        if not raw:
+            continue
+        name = raw.replace("-", "_") if mapped else raw
+        if name in seen:
             continue
         seen.add(name)
-        out.append((name, f"tacacs_authz.csv:{column}:line {i}"))
+        src = f"tacacs_authz.csv:{column}:line {i}"
+        if mapped and raw != name:
+            src = f"{src} -> local.ise_tacacs_name"
+        src = f"{src} (Terraform POSTs {name!r})"
+        out.append((name, src))
     return out
 
 
