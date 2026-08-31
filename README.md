@@ -42,6 +42,14 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 Then paste the block above.
 
+If you already ran apply once, pull this folder first, then apply again:
+
+```
+git pull
+. .\load-env.ps1
+terraform apply
+```
+
 ## First apply (no 6,250 NADs)
 
 Default NAD count is **0**. First apply creates policy objects only:
@@ -73,8 +81,8 @@ These still produce a valid `terraform init`. They are incomplete because the CS
 
 | Object | In Git | On apply |
 | --- | --- | --- |
-| TACACS command sets | Names only (`T1`–`T4`, vendor, contractor, auditor-*) | Created as empty names. No IOS commands in the CSVs. |
-| TACACS shell profiles | Names only | Created as empty names. No privilege / session attributes in the CSVs. |
+| TACACS command sets | CSV names (`T1`–`T4`, vendor, contractor, auditor-*) | ISE names with hyphen → underscore (`auditor_external`). No IOS commands. `permit_unmatched = true` so an empty set is valid. |
+| TACACS shell profiles | CSV names | Same hyphen → underscore map. ISE 3.5 rejects empty profiles, so each profile has a privilege-1 stub (`priv-lvl=1`). Not a full shell. |
 | `time_bound=yes` | Flag only (vendor, auditor-external) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
 | Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |
