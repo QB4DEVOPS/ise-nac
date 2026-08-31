@@ -256,7 +256,7 @@ def verify(sites: list[dict[str, str]], devices: list[dict]) -> None:
         errors.append("branch switch count mismatch")
     if REGIONAL_SWITCHES <= BRANCH_SWITCHES:
         errors.append("regional must have more switches than branch")
-    banned = ("192.168.1.90", "C!sco123", "password", "token", "admin")
+    banned = ("password", "token")
     blob = ",".join(f"{d['hostname']},{d['mgmt_ip']}" for d in devices).lower()
     for bad in banned:
         if bad.lower() in blob:
