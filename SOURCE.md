@@ -56,8 +56,11 @@ wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-b
 NDG-scoped), contractor, auditor-internal (all four NDGs, read-only),
 auditor-external (time-bound, read-only). Identity groups keep hyphens.
 `command_set` and `shell_profile` use ISE-legal names (`auditor_internal`,
-`auditor_external`); no hyphens. Names only; no IOS command contents. Empty
-command sets permit unmatched. Country is not a condition.
+`auditor_external`); no hyphens. IOS-XE command contents live in
+`command_sets.yaml` (Terraform `ise_tacacs_command_set` commands blocks).
+T4 may permit unmatched; every other set lists real commands and denies
+unmatched. Shell privilege is in `shell_profiles.yaml`. Country is not a
+condition.
 
 No passwords, admin accounts, or lab management addresses.
 

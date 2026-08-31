@@ -1,6 +1,8 @@
-"""Empty TACACS command sets must permit unmatched traffic.
+"""TACACS command sets must contain IOS commands except T4.
 
-Checks permit_unmatched on the Terraform resource ISE receives, not only nac.yaml.
+T4 may be empty with permit_unmatched=true (full device-admin).
+Every other set must have at least one command and permit_unmatched=false.
+Empty + permit_unmatched=false is invalid on ISE (HTTP 400).
 """
 
 from __future__ import annotations
@@ -21,6 +23,8 @@ _tf = importlib.util.module_from_spec(_spec)
 sys.modules["tf_ise_post"] = _tf
 _spec.loader.exec_module(_tf)
 
+_T4 = "T4"
+
 
 def _has_commands(entry: dict[str, Any] | None) -> bool:
     if not entry:
@@ -40,24 +44,85 @@ def _permits_unmatched(entry: dict[str, Any] | None) -> bool:
     return False
 
 
+def _check_entry(
+    name: str,
+    entry: dict[str, Any] | None,
+    path: str,
+    source: str,
+) -> Violation | None:
+    has = _has_commands(entry)
+    permit = _permits_unmatched(entry)
+    if name == _T4:
+        if not permit:
+            return Violation(
+                message=(
+                    f"TACACS command set '{name}' must set permit_unmatched = true "
+                    f"({source}). T4 is full device-admin."
+                ),
+                path=path,
+                details={
+                    "command_set": name,
+                    "commands": len(entry.get("commands") or []) if entry else 0,
+                    "permit_unmatched": permit,
+                    "source": source,
+                },
+            )
+        return None
+    if permit:
+        return Violation(
+            message=(
+                f"TACACS command set '{name}' must set permit_unmatched = false "
+                f"({source}). Only T4 may permit unmatched."
+            ),
+            path=path,
+            details={
+                "command_set": name,
+                "commands": len(entry.get("commands") or []) if entry else 0,
+                "permit_unmatched": True,
+                "source": source,
+            },
+        )
+    if not has:
+        return Violation(
+            message=(
+                f"TACACS command set '{name}' has no IOS commands ({source}). "
+                "ISE rejects empty command sets unless they permit unmatched. "
+                "Non-T4 sets must list real commands with permit_unmatched = false."
+            ),
+            path=path,
+            details={
+                "command_set": name,
+                "commands": 0,
+                "permit_unmatched": False,
+                "source": source,
+            },
+        )
+    return None
+
+
 class Rule(RuleBase):
     id = "102"
     description = (
-        "Empty TACACS command sets Terraform POSTs must set permit_unmatched = true"
+        "TACACS command sets must include IOS commands except T4, which may "
+        "be empty with permit_unmatched = true"
     )
     severity = "HIGH"
-    title = "EMPTY TACACS COMMAND SET"
-    affected_items_label = "Empty command sets"
+    title = "TACACS COMMAND SET COMMANDS"
+    affected_items_label = "Command sets"
     explanation = """\
 ISE rejects TACACS command sets that have no commands when permit_unmatched is
-false. Terraform POSTs ise_tacacs_command_set from tacacs_authz.csv names with
-no IOS commands. If that resource sets permit_unmatched = false (or omits it),
-apply returns HTTP 400. nac.yaml can drift; this rule reads main.tf."""
+false (HTTP 400). Non-T4 sets (T1–T3, vendor, contractor, auditor_*) must
+contain real IOS commands and deny unmatched. T4 is full device-admin and may
+be empty with permit_unmatched = true. Terraform yamldecodes command_sets.yaml;
+nac.yaml can drift, so this rule reads both plus main.tf."""
     recommendation = """\
-Set permit_unmatched = true on resource.ise_tacacs_command_set when commands
-are empty, and set permit_unmatched: true on YAML command_sets with no commands."""
+Put IOS commands in command_sets.yaml (grant PERMIT, command, arguments).
+Set permit_unmatched: false except T4 (permit_unmatched: true). Rebuild
+nac.yaml with python3 scripts/generate_nac.py. Wire the YAML into
+resource.ise_tacacs_command_set commands in main.tf."""
     references = [
         "https://github.com/netascode/nac-validate",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/latest/docs/resources/tacacs_command_set",
     ]
 
     @classmethod
@@ -66,58 +131,89 @@ are empty, and set permit_unmatched: true on YAML command_sets with no commands.
             data = {}
 
         violations: list[Violation] = []
+        seen: set[tuple[str, str]] = set()
+
+        def add(v: Violation | None) -> None:
+            if v is None:
+                return
+            key = (str(v.details.get("command_set", "")), str(v.details.get("source", "")))
+            if key in seen:
+                return
+            seen.add(key)
+            violations.append(v)
+
         posted = _tf.posted_names("command_set")
         resource = _tf.command_set_resource()
-        tf_permit = resource["permit_unmatched"]
-        tf_has_commands = bool(resource["has_commands"])
+        file_defs = _tf.command_set_defs()
 
-        # What apply POSTs: empty command-set resource + permit_unmatched false.
-        if posted and not tf_has_commands and tf_permit is not True:
+        yaml_defs: dict[str, dict[str, Any]] = {}
+        for item in data.get("command_sets") or []:
+            if isinstance(item, dict) and isinstance(item.get("name"), str):
+                yaml_defs[item["name"]] = item
+
+        non_t4 = [name for name, _ in posted if name != _T4]
+        if non_t4 and not resource["has_commands"]:
             for name, _csv_path in posted:
-                violations.append(
+                if name == _T4:
+                    continue
+                add(
                     Violation(
                         message=(
-                            f"TACACS command set '{name}' is POSTed empty with "
-                            "permit_unmatched = false (or unset) in Terraform. "
-                            "ISE rejects empty command sets unless they permit "
-                            "unmatched. Set permit_unmatched = true in main.tf."
+                            f"TACACS command set '{name}' is POSTed without a "
+                            "commands block in Terraform. Non-T4 sets need real "
+                            "IOS commands (grant PERMIT, command, arguments)."
                         ),
                         path=resource["path"],
                         details={
                             "command_set": name,
                             "commands": 0,
-                            "permit_unmatched": False if tf_permit is not True else True,
+                            "permit_unmatched": resource["permit_unmatched"],
                             "source": "terraform",
                         },
                     )
                 )
 
-        defined: dict[str, dict[str, Any]] = {}
-        for item in data.get("command_sets") or []:
-            if isinstance(item, dict) and isinstance(item.get("name"), str):
-                defined[item["name"]] = item
-
-        yaml_failed: set[str] = {str(v.details.get("command_set", "")) for v in violations}
-        for name, entry in sorted(defined.items()):
-            if name in yaml_failed:
-                continue
-            if _has_commands(entry):
-                continue
-            if _permits_unmatched(entry):
-                continue
-            violations.append(
-                Violation(
-                    message=(
-                        f"TACACS command set '{name}' has no commands and "
-                        "permit_unmatched is false. ISE rejects empty command "
-                        "sets unless they permit unmatched."
-                    ),
-                    path=f"command_sets[name={name}]",
-                    details={
-                        "command_set": name,
-                        "commands": 0,
-                        "permit_unmatched": False,
-                    },
+        if resource["permit_unmatched"] is True and non_t4:
+            for name, _csv_path in posted:
+                if name == _T4:
+                    continue
+                add(
+                    Violation(
+                        message=(
+                            f"TACACS command set '{name}' is POSTed with "
+                            "permit_unmatched = true in Terraform. Only T4 may "
+                            "permit unmatched."
+                        ),
+                        path=resource["path"],
+                        details={
+                            "command_set": name,
+                            "permit_unmatched": True,
+                            "source": "terraform",
+                        },
+                    )
                 )
-            )
+
+        for name, csv_path in posted:
+            entry = file_defs.get(name)
+            if entry is None:
+                add(
+                    Violation(
+                        message=(
+                            f"TACACS command set '{name}' is POSTed from "
+                            "tacacs_authz.csv but missing from command_sets.yaml."
+                        ),
+                        path=csv_path,
+                        details={
+                            "command_set": name,
+                            "commands": 0,
+                            "source": "command_sets.yaml",
+                        },
+                    )
+                )
+                continue
+            add(_check_entry(name, entry, "command_sets.yaml", "command_sets.yaml"))
+
+        for name, entry in sorted(yaml_defs.items()):
+            add(_check_entry(name, entry, f"command_sets[name={name}]", "nac.yaml"))
+
         return violations

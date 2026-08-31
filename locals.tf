@@ -15,8 +15,18 @@ locals {
   identity_groups = toset([for row in local.authz : row.identity_group])
 
   # ISE TACACS command-set / shell-profile names: alphanumeric, underscore, space.
-  # Hyphen is illegal (auditor-external → auditor_external). CSV stays the Excel original.
+  # Hyphen is illegal (auditor-external → auditor_external). Identity groups keep hyphens.
   ise_tacacs_name = {
     for n in setunion(local.command_sets, local.shell_profiles) : n => replace(n, "-", "_")
+  }
+
+  # IOS commands and priv-lvl live in YAML (NaC). Terraform POSTs these to ISE.
+  command_set_by_name = {
+    for cs in yamldecode(file("${path.module}/command_sets.yaml")).command_sets :
+    cs.name => cs
+  }
+  shell_profile_by_name = {
+    for sp in yamldecode(file("${path.module}/shell_profiles.yaml")).shell_profiles :
+    sp.name => sp
   }
 }

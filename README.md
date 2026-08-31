@@ -28,10 +28,10 @@ pip install nac-validate
 nac-validate nac.yaml sites.yaml -s .schema.yaml -r .rules
 ```
 
-That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml`. `.rules/` also reads `tacacs_authz.csv` and Terraform (`local.ise_tacacs_name` in `locals.tf`, `permit_unmatched` in `main.tf`) — the names apply POSTs to ISE, not only `nac.yaml` (those drifted once):
+That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml`. `.rules/` also reads `tacacs_authz.csv`, `command_sets.yaml`, and Terraform (`local.ise_tacacs_name` in `locals.tf`, commands in `main.tf`) — the names and commands apply POSTs to ISE, not only `nac.yaml`:
 
-1. TACACS **command-set** and **profile** names may only use letters, digits, underscore, and space. Hyphens fail. NDG hyphens (`access-marketing`) stay.
-2. Empty command sets with `permit_unmatched = false` are invalid (Terraform resource and YAML).
+1. TACACS **command-set** and **profile** names may only use letters, digits, underscore, and space. Hyphens fail (`auditor-internal` / `auditor-external`). NDG hyphens (`access-marketing`) stay.
+2. Non-T4 command sets must list real IOS commands with `permit_unmatched = false`. T4 may be empty with `permit_unmatched = true`. Empty sets with `permit_unmatched = false` are invalid (HTTP 400).
 
 If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed.
 
@@ -102,12 +102,12 @@ Password and username come from the environment / `.env`. Nothing in git has the
 
 ## What the provider cannot fully express
 
-These still produce a valid `terraform init`. They are incomplete because the CSVs do not contain the data:
+These still produce a valid `terraform init`. Some objects are incomplete because the CSVs do not contain the data:
 
 | Object | In Git | On apply |
 | --- | --- | --- |
-| TACACS command sets | CSV `command_set` (`T1`–`T4`, vendor, contractor, `auditor_internal` / `auditor_external`) | Terraform POSTs ISE names (hyphen → underscore). No IOS commands. `permit_unmatched = true` so an empty set is valid. |
-| TACACS shell profiles | CSV `shell_profile` (same names) | Same hyphen → underscore map. ISE 3.5 rejects empty profiles, so each profile has a privilege-1 stub (`priv-lvl=1`). Not a full shell. |
+| TACACS command sets | `command_sets.yaml` — real IOS-XE commands (`T1`–`T3`, vendor, contractor, `auditor_internal`, `auditor_external`). T4 empty with `permit_unmatched=true`. CSV hyphens map to underscores. | `ise_tacacs_command_set` with `commands` (`grant=PERMIT`, command, arguments). `permit_unmatched=false` except T4. |
+| TACACS shell profiles | `shell_profiles.yaml` — `priv-lvl` 1 for T1 and `auditor_*`; 15 for T2/T3/T4/vendor/contractor | `ise_tacacs_profile` session attribute `priv-lvl`. Names cannot contain hyphens. |
 | `time_bound=yes` | Flag only (vendor, auditor-external identity) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
 | Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |

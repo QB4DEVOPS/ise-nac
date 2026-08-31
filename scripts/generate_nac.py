@@ -66,6 +66,7 @@ def main() -> int:
         "# Generated ISE-as-code feed. Do not edit by hand.",
         "# Rebuild: python3 scripts/generate_nac.py",
         "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv",
+        "# TACACS objects: command_sets.yaml shell_profiles.yaml",
         "",
         "lab:",
         "  pan:",
@@ -136,48 +137,19 @@ def main() -> int:
                     ("name", yq(row["name"])),
                     ("identity_group", yq(row["identity_group"])),
                     ("ndg", yq(row["ndg"])),
-                    ("command_set", yq(row["command_set"])),
-                    ("shell_profile", yq(row["shell_profile"])),
+                    ("command_set", yq(row["command_set"].replace("-", "_"))),
+                    ("shell_profile", yq(row["shell_profile"].replace("-", "_"))),
                     ("time_bound", yq(row["time_bound"])),
                 ],
             )
         )
 
-    # Unique TACACS objects from authz. CSVs have names only, no IOS commands.
-    command_set_names: list[str] = []
-    shell_profile_names: list[str] = []
-    for row in authz:
-        if row["command_set"] not in command_set_names:
-            command_set_names.append(row["command_set"])
-        if row["shell_profile"] not in shell_profile_names:
-            shell_profile_names.append(row["shell_profile"])
-
-    lines.append("")
-    lines.append("command_sets:")
-    for name in command_set_names:
-        lines.extend(
-            mapping(
-                2,
-                [
-                    ("name", yq(name)),
-                    # Boolean, not yq(): empty sets must permit unmatched or ISE 400s.
-                    ("permit_unmatched", "true"),
-                    ("commands", "[]"),
-                ],
-            )
-        )
-
-    lines.append("")
-    lines.append("shell_profiles:")
-    for name in shell_profile_names:
-        lines.extend(
-            mapping(
-                2,
-                [
-                    ("name", yq(name)),
-                ],
-            )
-        )
+    # TACACS objects. YAML originals: command_sets.yaml, shell_profiles.yaml.
+    for extra in ("command_sets.yaml", "shell_profiles.yaml"):
+        body = (ROOT / extra).read_text(encoding="utf-8").rstrip()
+        if body:
+            lines.append("")
+            lines.append(body)
 
     lines.append("")
     lines.append("devices:")
