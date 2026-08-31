@@ -208,12 +208,33 @@ Keep CSV keys as T1."""
                     )
                 )
 
+        yaml_cs = _item_names(
+            _tf._load_yaml_list(_tf.COMMAND_SETS_YAML, "command_sets")
+        )
         fail_list_duplicates(
-            _item_names(_tf._load_yaml_list(_tf.COMMAND_SETS_YAML, "command_sets")),
+            yaml_cs,
             "command_sets.yaml",
             "command-set",
             "command_sets.yaml",
         )
+        for name in yaml_cs:
+            if name.endswith("_cs"):
+                continue
+            add(
+                Violation(
+                    message=(
+                        f"command_sets.yaml name: '{name}' must be the ISE POST "
+                        "name with a _cs suffix (T1_cs, vendor_cs, …). CSV keys "
+                        "stay T1."
+                    ),
+                    path=f"command_sets.yaml[name={name}].name",
+                    details={
+                        "name": name,
+                        "kind": "command_set_lock",
+                        "source": "command_sets.yaml",
+                    },
+                )
+            )
         fail_list_duplicates(
             _item_names(
                 _tf._load_yaml_list(_tf.SHELL_PROFILES_YAML, "shell_profiles")

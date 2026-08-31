@@ -128,9 +128,41 @@ def _resource_name_uses_local(resource_type: str, local_attr: str) -> bool:
     return False
 
 
-def _resource_posts_mapped_name(resource_type: str) -> bool:
-    """True when the resource name attribute uses local.ise_tacacs_name."""
-    return _resource_name_uses_local(resource_type, "ise_tacacs_name")
+def _resource_posts_yaml_name(resource_type: str, csv_map: str) -> bool:
+    """True when the ladder resource POSTs local.<csv_map>[...].name.
+
+    That is the YAML ``name:`` (T1_cs / T1_shell), looked up by CSV key.
+    Skips the GUI canary (resource address ``test``).
+    """
+    text = MAIN_TF.read_text(encoding="utf-8") if MAIN_TF.is_file() else ""
+    for m in _RESOURCE.finditer(text):
+        if m.group(1) != resource_type:
+            continue
+        if m.group(2) == "test":
+            continue
+        block = _brace_block(text, m.end() - 1)
+        return bool(
+            re.search(
+                rf"name\s*=\s*local\.{re.escape(csv_map)}\[.+\]\.name",
+                block,
+                re.S,
+            )
+        )
+    return False
+
+
+def _yaml_name_for_csv(kind: str, csv_key: str) -> str | None:
+    """YAML ``name:`` for a CSV tier key, if present."""
+    defs = command_set_defs() if kind == "command_set" else shell_profile_defs()
+    stem = csv_key.replace("-", "_")
+    suffix = "_cs" if kind == "command_set" else "_shell"
+    for candidate in (f"{stem}{suffix}", stem, csv_key):
+        if candidate in defs:
+            return candidate
+    for yname in defs:
+        if yname.endswith(suffix) and yname[: -len(suffix)] == stem:
+            return yname
+    return None
 
 
 def literal_resource_names(resource_type: str) -> list[tuple[str, str]]:
@@ -173,25 +205,31 @@ def posted_records(kind: str) -> list[dict[str, str]]:
     uses_hyphen_map = False
     map_label = "local.ise_tacacs_name"
     suffix = ""
+    yaml_map = (
+        "command_set_by_csv" if kind == "command_set" else "shell_profile_by_csv"
+    )
+    posts_yaml = _resource_posts_yaml_name(resource_type, yaml_map)
     if kind == "shell_profile":
-        uses_suffix = _maps_shell_profile_suffix() and _resource_name_uses_local(
-            resource_type, "ise_tacacs_shell_profile_name"
+        uses_suffix = _maps_shell_profile_suffix() and (
+            posts_yaml
+            or _resource_name_uses_local(resource_type, "ise_tacacs_shell_profile_name")
         )
-        uses_hyphen_map = uses_suffix or (
+        uses_hyphen_map = uses_suffix or posts_yaml or (
             hyphen and _resource_name_uses_local(resource_type, "ise_tacacs_name")
         )
-        if uses_suffix:
-            map_label = "local.ise_tacacs_shell_profile_name"
+        if uses_suffix or posts_yaml:
+            map_label = f"local.{yaml_map}.name" if posts_yaml else "local.ise_tacacs_shell_profile_name"
             suffix = "_shell"
     else:
-        uses_suffix = _maps_command_set_suffix() and _resource_name_uses_local(
-            resource_type, "ise_tacacs_command_set_name"
+        uses_suffix = _maps_command_set_suffix() and (
+            posts_yaml
+            or _resource_name_uses_local(resource_type, "ise_tacacs_command_set_name")
         )
-        uses_hyphen_map = uses_suffix or (
+        uses_hyphen_map = uses_suffix or posts_yaml or (
             hyphen and _resource_name_uses_local(resource_type, "ise_tacacs_name")
         )
-        if uses_suffix:
-            map_label = "local.ise_tacacs_command_set_name"
+        if uses_suffix or posts_yaml:
+            map_label = f"local.{yaml_map}.name" if posts_yaml else "local.ise_tacacs_command_set_name"
             suffix = "_cs"
 
     seen: set[str] = set()
@@ -200,9 +238,15 @@ def posted_records(kind: str) -> list[dict[str, str]]:
         raw = (row.get(column) or "").strip()
         if not raw:
             continue
-        ise_name = raw.replace("-", "_") if uses_hyphen_map else raw
-        if uses_suffix:
-            ise_name = f"{ise_name}{suffix}"
+        if posts_yaml:
+            yname = _yaml_name_for_csv(kind, raw)
+            ise_name = yname if yname else (
+                f"{raw.replace('-', '_')}{suffix}" if suffix else raw
+            )
+        else:
+            ise_name = raw.replace("-", "_") if uses_hyphen_map else raw
+            if uses_suffix:
+                ise_name = f"{ise_name}{suffix}"
         if ise_name in seen:
             continue
         seen.add(ise_name)

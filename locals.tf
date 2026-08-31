@@ -35,13 +35,13 @@ locals {
     for n in local.shell_profiles : n => "${local.ise_tacacs_name[n]}_shell"
   }
 
-  # IOS commands and session_attributes live in YAML (NaC). Terraform POSTs these to ISE.
-  command_set_by_name = {
+  # YAML objects keyed by CSV key (T1). .name is the ISE POST name (T1_cs / T1_shell).
+  command_set_by_csv = {
     for cs in yamldecode(file("${path.module}/command_sets.yaml")).command_sets :
-    cs.name => cs
+    trimsuffix(cs.name, "_cs") => cs
   }
-  shell_profile_by_name = {
+  shell_profile_by_csv = {
     for sp in yamldecode(file("${path.module}/shell_profiles.yaml")).shell_profiles :
-    sp.name => sp
+    trimsuffix(sp.name, "_shell") => sp
   }
 }

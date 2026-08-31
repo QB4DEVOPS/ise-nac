@@ -46,14 +46,14 @@ resource "ise_user_identity_group" "this" {
 }
 
 # IOS-XE command sets from command_sets.yaml. T4 may permit unmatched; others do not.
-# ISE name is T1_cs (YAML name: and Terraform POST). CSV keys stay T1.
+# Look up by CSV key (T1). POST the YAML name: (T1_cs).
 resource "ise_tacacs_command_set" "this" {
   for_each         = local.command_sets
-  name             = local.ise_tacacs_command_set_name[each.value]
-  description      = try(local.command_set_by_name[local.ise_tacacs_command_set_name[each.value]].description, "TACACS command set ${local.ise_tacacs_command_set_name[each.value]}")
-  permit_unmatched = try(local.command_set_by_name[local.ise_tacacs_command_set_name[each.value]].permit_unmatched, false)
+  name             = local.command_set_by_csv[local.ise_tacacs_name[each.value]].name
+  description      = try(local.command_set_by_csv[local.ise_tacacs_name[each.value]].description, "TACACS command set ${local.command_set_by_csv[local.ise_tacacs_name[each.value]].name}")
+  permit_unmatched = try(local.command_set_by_csv[local.ise_tacacs_name[each.value]].permit_unmatched, false)
   commands = [
-    for c in try(local.command_set_by_name[local.ise_tacacs_command_set_name[each.value]].commands, []) : {
+    for c in try(local.command_set_by_csv[local.ise_tacacs_name[each.value]].commands, []) : {
       grant     = c.grant
       command   = c.command
       arguments = c.arguments
@@ -64,13 +64,13 @@ resource "ise_tacacs_command_set" "this" {
 # Shell profiles from shell_profiles.yaml. CiscoDevNet/ise 0.3.4:
 # session_attributes = [{ type = "MANDATORY"|"OPTIONAL", name, value }].
 # T1/auditor_* priv-lvl 1; everyone else 15. Empty profiles 400 on ISE 3.5.
-# ISE name is T1_shell (YAML name: and Terraform POST). CSV keys stay T1.
+# Look up by CSV key (T1). POST the YAML name: (T1_shell).
 resource "ise_tacacs_profile" "this" {
   for_each    = local.shell_profiles
-  name        = local.ise_tacacs_shell_profile_name[each.value]
-  description = try(local.shell_profile_by_name[local.ise_tacacs_shell_profile_name[each.value]].description, "TACACS shell profile ${local.ise_tacacs_shell_profile_name[each.value]}")
+  name        = local.shell_profile_by_csv[local.ise_tacacs_name[each.value]].name
+  description = try(local.shell_profile_by_csv[local.ise_tacacs_name[each.value]].description, "TACACS shell profile ${local.shell_profile_by_csv[local.ise_tacacs_name[each.value]].name}")
   session_attributes = [
-    for a in local.shell_profile_by_name[local.ise_tacacs_shell_profile_name[each.value]].session_attributes : {
+    for a in local.shell_profile_by_csv[local.ise_tacacs_name[each.value]].session_attributes : {
       type  = a.type
       name  = a.name
       value = tostring(a.value)
