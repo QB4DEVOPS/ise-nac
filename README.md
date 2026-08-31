@@ -32,7 +32,7 @@ That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-
 
 1. TACACS **command-set** and **profile** names may only use letters, digits, underscore, and space. Hyphens fail (`auditor-internal` / `auditor-external`). NDG hyphens (`access-marketing`) stay.
 2. Non-T4 command sets must list real IOS commands with `permit_unmatched = false`. T4 may be empty with `permit_unmatched = true`. Empty sets with `permit_unmatched = false` are invalid (HTTP 400).
-3. Command `arguments` are ISE ERS literals (optional `*` wildcard). PCRE such as `ver(sion)?.*` is rejected (HTTP 400). `command` is the first IOS word only.
+3. **Rule 103 FAILS** (non-zero exit) if command `arguments` contain regex metacharacters (`(`, `)`, `?`, `|`, `.`, etc.). Plain words and `*` only. Missing `command_sets.yaml` also fails (closed). PCRE such as `ver(sion)?.*` 400s on ISE.
 4. Shell profiles POST `session_attributes` (`type=MANDATORY`, `name=priv-lvl`, `value=1` or `15`). Empty profiles 400 on ISE 3.5.
 
 If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed. It still does not talk to ISE.
