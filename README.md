@@ -28,12 +28,13 @@ pip install nac-validate
 nac-validate nac.yaml sites.yaml -s .schema.yaml -r .rules
 ```
 
-That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml`. `.rules/` also reads `tacacs_authz.csv`, `command_sets.yaml`, and Terraform (`local.ise_tacacs_name` in `locals.tf`, commands in `main.tf`) — the names and commands apply POSTs to ISE, not only `nac.yaml`:
+That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml`. `.rules/` also reads `tacacs_authz.csv`, `command_sets.yaml`, and Terraform (`local.ise_tacacs_command_set_name` / `local.ise_tacacs_shell_profile_name` in `locals.tf`, commands in `main.tf`) — the names and commands apply POSTs to ISE, not only `nac.yaml`:
 
 1. TACACS **command-set** and **profile** names may only use letters, digits, underscore, and space. Hyphens fail (`auditor-internal` / `auditor-external`). NDG hyphens (`access-marketing`) stay.
 2. Non-T4 command sets must list real IOS commands with `permit_unmatched = false`. T4 may be empty with `permit_unmatched = true`. Empty sets with `permit_unmatched = false` are invalid (HTTP 400).
 3. **Rule 103 FAILS** (non-zero exit) if command `arguments` contain regex metacharacters (`(`, `)`, `?`, `|`, `.`, etc.). Plain words and `*` only. Missing `command_sets.yaml` also fails (closed). PCRE such as `ver(sion)?.*` 400s on ISE.
 4. Shell profiles POST `session_attributes` (`type=MANDATORY`, `name=priv-lvl`, `value=1` or `15`). Empty profiles 400 on ISE 3.5.
+5. **Rule 105 FAILS** if any string is duplicated in the **combined** set of all command-set ISE names and all profile ISE names (one ERS namespace). Every TACACS object is suffixed (underscore only). Command sets: `T1_cs` `T2_cs` `T3_cs` `T4_cs` `vendor_cs` `contractor_cs` `auditor_internal_cs` `auditor_external_cs` `test_cs`. Profiles: `T1_shell` `T2_shell` `T3_shell` `T4_shell` `vendor_shell` `contractor_shell` `auditor_internal_shell` `auditor_external_shell`. No profile named `test_cs`. CSV keys stay `T1`. Identity groups, NDGs, and authz rule names are unchanged.
 
 If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed. It still does not talk to ISE.
 
@@ -78,7 +79,7 @@ TARS owns the NAC. Terraform creates the GUI test. Robert does not click ISE to 
 terraform apply -target=ise_tacacs_command_set.test
 ```
 
-That address is `ise_tacacs_command_set.test`. ISE name is exactly `test`: one command, `show` / `version` / `PERMIT`, `permit_unmatched=false`. No regex. If this 400s, Device Admin / TACACS may not be licensed yet.
+That address is `ise_tacacs_command_set.test`. ISE name is `test_cs`: one command, `show` / `version` / `PERMIT`, `permit_unmatched=false`. No regex. If this 400s, Device Admin / TACACS may not be licensed yet.
 
 If you already ran apply once, pull this folder first, then apply again:
 
@@ -119,8 +120,8 @@ These still produce a valid `terraform init`. Some objects are incomplete becaus
 
 | Object | In Git | On apply |
 | --- | --- | --- |
-| TACACS command sets | `command_sets.yaml` — real IOS-XE commands (`T1`–`T3`, vendor, contractor, `auditor_internal`, `auditor_external`). T4 empty with `permit_unmatched=true`. CSV hyphens map to underscores. Arguments are literals + `*` (no PCRE). | `ise_tacacs_command_set` with `commands` (`grant=PERMIT`, command, arguments). `permit_unmatched=false` except T4. |
-| TACACS shell profiles | `shell_profiles.yaml` — `session_attributes` `type=MANDATORY` `name=priv-lvl` `value=1` for T1 and `auditor_*`; `15` for T2/T3/T4/vendor/contractor | `ise_tacacs_profile` session_attributes per CiscoDevNet/ise 0.3.4. Names cannot contain hyphens. |
+| TACACS command sets | `command_sets.yaml` — YAML `name:` is the ISE name (`T1_cs`–`T3_cs`, `vendor_cs`, `contractor_cs`, `auditor_internal_cs`, `auditor_external_cs`). T4_cs empty with `permit_unmatched=true`. CSV keys stay `T1`. Arguments are literals + `*` (no PCRE). | `ise_tacacs_command_set` `name` is `local.ise_tacacs_command_set_name` (`T1_cs`). Canary `.test` POSTs `test_cs`. `permit_unmatched=false` except T4. |
+| TACACS shell profiles | `shell_profiles.yaml` — YAML `name:` is the ISE name (`T1_shell`, `T2_shell`, …). `session_attributes` `type=MANDATORY` `name=priv-lvl` `value=1` for T1 and `auditor_*`; `15` for T2/T3/T4/vendor/contractor. CSV keys stay `T1`. | `ise_tacacs_profile` name is `local.ise_tacacs_shell_profile_name` (`T1_shell`, not `T1`). ISE ERS shares one name namespace with command sets. Authz `profile` uses `.name`. Names cannot contain hyphens. |
 | `time_bound=yes` | Flag only (vendor, auditor-external identity) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
 | Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |

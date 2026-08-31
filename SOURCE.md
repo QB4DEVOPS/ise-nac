@@ -55,13 +55,20 @@ assume Active Directory.
 wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-bound,
 NDG-scoped), contractor, auditor-internal (all four NDGs, read-only),
 auditor-external (time-bound, read-only). Identity groups keep hyphens.
-`command_set` and `shell_profile` use ISE-legal names (`auditor_internal`,
-`auditor_external`); no hyphens. IOS-XE command contents live in
-`command_sets.yaml` (Terraform `ise_tacacs_command_set` commands blocks).
-ISE ERS arguments are literal tokens plus optional `*` (not PCRE).
-T4 may permit unmatched; every other set lists real commands and denies
-unmatched. Shell privilege is `session_attributes` in `shell_profiles.yaml`
-(`type=MANDATORY`, `name=priv-lvl`). Country is not a condition.
+`command_set` CSV keys stay T1 (ISE-legal tokens, no hyphens). Command-set
+ISE names and `command_sets.yaml` `name:` are `{key}_cs` (`T1_cs`,
+`vendor_cs`, …). The GUI canary resource address stays
+`ise_tacacs_command_set.test` and POSTs ISE name `test_cs`. Shell-profile
+CSV keys stay T1; `shell_profiles.yaml` `name:` and the ISE POST name are
+`{key}_shell` (`T1_shell`, `vendor_shell`, …) because ISE ERS shares one
+name namespace — every TACACS object is suffixed. Both named `T1` returns
+HTTP 400.
+IOS-XE command contents live in `command_sets.yaml` (Terraform
+`ise_tacacs_command_set` commands blocks). ISE ERS arguments are literal
+tokens plus optional `*` (not PCRE). T4 may permit unmatched; every other
+set lists real commands and denies unmatched. Shell privilege is
+`session_attributes` in `shell_profiles.yaml` (`type=MANDATORY`,
+`name=priv-lvl`). Country is not a condition.
 
 No passwords, admin accounts, or lab management addresses.
 

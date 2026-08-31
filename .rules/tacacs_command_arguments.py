@@ -48,7 +48,7 @@ _ALLOWED_COMMANDS = frozenset(
         "no",
     }
 )
-_T4 = "T4"
+_T4 = frozenset({"T4", "T4_cs"})
 
 
 def _as_str(value: Any) -> str:
@@ -288,7 +288,7 @@ Rebuild nac.yaml with python3 scripts/generate_nac.py."""
                 ):
                     add(v)
 
-        posted = [name for name, _ in _tf.posted_names("command_set") if name != _T4]
+        posted = [name for name, _ in _tf.posted_names("command_set") if name not in _T4]
         if posted and not load_violations and scanned == 0:
             add(
                 Violation(

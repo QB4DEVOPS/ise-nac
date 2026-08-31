@@ -2227,9 +2227,14 @@ tacacs_authz:
 # ISE ERS does NOT accept PCRE in arguments (parentheses, ?, .*). Use a
 # command token plus literal arguments. * is the ISE wildcard.
 # command = first word only. grant PERMIT. permit_unmatched false except T4.
+# YAML name: values ARE the ISE POST names. Must be exactly:
+#   T1_cs T2_cs T3_cs T4_cs vendor_cs contractor_cs
+#   auditor_internal_cs auditor_external_cs
+# CSV keys stay T1. Terraform looks up by CSV key and POSTs this name:.
+# Canary test_cs is Terraform-only (resource address .test).
 # No reload, aaa, or username except T4 (unmatched permitted).
 command_sets:
-  - name: T1
+  - name: T1_cs
     description: Read-only access-switch ops (show, ping, traceroute). No configure.
     permit_unmatched: false
     commands:
@@ -2252,7 +2257,7 @@ command_sets:
         command: traceroute
         arguments: "*"
 
-  - name: T2
+  - name: T2_cs
     description: T1 plus access-port description, shutdown, and access VLAN. No wr mem.
     permit_unmatched: false
     commands:
@@ -2302,7 +2307,7 @@ command_sets:
         command: exit
         arguments: ""
 
-  - name: T3
+  - name: T3_cs
     description: T2 plus VLAN, spanning-tree, and copy run start. No reload, aaa, username.
     permit_unmatched: false
     commands:
@@ -2367,12 +2372,12 @@ command_sets:
         command: exit
         arguments: ""
 
-  - name: T4
+  - name: T4_cs
     description: Full device-admin. Unmatched IOS commands are permitted (privilege 15).
     permit_unmatched: true
     commands: []
 
-  - name: vendor
+  - name: vendor_cs
     description: Show plus interface description only. No shutdown, wr mem, reload, aaa, username.
     permit_unmatched: false
     commands:
@@ -2398,7 +2403,7 @@ command_sets:
         command: exit
         arguments: ""
 
-  - name: contractor
+  - name: contractor_cs
     description: Same as T2. Access-port description, shutdown, and access VLAN. No wr mem.
     permit_unmatched: false
     commands:
@@ -2448,7 +2453,7 @@ command_sets:
         command: exit
         arguments: ""
 
-  - name: auditor_internal
+  - name: auditor_internal_cs
     description: Internal auditor read-only. show run, version, inventory, logging. No config.
     permit_unmatched: false
     commands:
@@ -2465,7 +2470,7 @@ command_sets:
         command: show
         arguments: logging
 
-  - name: auditor_external
+  - name: auditor_external_cs
     description: External auditor. show version and inventory only. No show run, no config.
     permit_unmatched: false
     commands:
@@ -2479,51 +2484,53 @@ command_sets:
 # TACACS shell profiles. Source for Terraform and nac.yaml.
 # CiscoDevNet/ise 0.3.4 ise_tacacs_profile session_attributes:
 #   type MANDATORY|OPTIONAL, name, value (strings).
-# T1 and auditor_* priv-lvl 1. T2/T3/T4/vendor/contractor priv-lvl 15.
+# YAML name: is the ISE POST name. Command sets are T1_cs; profiles are T1_shell.
+# CSV keys stay T1. No two ISE names may match. No profile named test_cs.
+# T1_shell and auditor_*_shell priv-lvl 1. Everyone else priv-lvl 15.
 shell_profiles:
-  - name: T1
+  - name: T1_shell
     description: Read-only device admin (privilege 1).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "1"
-  - name: T2
+  - name: T2_shell
     description: Access-switch interface admin (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: T3
+  - name: T3_shell
     description: Access-switch VLAN and spanning-tree admin (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: T4
+  - name: T4_shell
     description: Full device-admin (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: vendor
+  - name: vendor_shell
     description: Vendor interface-description admin (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: contractor
+  - name: contractor_shell
     description: Contractor interface admin, same as T2 (privilege 15).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "15"
-  - name: auditor_internal
+  - name: auditor_internal_shell
     description: Internal auditor read-only (privilege 1).
     session_attributes:
       - type: MANDATORY
         name: priv-lvl
         value: "1"
-  - name: auditor_external
+  - name: auditor_external_shell
     description: External auditor read-only (privilege 1).
     session_attributes:
       - type: MANDATORY
