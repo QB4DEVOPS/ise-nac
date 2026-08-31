@@ -14,10 +14,18 @@ locals {
   shell_profiles  = toset([for row in local.authz : row.shell_profile])
   identity_groups = toset([for row in local.authz : row.identity_group])
 
-  # ISE TACACS command-set / shell-profile names: alphanumeric, underscore, space.
+  # ISE TACACS command-set names: alphanumeric, underscore, space.
   # Hyphen is illegal (auditor-external → auditor_external). Identity groups keep hyphens.
+  # CSV/YAML tier keys stay T1, vendor, contractor, auditor_internal, …
   ise_tacacs_name = {
     for n in setunion(local.command_sets, local.shell_profiles) : n => replace(n, "-", "_")
+  }
+
+  # ISE ERS uses ONE shared name namespace for TACACS command sets AND shell
+  # profiles. A profile named T1 400s when command set T1 exists (contractor
+  # failed the same way). Profile ISE names get a _shell suffix. No hyphens.
+  ise_tacacs_shell_profile_name = {
+    for n in local.shell_profiles : n => "${local.ise_tacacs_name[n]}_shell"
   }
 
   # IOS commands and session_attributes live in YAML (NaC). Terraform POSTs these to ISE.

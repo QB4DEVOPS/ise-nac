@@ -1,7 +1,11 @@
 # TACACS shell profiles. Source for Terraform and nac.yaml.
 # CiscoDevNet/ise 0.3.4 ise_tacacs_profile session_attributes:
 #   type MANDATORY|OPTIONAL, name, value (strings).
+# YAML/CSV tier keys stay T1, T2, T3, T4, vendor, contractor, auditor_*.
+# ISE ERS POST names are T1_shell, T2_shell, … (locals.ise_tacacs_shell_profile_name).
+# Command sets and profiles share one ERS name namespace; they cannot both be T1.
 # T1 and auditor_* priv-lvl 1. T2/T3/T4/vendor/contractor priv-lvl 15.
+# No profile named test — that name is the command-set GUI canary.
 shell_profiles:
   - name: T1
     description: Read-only device admin (privilege 1).

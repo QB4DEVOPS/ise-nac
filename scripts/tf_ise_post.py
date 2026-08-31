@@ -1,7 +1,9 @@
 """Resolve TACACS names and command sets Terraform actually POSTs to ISE.
 
 nac.yaml can drift from apply. Terraform csvdecodes tacacs_authz.csv, then
-sets resource name = local.ise_tacacs_name[each.value] (hyphen → underscore),
+sets command-set name = local.ise_tacacs_name[each.value] (hyphen → underscore)
+and profile name = local.ise_tacacs_shell_profile_name[each.value]
+({name}_shell — ISE ERS shares one namespace with command sets),
 and yamldecodes command_sets.yaml / shell_profiles.yaml.
 NDG and identity-group hyphens are out of scope.
 """
@@ -80,45 +82,147 @@ def _maps_hyphen_to_underscore() -> bool:
     )
 
 
-def _resource_posts_mapped_name(resource_type: str) -> bool:
-    """True when the resource name attribute uses local.ise_tacacs_name."""
+def _maps_shell_profile_suffix() -> bool:
+    """True when locals.tf sets profile ISE names to {name}_shell.
+
+    The map value is ``${local.ise_tacacs_name[n]}_shell``, so a ``}`` from the
+    interpolation sits before ``_shell``. Do not use ``[^}]*``.
+    """
+    return bool(
+        re.search(
+            r"ise_tacacs_shell_profile_name\s*=\s*\{[\s\S]{0,500}?_shell",
+            _tf_text(),
+        )
+    )
+
+
+def _resource_name_uses_local(resource_type: str, local_attr: str) -> bool:
+    """True when the ladder resource name uses local.<local_attr>[...].
+
+    Skips the GUI canary (resource address ``test``).
+    """
     text = MAIN_TF.read_text(encoding="utf-8") if MAIN_TF.is_file() else ""
     for m in _RESOURCE.finditer(text):
         if m.group(1) != resource_type:
             continue
+        if m.group(2) == "test":
+            continue
         block = _brace_block(text, m.end() - 1)
-        return bool(re.search(r"name\s*=\s*local\.ise_tacacs_name\[", block))
+        return bool(
+            re.search(rf"name\s*=\s*local\.{re.escape(local_attr)}\[", block)
+        )
     return False
 
 
-def posted_names(kind: str) -> list[tuple[str, str]]:
-    """Unique names Terraform POSTs to ISE.
+def _resource_posts_mapped_name(resource_type: str) -> bool:
+    """True when the resource name attribute uses local.ise_tacacs_name."""
+    return _resource_name_uses_local(resource_type, "ise_tacacs_name")
+
+
+def literal_resource_names(resource_type: str) -> list[tuple[str, str]]:
+    """Hardcoded name = \"...\" on a resource (the GUI canary named test)."""
+    text = MAIN_TF.read_text(encoding="utf-8") if MAIN_TF.is_file() else ""
+    out: list[tuple[str, str]] = []
+    for m in _RESOURCE.finditer(text):
+        if m.group(1) != resource_type:
+            continue
+        block = _brace_block(text, m.end() - 1)
+        nm = re.search(r'\bname\s*=\s*"([^"]+)"', block)
+        if not nm:
+            continue
+        name = nm.group(1)
+        path = (
+            f"main.tf:resource.{resource_type}.{m.group(2)} "
+            f"(Terraform POSTs {name!r})"
+        )
+        out.append((name, path))
+    return out
+
+
+def posted_records(kind: str) -> list[dict[str, str]]:
+    """Unique TACACS objects Terraform POSTs to ISE.
 
     kind is ``command_set`` or ``shell_profile``.
-    Returns (name, source_path) in first-seen order.
-    Applies locals.ise_tacacs_name (hyphen → underscore) when Terraform does.
+    Each record has csv_key, ise_name, path.
+    Command-set ISE names use local.ise_tacacs_name (hyphen → underscore).
+    Profile ISE names use local.ise_tacacs_shell_profile_name ({name}_shell)
+    when Terraform actually wires that map onto ise_tacacs_profile.name.
     """
     cols = local_csv_columns()
     column = cols["command_sets"] if kind == "command_set" else cols["shell_profiles"]
     resource_type = (
         "ise_tacacs_command_set" if kind == "command_set" else "ise_tacacs_profile"
     )
-    mapped = _maps_hyphen_to_underscore() and _resource_posts_mapped_name(resource_type)
+    hyphen = _maps_hyphen_to_underscore()
+    uses_suffix = False
+    uses_hyphen_map = False
+    map_label = "local.ise_tacacs_name"
+    if kind == "shell_profile":
+        uses_suffix = _maps_shell_profile_suffix() and _resource_name_uses_local(
+            resource_type, "ise_tacacs_shell_profile_name"
+        )
+        uses_hyphen_map = uses_suffix or (
+            hyphen and _resource_name_uses_local(resource_type, "ise_tacacs_name")
+        )
+        if uses_suffix:
+            map_label = "local.ise_tacacs_shell_profile_name"
+    else:
+        uses_hyphen_map = hyphen and _resource_name_uses_local(
+            resource_type, "ise_tacacs_name"
+        )
+
     seen: set[str] = set()
-    out: list[tuple[str, str]] = []
+    out: list[dict[str, str]] = []
     for i, row in enumerate(read_authz_csv(), start=2):
         raw = (row.get(column) or "").strip()
         if not raw:
             continue
-        name = raw.replace("-", "_") if mapped else raw
-        if name in seen:
+        ise_name = raw.replace("-", "_") if uses_hyphen_map else raw
+        if uses_suffix:
+            ise_name = f"{ise_name}_shell"
+        if ise_name in seen:
             continue
-        seen.add(name)
+        seen.add(ise_name)
         src = f"tacacs_authz.csv:{column}:line {i}"
-        if mapped and raw != name:
-            src = f"{src} -> local.ise_tacacs_name"
-        src = f"{src} (Terraform POSTs {name!r})"
-        out.append((name, src))
+        if ise_name != raw:
+            src = f"{src} -> {map_label}"
+        src = f"{src} (Terraform POSTs {ise_name!r})"
+        out.append({"csv_key": raw, "ise_name": ise_name, "path": src})
+    return out
+
+
+def posted_names(kind: str) -> list[tuple[str, str]]:
+    """Unique names Terraform POSTs to ISE.
+
+    kind is ``command_set`` or ``shell_profile``.
+    Returns (ise_name, source_path) in first-seen order.
+    """
+    return [(r["ise_name"], r["path"]) for r in posted_records(kind)]
+
+
+def yaml_lookup_keys(
+    kind: str, ise_name: str, csv_key: str | None = None
+) -> list[str]:
+    """YAML ``name:`` keys that may hold session_attributes / commands.
+
+    CSV/YAML tier keys stay T1; profile ISE names are T1_shell.
+    """
+    keys: list[str] = []
+    if csv_key:
+        keys.append(csv_key.replace("-", "_"))
+        if csv_key not in keys:
+            keys.append(csv_key)
+    keys.append(ise_name)
+    if kind == "shell_profile" and ise_name.endswith("_shell"):
+        stem = ise_name[: -len("_shell")]
+        if stem and stem not in keys:
+            keys.append(stem)
+    seen: set[str] = set()
+    out: list[str] = []
+    for key in keys:
+        if key and key not in seen:
+            seen.add(key)
+            out.append(key)
     return out
 
 

@@ -206,21 +206,39 @@ Rebuild nac.yaml with python3 scripts/generate_nac.py."""
                     )
                 )
 
-        for name, csv_path in posted:
-            entry = file_defs.get(name)
+        for rec in _tf.posted_records("shell_profile"):
+            ise_name = rec["ise_name"]
+            csv_path = rec["path"]
+            keys = _tf.yaml_lookup_keys("shell_profile", ise_name, rec.get("csv_key"))
+            entry = None
+            yaml_name = keys[0] if keys else ise_name
+            for key in keys:
+                if key in file_defs:
+                    entry = file_defs[key]
+                    yaml_name = key
+                    break
             if entry is None:
                 add(
                     Violation(
                         message=(
-                            f"TACACS profile '{name}' is POSTed from "
-                            "tacacs_authz.csv but missing from shell_profiles.yaml."
+                            f"TACACS profile '{ise_name}' is POSTed from "
+                            "tacacs_authz.csv but missing from shell_profiles.yaml "
+                            f"(looked up YAML keys {keys})."
                         ),
                         path=csv_path,
-                        details={"profile": name, "source": "shell_profiles.yaml"},
+                        details={
+                            "profile": yaml_name,
+                            "ise_name": ise_name,
+                            "source": "shell_profiles.yaml",
+                        },
                     )
                 )
                 continue
-            add(_check_entry(name, entry, "shell_profiles.yaml", "shell_profiles.yaml"))
+            add(
+                _check_entry(
+                    yaml_name, entry, "shell_profiles.yaml", "shell_profiles.yaml"
+                )
+            )
 
         for item in data.get("shell_profiles") or []:
             if not isinstance(item, dict):
