@@ -22,8 +22,12 @@ locals {
   }
 
   # ISE ERS uses ONE shared name namespace for TACACS command sets AND shell
-  # profiles. A profile named T1 400s when command set T1 exists (contractor
-  # failed the same way). Profile ISE names get a _shell suffix. No hyphens.
+  # profiles. Locked ISE POST names (underscore only; no two strings match):
+  #   command sets: T1 T2 T3 T4 vendor contractor auditor_internal
+  #                 auditor_external test
+  #   profiles:     T1_shell T2_shell T3_shell T4_shell vendor_shell
+  #                 contractor_shell auditor_internal_shell auditor_external_shell
+  # CSV keys stay T1. Identity groups / NDGs / authz rule names are not this map.
   ise_tacacs_shell_profile_name = {
     for n in local.shell_profiles : n => "${local.ise_tacacs_name[n]}_shell"
   }

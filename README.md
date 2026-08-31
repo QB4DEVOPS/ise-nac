@@ -34,7 +34,7 @@ That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-
 2. Non-T4 command sets must list real IOS commands with `permit_unmatched = false`. T4 may be empty with `permit_unmatched = true`. Empty sets with `permit_unmatched = false` are invalid (HTTP 400).
 3. **Rule 103 FAILS** (non-zero exit) if command `arguments` contain regex metacharacters (`(`, `)`, `?`, `|`, `.`, etc.). Plain words and `*` only. Missing `command_sets.yaml` also fails (closed). PCRE such as `ver(sion)?.*` 400s on ISE.
 4. Shell profiles POST `session_attributes` (`type=MANDATORY`, `name=priv-lvl`, `value=1` or `15`). Empty profiles 400 on ISE 3.5.
-5. **Rule 105 FAILS** if a command-set ISE name equals a profile ISE name. ISE ERS uses one shared namespace for both. Command-set ISE names stay `T1`, `T2`, `T3`, `T4`, `vendor`, `contractor`, `auditor_internal`, `auditor_external`, `test`. Profile ISE names must be `T1_shell`, `T2_shell`, `T3_shell`, `T4_shell`, `vendor_shell`, `contractor_shell`, `auditor_internal_shell`, `auditor_external_shell`. CSV/YAML tier keys may stay `T1`. No profile named `test`.
+5. **Rule 105 FAILS** if a command-set ISE name equals a profile ISE name, or if Terraform POSTs any ISE name outside this locked unique list (underscore only). Command sets: `T1` `T2` `T3` `T4` `vendor` `contractor` `auditor_internal` `auditor_external` `test`. Profiles: `T1_shell` `T2_shell` `T3_shell` `T4_shell` `vendor_shell` `contractor_shell` `auditor_internal_shell` `auditor_external_shell`. CSV/YAML keys stay `T1`. Identity groups, NDGs, and authz rule names are unchanged.
 
 If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed. It still does not talk to ISE.
 
