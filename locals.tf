@@ -20,7 +20,7 @@ locals {
     for n in setunion(local.command_sets, local.shell_profiles) : n => replace(n, "-", "_")
   }
 
-  # IOS commands and priv-lvl live in YAML (NaC). Terraform POSTs these to ISE.
+  # IOS commands and session_attributes live in YAML (NaC). Terraform POSTs these to ISE.
   command_set_by_name = {
     for cs in yamldecode(file("${path.module}/command_sets.yaml")).command_sets :
     cs.name => cs

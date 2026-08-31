@@ -42,16 +42,18 @@ resource "ise_tacacs_command_set" "this" {
   ]
 }
 
-# Shell profiles from shell_profiles.yaml (priv-lvl 1 for T1/auditor_*; 15 otherwise).
+# Shell profiles from shell_profiles.yaml. CiscoDevNet/ise 0.3.4:
+# session_attributes = [{ type = "MANDATORY"|"OPTIONAL", name, value }].
+# T1/auditor_* priv-lvl 1; everyone else 15. Empty profiles 400 on ISE 3.5.
 resource "ise_tacacs_profile" "this" {
   for_each    = local.shell_profiles
   name        = local.ise_tacacs_name[each.value]
   description = try(local.shell_profile_by_name[local.ise_tacacs_name[each.value]].description, "TACACS shell profile ${local.ise_tacacs_name[each.value]}")
   session_attributes = [
-    {
-      type  = "MANDATORY"
-      name  = "priv-lvl"
-      value = tostring(local.shell_profile_by_name[local.ise_tacacs_name[each.value]].priv_lvl)
+    for a in local.shell_profile_by_name[local.ise_tacacs_name[each.value]].session_attributes : {
+      type  = a.type
+      name  = a.name
+      value = tostring(a.value)
     }
   ]
 }

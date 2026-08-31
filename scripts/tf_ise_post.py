@@ -182,3 +182,36 @@ def command_set_resource() -> dict[str, Any]:
         result["path"] = f"main.tf:resource.ise_tacacs_command_set.{m.group(2)}"
         break
     return result
+
+
+def profile_resource() -> dict[str, Any]:
+    """Attributes of resource ise_tacacs_profile that Terraform POSTs.
+
+    CiscoDevNet/ise 0.3.4 session_attributes nested schema:
+    type (MANDATORY|OPTIONAL), name, value.
+    """
+    text = MAIN_TF.read_text(encoding="utf-8") if MAIN_TF.is_file() else ""
+    tf_all = _tf_text()
+    result: dict[str, Any] = {
+        "has_session_attributes": False,
+        "type_mandatory": False,
+        "name_priv_lvl": False,
+        "uses_shell_profiles_yaml": "shell_profiles.yaml" in tf_all,
+        "path": "main.tf:ise_tacacs_profile",
+    }
+    for m in _RESOURCE.finditer(text):
+        if m.group(1) != "ise_tacacs_profile":
+            continue
+        block = _brace_block(text, m.end() - 1)
+        result["has_session_attributes"] = bool(
+            re.search(r"\bsession_attributes\s*=", block)
+        )
+        result["type_mandatory"] = bool(
+            re.search(r'type\s*=\s*"MANDATORY"|type\s*=\s*a\.type', block)
+        )
+        result["name_priv_lvl"] = bool(
+            re.search(r'name\s*=\s*"priv-lvl"|name\s*=\s*a\.name', block)
+        )
+        result["path"] = f"main.tf:resource.ise_tacacs_profile.{m.group(2)}"
+        break
+    return result

@@ -2223,9 +2223,11 @@ tacacs_authz:
     time_bound: "no"
 
 # IOS-XE access-switch TACACS command sets. Source for Terraform and nac.yaml.
-# grant/command/arguments match CiscoDevNet/ise ise_tacacs_command_set.
-# permit_unmatched is false except T4 (full device-admin).
-# No reload, aaa, or username in any set except T4 (unmatched permitted).
+# CiscoDevNet/ise 0.3.4 ise_tacacs_command_set: grant, command, arguments.
+# ISE ERS does NOT accept PCRE in arguments (parentheses, ?, .*). Use a
+# command token plus literal arguments. * is the ISE wildcard.
+# command = first word only. grant PERMIT. permit_unmatched false except T4.
+# No reload, aaa, or username except T4 (unmatched permitted).
 command_sets:
   - name: T1
     description: Read-only access-switch ops (show, ping, traceroute). No configure.
@@ -2233,22 +2235,22 @@ command_sets:
     commands:
       - grant: PERMIT
         command: show
-        arguments: ver(sion)?.*
+        arguments: version
       - grant: PERMIT
         command: show
-        arguments: ip int(erface)? br(ief)?.*
+        arguments: ip interface brief
       - grant: PERMIT
         command: show
-        arguments: run(ning-config)?.*
+        arguments: running-config
       - grant: PERMIT
         command: show
-        arguments: log(ging)?.*
+        arguments: logging
       - grant: PERMIT
         command: ping
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: traceroute
-        arguments: ".*"
+        arguments: "*"
 
   - name: T2
     description: T1 plus access-port description, shutdown, and access VLAN. No wr mem.
@@ -2256,43 +2258,43 @@ command_sets:
     commands:
       - grant: PERMIT
         command: show
-        arguments: ver(sion)?.*
+        arguments: version
       - grant: PERMIT
         command: show
-        arguments: ip int(erface)? br(ief)?.*
+        arguments: ip interface brief
       - grant: PERMIT
         command: show
-        arguments: run(ning-config)?.*
+        arguments: running-config
       - grant: PERMIT
         command: show
-        arguments: log(ging)?.*
+        arguments: logging
       - grant: PERMIT
         command: ping
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: traceroute
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: configure
-        arguments: t(erminal)?
+        arguments: terminal
       - grant: PERMIT
         command: config
-        arguments: t(erminal)?
+        arguments: terminal
       - grant: PERMIT
         command: interface
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: description
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: shutdown
-        arguments: ".*"
+        arguments: ""
       - grant: PERMIT
         command: "no"
         arguments: shutdown
       - grant: PERMIT
         command: switchport
-        arguments: access vlan .*
+        arguments: "access vlan *"
       - grant: PERMIT
         command: end
         arguments: ""
@@ -2306,52 +2308,55 @@ command_sets:
     commands:
       - grant: PERMIT
         command: show
-        arguments: ver(sion)?.*
+        arguments: version
       - grant: PERMIT
         command: show
-        arguments: ip int(erface)? br(ief)?.*
+        arguments: ip interface brief
       - grant: PERMIT
         command: show
-        arguments: run(ning-config)?.*
+        arguments: running-config
       - grant: PERMIT
         command: show
-        arguments: log(ging)?.*
+        arguments: logging
       - grant: PERMIT
         command: ping
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: traceroute
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: configure
-        arguments: t(erminal)?
+        arguments: terminal
       - grant: PERMIT
         command: config
-        arguments: t(erminal)?
+        arguments: terminal
       - grant: PERMIT
         command: interface
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: description
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: shutdown
-        arguments: ".*"
+        arguments: ""
       - grant: PERMIT
         command: "no"
-        arguments: (shutdown|spanning-tree .*|vlan .*)
+        arguments: shutdown
+      - grant: PERMIT
+        command: "no"
+        arguments: "spanning-tree *"
+      - grant: PERMIT
+        command: "no"
+        arguments: "vlan *"
       - grant: PERMIT
         command: switchport
-        arguments: access vlan .*
+        arguments: "access vlan *"
       - grant: PERMIT
         command: vlan
-        arguments: ".*"
-      - grant: PERMIT
-        command: name
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: spanning-tree
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: copy
         arguments: running-config startup-config
@@ -2373,19 +2378,19 @@ command_sets:
     commands:
       - grant: PERMIT
         command: show
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: configure
-        arguments: t(erminal)?
+        arguments: terminal
       - grant: PERMIT
         command: config
-        arguments: t(erminal)?
+        arguments: terminal
       - grant: PERMIT
         command: interface
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: description
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: end
         arguments: ""
@@ -2399,43 +2404,43 @@ command_sets:
     commands:
       - grant: PERMIT
         command: show
-        arguments: ver(sion)?.*
+        arguments: version
       - grant: PERMIT
         command: show
-        arguments: ip int(erface)? br(ief)?.*
+        arguments: ip interface brief
       - grant: PERMIT
         command: show
-        arguments: run(ning-config)?.*
+        arguments: running-config
       - grant: PERMIT
         command: show
-        arguments: log(ging)?.*
+        arguments: logging
       - grant: PERMIT
         command: ping
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: traceroute
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: configure
-        arguments: t(erminal)?
+        arguments: terminal
       - grant: PERMIT
         command: config
-        arguments: t(erminal)?
+        arguments: terminal
       - grant: PERMIT
         command: interface
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: description
-        arguments: ".*"
+        arguments: "*"
       - grant: PERMIT
         command: shutdown
-        arguments: ".*"
+        arguments: ""
       - grant: PERMIT
         command: "no"
         arguments: shutdown
       - grant: PERMIT
         command: switchport
-        arguments: access vlan .*
+        arguments: "access vlan *"
       - grant: PERMIT
         command: end
         arguments: ""
@@ -2449,16 +2454,16 @@ command_sets:
     commands:
       - grant: PERMIT
         command: show
-        arguments: run(ning-config)?.*
+        arguments: running-config
       - grant: PERMIT
         command: show
-        arguments: ver(sion)?.*
+        arguments: version
       - grant: PERMIT
         command: show
-        arguments: inv(entory)?.*
+        arguments: inventory
       - grant: PERMIT
         command: show
-        arguments: log(ging)?.*
+        arguments: logging
 
   - name: auditor_external
     description: External auditor. show version and inventory only. No show run, no config.
@@ -2466,38 +2471,64 @@ command_sets:
     commands:
       - grant: PERMIT
         command: show
-        arguments: ver(sion)?.*
+        arguments: version
       - grant: PERMIT
         command: show
-        arguments: inv(entory)?.*
+        arguments: inventory
 
 # TACACS shell profiles. Source for Terraform and nac.yaml.
-# auditor_* and T1 are priv-lvl 1. T2/T3/T4/vendor/contractor are priv-lvl 15.
+# CiscoDevNet/ise 0.3.4 ise_tacacs_profile session_attributes:
+#   type MANDATORY|OPTIONAL, name, value (strings).
+# T1 and auditor_* priv-lvl 1. T2/T3/T4/vendor/contractor priv-lvl 15.
 shell_profiles:
   - name: T1
     description: Read-only device admin (privilege 1).
-    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"
   - name: T2
     description: Access-switch interface admin (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: T3
     description: Access-switch VLAN and spanning-tree admin (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: T4
     description: Full device-admin (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: vendor
     description: Vendor interface-description admin (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: contractor
     description: Contractor interface admin, same as T2 (privilege 15).
-    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
   - name: auditor_internal
     description: Internal auditor read-only (privilege 1).
-    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"
   - name: auditor_external
     description: External auditor read-only (privilege 1).
-    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"
 
 devices:
   - hostname: ushun-sw-01

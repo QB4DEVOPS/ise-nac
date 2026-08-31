@@ -74,3 +74,9 @@ shell_profile:
   name: str()
   description: str(required=False)
   priv_lvl: int(required=False)
+  session_attributes: list(include('session_attribute'), required=False)
+
+session_attribute:
+  type: enum('MANDATORY', 'OPTIONAL')
+  name: str()
+  value: any(str(), int())
