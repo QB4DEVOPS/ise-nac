@@ -7,7 +7,7 @@ variable "ise_host" {
 variable "ise_username" {
   type        = string
   description = "ISE admin user. Same as ISE_USERNAME in .env."
-  default     = "admin"
+  default     = "iseadmin"
 }
 
 variable "nad_count" {
