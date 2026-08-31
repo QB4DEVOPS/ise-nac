@@ -1,0 +1,401 @@
+﻿id,city,admin1,cc,type
+us-huntsville,Huntsville,Alabama,us,regional
+us-anchorage,Anchorage,Alaska,us,regional
+us-phoenix,Phoenix,Arizona,us,regional
+us-little-rock,Little Rock,Arkansas,us,regional
+us-los-angeles,Los Angeles,California,us,regional
+us-denver,Denver,Colorado,us,regional
+us-bridgeport,Bridgeport,Connecticut,us,regional
+us-wilmington-de,Wilmington,Delaware,us,regional
+us-jacksonville,Jacksonville,Florida,us,regional
+us-atlanta,Atlanta,Georgia,us,regional
+us-honolulu,Honolulu,Hawaii,us,regional
+us-boise,Boise,Idaho,us,regional
+us-chicago,Chicago,Illinois,us,regional
+us-indianapolis,Indianapolis,Indiana,us,regional
+us-des-moines,Des Moines,Iowa,us,regional
+us-wichita,Wichita,Kansas,us,regional
+us-louisville,Louisville,Kentucky,us,regional
+us-new-orleans,New Orleans,Louisiana,us,regional
+us-portland-me,Portland,Maine,us,regional
+us-baltimore,Baltimore,Maryland,us,regional
+us-boston,Boston,Massachusetts,us,regional
+us-detroit,Detroit,Michigan,us,regional
+us-minneapolis,Minneapolis,Minnesota,us,regional
+us-jackson,Jackson,Mississippi,us,regional
+us-kansas-city-mo,Kansas City,Missouri,us,regional
+us-billings,Billings,Montana,us,regional
+us-omaha,Omaha,Nebraska,us,regional
+us-las-vegas,Las Vegas,Nevada,us,regional
+us-manchester,Manchester,New Hampshire,us,regional
+us-newark,Newark,New Jersey,us,regional
+us-albuquerque,Albuquerque,New Mexico,us,regional
+us-new-york,New York,New York,us,regional
+us-charlotte,Charlotte,North Carolina,us,regional
+us-fargo,Fargo,North Dakota,us,regional
+us-columbus-oh,Columbus,Ohio,us,regional
+us-oklahoma-city,Oklahoma City,Oklahoma,us,regional
+us-portland-or,Portland,Oregon,us,regional
+us-philadelphia,Philadelphia,Pennsylvania,us,regional
+us-providence,Providence,Rhode Island,us,regional
+us-charleston-sc,Charleston,South Carolina,us,regional
+us-sioux-falls,Sioux Falls,South Dakota,us,regional
+us-nashville,Nashville,Tennessee,us,regional
+us-houston,Houston,Texas,us,regional
+us-salt-lake-city,Salt Lake City,Utah,us,regional
+us-burlington,Burlington,Vermont,us,regional
+us-virginia-beach,Virginia Beach,Virginia,us,regional
+us-seattle,Seattle,Washington,us,regional
+us-charleston-wv,Charleston,West Virginia,us,regional
+us-milwaukee,Milwaukee,Wisconsin,us,regional
+us-cheyenne,Cheyenne,Wyoming,us,regional
+us-abilene,Abilene,Texas,us,branch
+us-akron,Akron,Ohio,us,branch
+us-alexandria,Alexandria,Virginia,us,branch
+us-allen,Allen,Texas,us,branch
+us-allentown,Allentown,Pennsylvania,us,branch
+us-amarillo,Amarillo,Texas,us,branch
+us-anaheim,Anaheim,California,us,branch
+us-ann-arbor,Ann Arbor,Michigan,us,branch
+us-antioch,Antioch,California,us,branch
+us-arlington,Arlington,Texas,us,branch
+us-arvada,Arvada,Colorado,us,branch
+us-athens,Athens,Georgia,us,branch
+us-augusta,Augusta,Georgia,us,branch
+us-aurora-co,Aurora,Colorado,us,branch
+us-aurora-il,Aurora,Illinois,us,branch
+us-austin,Austin,Texas,us,branch
+us-bakersfield,Bakersfield,California,us,branch
+us-baton-rouge,Baton Rouge,Louisiana,us,branch
+us-beaumont,Beaumont,Texas,us,branch
+us-bellevue,Bellevue,Washington,us,branch
+us-berkeley,Berkeley,California,us,branch
+us-birmingham,Birmingham,Alabama,us,branch
+us-broken-arrow,Broken Arrow,Oklahoma,us,branch
+us-brownsville,Brownsville,Texas,us,branch
+us-buckeye,Buckeye,Arizona,us,branch
+us-buffalo,Buffalo,New York,us,branch
+us-cambridge,Cambridge,Massachusetts,us,branch
+us-cape-coral,Cape Coral,Florida,us,branch
+us-carlsbad,Carlsbad,California,us,branch
+us-carrollton,Carrollton,Texas,us,branch
+us-cary,Cary,North Carolina,us,branch
+us-cedar-rapids,Cedar Rapids,Iowa,us,branch
+us-chandler,Chandler,Arizona,us,branch
+us-chattanooga,Chattanooga,Tennessee,us,branch
+us-chesapeake,Chesapeake,Virginia,us,branch
+us-chula-vista,Chula Vista,California,us,branch
+us-cincinnati,Cincinnati,Ohio,us,branch
+us-clarksville,Clarksville,Tennessee,us,branch
+us-clearwater,Clearwater,Florida,us,branch
+us-cleveland,Cleveland,Ohio,us,branch
+us-clovis,Clovis,California,us,branch
+us-college-station,College Station,Texas,us,branch
+us-colorado-springs,Colorado Springs,Colorado,us,branch
+us-columbia-mo,Columbia,Missouri,us,branch
+us-columbia-sc,Columbia,South Carolina,us,branch
+us-columbus-ga,Columbus,Georgia,us,branch
+us-concord-ca,Concord,California,us,branch
+us-concord-nc,Concord,North Carolina,us,branch
+us-conroe,Conroe,Texas,us,branch
+us-coral-springs,Coral Springs,Florida,us,branch
+us-corona,Corona,California,us,branch
+us-corpus-christi,Corpus Christi,Texas,us,branch
+us-dallas,Dallas,Texas,us,branch
+us-davie,Davie,Florida,us,branch
+us-dayton,Dayton,Ohio,us,branch
+us-denton,Denton,Texas,us,branch
+us-durham,Durham,North Carolina,us,branch
+us-edinburg,Edinburg,Texas,us,branch
+us-el-paso,El Paso,Texas,us,branch
+us-elgin,Elgin,Illinois,us,branch
+us-elizabeth,Elizabeth,New Jersey,us,branch
+us-elk-grove,Elk Grove,California,us,branch
+us-escondido,Escondido,California,us,branch
+us-eugene,Eugene,Oregon,us,branch
+us-evansville,Evansville,Indiana,us,branch
+us-everett,Everett,Washington,us,branch
+us-fairfield,Fairfield,California,us,branch
+us-fayetteville,Fayetteville,North Carolina,us,branch
+us-fontana,Fontana,California,us,branch
+us-fort-collins,Fort Collins,Colorado,us,branch
+us-fort-lauderdale,Fort Lauderdale,Florida,us,branch
+us-fort-wayne,Fort Wayne,Indiana,us,branch
+us-fort-worth,Fort Worth,Texas,us,branch
+us-fremont,Fremont,California,us,branch
+us-fresno,Fresno,California,us,branch
+us-frisco,Frisco,Texas,us,branch
+us-fullerton,Fullerton,California,us,branch
+us-gainesville,Gainesville,Florida,us,branch
+us-garden-grove,Garden Grove,California,us,branch
+us-garland,Garland,Texas,us,branch
+us-gilbert,Gilbert,Arizona,us,branch
+us-glendale-az,Glendale,Arizona,us,branch
+us-glendale-ca,Glendale,California,us,branch
+us-goodyear,Goodyear,Arizona,us,branch
+us-grand-prairie,Grand Prairie,Texas,us,branch
+us-grand-rapids,Grand Rapids,Michigan,us,branch
+us-greeley,Greeley,Colorado,us,branch
+us-greensboro,Greensboro,North Carolina,us,branch
+us-gresham,Gresham,Oregon,us,branch
+us-hampton,Hampton,Virginia,us,branch
+us-hartford,Hartford,Connecticut,us,branch
+us-hayward,Hayward,California,us,branch
+us-henderson,Henderson,Nevada,us,branch
+us-hialeah,Hialeah,Florida,us,branch
+us-high-point,High Point,North Carolina,us,branch
+us-hillsboro,Hillsboro,Oregon,us,branch
+us-hollywood,Hollywood,Florida,us,branch
+us-huntington-beach,Huntington Beach,California,us,branch
+us-independence,Independence,Missouri,us,branch
+us-irvine,Irvine,California,us,branch
+us-irving,Irving,Texas,us,branch
+us-jersey-city,Jersey City,New Jersey,us,branch
+us-joliet,Joliet,Illinois,us,branch
+us-kansas-city-ks,Kansas City,Kansas,us,branch
+us-kent,Kent,Washington,us,branch
+us-killeen,Killeen,Texas,us,branch
+us-knoxville,Knoxville,Tennessee,us,branch
+us-lafayette,Lafayette,Louisiana,us,branch
+us-lakeland,Lakeland,Florida,us,branch
+us-lakewood,Lakewood,Colorado,us,branch
+us-lancaster,Lancaster,California,us,branch
+us-lansing,Lansing,Michigan,us,branch
+us-laredo,Laredo,Texas,us,branch
+us-las-cruces,Las Cruces,New Mexico,us,branch
+us-league-city,League City,Texas,us,branch
+us-lewisville,Lewisville,Texas,us,branch
+us-lexington,Lexington,Kentucky,us,branch
+us-lincoln,Lincoln,Nebraska,us,branch
+us-long-beach,Long Beach,California,us,branch
+us-lowell,Lowell,Massachusetts,us,branch
+us-lubbock,Lubbock,Texas,us,branch
+us-macon,Macon,Georgia,us,branch
+us-madison,Madison,Wisconsin,us,branch
+us-mcallen,McAllen,Texas,us,branch
+us-mckinney,McKinney,Texas,us,branch
+us-memphis,Memphis,Tennessee,us,branch
+us-menifee,Menifee,California,us,branch
+us-meridian,Meridian,Idaho,us,branch
+us-mesa,Mesa,Arizona,us,branch
+us-mesquite,Mesquite,Texas,us,branch
+us-miami,Miami,Florida,us,branch
+us-miami-gardens,Miami Gardens,Florida,us,branch
+us-midland,Midland,Texas,us,branch
+us-miramar,Miramar,Florida,us,branch
+us-mobile,Mobile,Alabama,us,branch
+us-modesto,Modesto,California,us,branch
+us-montgomery,Montgomery,Alabama,us,branch
+us-moreno-valley,Moreno Valley,California,us,branch
+us-murfreesboro,Murfreesboro,Tennessee,us,branch
+us-murrieta,Murrieta,California,us,branch
+us-nampa,Nampa,Idaho,us,branch
+us-naperville,Naperville,Illinois,us,branch
+us-new-braunfels,New Braunfels,Texas,us,branch
+us-new-haven,New Haven,Connecticut,us,branch
+us-newport-news,Newport News,Virginia,us,branch
+us-norfolk,Norfolk,Virginia,us,branch
+us-norman,Norman,Oklahoma,us,branch
+us-north-charleston,North Charleston,South Carolina,us,branch
+us-north-las-vegas,North Las Vegas,Nevada,us,branch
+us-oakland,Oakland,California,us,branch
+us-oceanside,Oceanside,California,us,branch
+us-odessa,Odessa,Texas,us,branch
+us-olathe,Olathe,Kansas,us,branch
+us-ontario,Ontario,California,us,branch
+us-orange,Orange,California,us,branch
+us-orlando,Orlando,Florida,us,branch
+us-overland-park,Overland Park,Kansas,us,branch
+us-oxnard,Oxnard,California,us,branch
+us-palm-bay,Palm Bay,Florida,us,branch
+us-palmdale,Palmdale,California,us,branch
+us-pasadena-ca,Pasadena,California,us,branch
+us-pasadena-tx,Pasadena,Texas,us,branch
+us-paterson,Paterson,New Jersey,us,branch
+us-pearland,Pearland,Texas,us,branch
+us-pembroke-pines,Pembroke Pines,Florida,us,branch
+us-peoria-az,Peoria,Arizona,us,branch
+us-peoria-il,Peoria,Illinois,us,branch
+us-pittsburgh,Pittsburgh,Pennsylvania,us,branch
+us-plano,Plano,Texas,us,branch
+us-pomona,Pomona,California,us,branch
+us-pompano-beach,Pompano Beach,Florida,us,branch
+us-port-st-lucie,Port St. Lucie,Florida,us,branch
+us-provo,Provo,Utah,us,branch
+us-pueblo,Pueblo,Colorado,us,branch
+us-raleigh,Raleigh,North Carolina,us,branch
+us-rancho-cucamonga,Rancho Cucamonga,California,us,branch
+us-reno,Reno,Nevada,us,branch
+us-richardson,Richardson,Texas,us,branch
+us-richmond-ca,Richmond,California,us,branch
+us-richmond-va,Richmond,Virginia,us,branch
+us-rio-rancho,Rio Rancho,New Mexico,us,branch
+us-riverside,Riverside,California,us,branch
+us-rochester-mn,Rochester,Minnesota,us,branch
+us-rochester-ny,Rochester,New York,us,branch
+us-rockford,Rockford,Illinois,us,branch
+us-roseville,Roseville,California,us,branch
+us-round-rock,Round Rock,Texas,us,branch
+us-sacramento,Sacramento,California,us,branch
+us-salem,Salem,Oregon,us,branch
+us-salinas,Salinas,California,us,branch
+us-san-antonio,San Antonio,Texas,us,branch
+us-san-bernardino,San Bernardino,California,us,branch
+us-san-buenaventura-ventura,San Buenaventura (Ventura),California,us,branch
+us-san-diego,San Diego,California,us,branch
+us-san-francisco,San Francisco,California,us,branch
+us-san-jose,San Jose,California,us,branch
+us-santa-ana,Santa Ana,California,us,branch
+us-santa-clara,Santa Clara,California,us,branch
+us-santa-clarita,Santa Clarita,California,us,branch
+us-santa-maria,Santa Maria,California,us,branch
+us-santa-rosa,Santa Rosa,California,us,branch
+us-savannah,Savannah,Georgia,us,branch
+us-scottsdale,Scottsdale,Arizona,us,branch
+us-shreveport,Shreveport,Louisiana,us,branch
+us-simi-valley,Simi Valley,California,us,branch
+us-south-fulton,South Fulton,Georgia,us,branch
+us-sparks,Sparks,Nevada,us,branch
+us-spokane,Spokane,Washington,us,branch
+us-springfield-il,Springfield,Illinois,us,branch
+us-springfield-ma,Springfield,Massachusetts,us,branch
+us-springfield-mo,Springfield,Missouri,us,branch
+us-st-louis,St. Louis,Missouri,us,branch
+us-st-paul,St. Paul,Minnesota,us,branch
+us-st-petersburg,St. Petersburg,Florida,us,branch
+us-stamford,Stamford,Connecticut,us,branch
+us-sterling-heights,Sterling Heights,Michigan,us,branch
+us-stockton,Stockton,California,us,branch
+us-sunnyvale,Sunnyvale,California,us,branch
+us-surprise,Surprise,Arizona,us,branch
+us-syracuse,Syracuse,New York,us,branch
+us-tacoma,Tacoma,Washington,us,branch
+us-tallahassee,Tallahassee,Florida,us,branch
+us-tampa,Tampa,Florida,us,branch
+us-temecula,Temecula,California,us,branch
+us-tempe,Tempe,Arizona,us,branch
+us-thornton,Thornton,Colorado,us,branch
+us-thousand-oaks,Thousand Oaks,California,us,branch
+us-toledo,Toledo,Ohio,us,branch
+us-topeka,Topeka,Kansas,us,branch
+us-torrance,Torrance,California,us,branch
+us-tucson,Tucson,Arizona,us,branch
+us-tulsa,Tulsa,Oklahoma,us,branch
+us-tuscaloosa,Tuscaloosa,Alabama,us,branch
+us-tyler,Tyler,Texas,us,branch
+us-vallejo,Vallejo,California,us,branch
+us-vancouver,Vancouver,Washington,us,branch
+us-victorville,Victorville,California,us,branch
+us-visalia,Visalia,California,us,branch
+us-waco,Waco,Texas,us,branch
+us-warren,Warren,Michigan,us,branch
+us-washington,Washington,District of Columbia,us,branch
+us-waterbury,Waterbury,Connecticut,us,branch
+us-west-jordan,West Jordan,Utah,us,branch
+us-west-palm-beach,West Palm Beach,Florida,us,branch
+us-west-valley-city,West Valley City,Utah,us,branch
+us-westminster,Westminster,Colorado,us,branch
+us-wilmington-nc,Wilmington,North Carolina,us,branch
+us-winston-salem,Winston-Salem,North Carolina,us,branch
+us-worcester,Worcester,Massachusetts,us,branch
+us-yonkers,Yonkers,New York,us,branch
+ae-dubai,Dubai,Dubai,ae,branch
+af-kabul,Kabul,Kabul,af,branch
+am-yerevan,Yerevan,Yerevan,am,branch
+ao-luanda,Luanda,Luanda,ao,branch
+ar-buenos-aires,Buenos Aires,Buenos Aires F.D.,ar,branch
+at-vienna,Vienna,Vienna,at,branch
+au-sydney,Sydney,New South Wales,au,branch
+az-baku,Baku,Baki,az,branch
+bd-dhaka,Dhaka,Dhaka Division,bd,branch
+bf-ouagadougou,Ouagadougou,Centre,bf,branch
+bg-sofia,Sofia,Sofia-Capital,bg,branch
+bo-la-paz,La Paz,La Paz Department,bo,branch
+br-sao-paulo,São Paulo,São Paulo,br,branch
+by-minsk,Minsk,Minsk City,by,branch
+ca-toronto,Toronto,Ontario,ca,branch
+cd-kinshasa,Kinshasa,Kinshasa,cd,branch
+cg-brazzaville,Brazzaville,Brazzaville,cg,branch
+ci-abidjan,Abidjan,Abidjan Autonomous District,ci,branch
+cl-santiago,Santiago,Santiago Metropolitan,cl,branch
+cm-douala,Douala,Littoral,cm,branch
+cn-chongqing,Chongqing,Chongqing,cn,branch
+co-bogota,Bogotá,Bogota D.C.,co,branch
+cu-havana,Havana,Havana,cu,branch
+cz-prague,Prague,Prague,cz,branch
+de-berlin,Berlin,State of Berlin,de,branch
+dk-copenhagen,Copenhagen,Capital Region,dk,branch
+do-santo-domingo,Santo Domingo,Nacional,do,branch
+dz-algiers,Algiers,Algiers,dz,branch
+ec-quito,Quito,Pichincha,ec,branch
+eg-cairo,Cairo,Cairo,eg,branch
+es-madrid,Madrid,Madrid,es,branch
+et-addis-ababa,Addis Ababa,Addis Ababa,et,branch
+fr-paris,Paris,Île-de-France,fr,branch
+gb-london,London,England,gb,branch
+gh-kumasi,Kumasi,Ashanti,gh,branch
+gn-conakry,Conakry,Conakry,gn,branch
+hk-hong-kong,Hong Kong,,hk,branch
+ht-port-au-prince,Port-au-Prince,Ouest,ht,branch
+hu-budapest,Budapest,Budapest,hu,branch
+id-jakarta,Jakarta,Jakarta,id,branch
+in-mumbai,Mumbai,Maharashtra,in,branch
+iq-baghdad,Baghdad,Baghdad,iq,branch
+ir-tehran,Tehran,Tehran,ir,branch
+it-rome,Rome,Lazio,it,branch
+jo-amman,Amman,Amman,jo,branch
+jp-tokyo,Tokyo,Tokyo,jp,branch
+ke-nairobi,Nairobi,Nairobi County,ke,branch
+kh-phnom-penh,Phnom Penh,Phnom Penh,kh,branch
+kp-pyongyang,Pyongyang,Pyongyang,kp,branch
+kr-seoul,Seoul,Seoul,kr,branch
+kz-almaty,Almaty,Almaty,kz,branch
+lb-beirut,Beirut,Beirut,lb,branch
+lr-monrovia,Monrovia,Montserrado County,lr,branch
+ly-tripoli,Tripoli,Tripoli,ly,branch
+ma-casablanca,Casablanca,Casablanca-Settat,ma,branch
+mg-antananarivo,Antananarivo,Analamanga,mg,branch
+ml-bamako,Bamako,Bamako,ml,branch
+mm-yangon,Yangon,Yangon,mm,branch
+mr-nouakchott,Nouakchott,,mr,branch
+mw-lilongwe,Lilongwe,Central Region,mw,branch
+mx-mexico-city,Mexico City,Mexico City,mx,branch
+my-kuala-lumpur,Kuala Lumpur,Kuala Lumpur,my,branch
+mz-maputo,Maputo,Maputo City,mz,branch
+ne-niamey,Niamey,Niamey,ne,branch
+ng-lagos,Lagos,Lagos,ng,branch
+no-oslo,Oslo,Oslo,no,branch
+np-kathmandu,Kathmandu,Bagmati Province,np,branch
+nz-auckland,Auckland,Auckland,nz,branch
+pe-lima,Lima,Lima Province,pe,branch
+ph-quezon-city,Quezon City,National Capital Region,ph,branch
+pk-lahore,Lahore,Punjab,pk,branch
+pl-warsaw,Warsaw,Mazovia,pl,branch
+py-asuncion,Asunción,Asuncion,py,branch
+ro-bucharest,Bucharest,Bucharest,ro,branch
+rs-belgrade,Belgrade,Central Serbia,rs,branch
+ru-moscow,Moscow,Moscow,ru,branch
+rw-kigali,Kigali,Kigali,rw,branch
+sa-jeddah,Jeddah,Mecca Region,sa,branch
+sd-khartoum,Khartoum,Khartoum,sd,branch
+se-stockholm,Stockholm,Stockholm,se,branch
+sg-singapore,Singapore,,sg,branch
+sn-dakar,Dakar,Dakar,sn,branch
+so-mogadishu,Mogadishu,Banaadir,so,branch
+sy-aleppo,Aleppo,Aleppo,sy,branch
+td-n-djamena,N'Djamena,N’Djaména,td,branch
+tg-lome,Lomé,Maritime,tg,branch
+th-bangkok,Bangkok,Bangkok,th,branch
+tr-istanbul,Istanbul,Istanbul,tr,branch
+tw-taipei,Taipei,Taiwan,tw,branch
+tz-dar-es-salaam,Dar es Salaam,Dar es Salaam Region,tz,branch
+ua-kyiv,Kyiv,Kyiv City,ua,branch
+ug-kampala,Kampala,Central Region,ug,branch
+uy-montevideo,Montevideo,Montevideo Department,uy,branch
+uz-tashkent,Tashkent,Tashkent,uz,branch
+ve-caracas,Caracas,Distrito Federal,ve,branch
+vn-ho-chi-minh-city,Ho Chi Minh City,Ho Chi Minh City (HCMC),vn,branch
+ye-sanaa,Sanaa,Amanat Alasimah,ye,branch
+za-johannesburg,Johannesburg,Gauteng,za,branch
+zm-lusaka,Lusaka,Lusaka Province,zm,branch
+zw-harare,Harare,Harare,zw,branch

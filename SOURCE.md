@@ -39,3 +39,23 @@ country; the 100 countries with the largest such cities are included.
 
 No HQ, DC (data-center), or IAP rows. No coordinates. `type` is only
 `regional` or `branch`.
+
+## Excel copies (generated)
+
+`sites.csv` is generated from `sites.yaml` (same 400 rows: id,city,admin1,cc,type). YAML stays the policy original.
+
+`ndgs.csv` is the four device-admin access groups from PLAN.md (not a site tree):
+access-marketing (T1+), access-hr (T2+), access-ceo (T3+), access-sourcecode (T4).
+
+`tacacs_authc.csv` is one TACACS authentication rule in ISE push order. No identity
+store was given, so the lab default is ISE Internal Users (protocol TACACS). Do not
+assume Active Directory.
+
+`tacacs_authz.csv` is TACACS authorization rules in ISE push order (first match
+wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-bound,
+NDG-scoped), contractor, auditor-internal (all four NDGs, read-only),
+auditor-external (time-bound, read-only). `command_set` and `shell_profile` are
+names only; no IOS command contents. Country is not a condition.
+
+No devices.csv (TARS owns access switches and IPs). No passwords, admin accounts,
+or lab management addresses.
