@@ -19,7 +19,32 @@ Change `ISE_PASSWORD=changeme` to the real lab password. Save. Close Notepad.
 
 On ISE, turn on **ERS** and **Open API** (Administration → System → Settings → API Settings). Device Admin / TACACS must be licensed.
 
+## Validate YAML before apply
+
+Run this in PowerShell **before** `terraform apply`. Python 3.10+ is required ([install Python](https://www.python.org/downloads/) if `pip` is missing).
+
+```
+pip install nac-validate
+nac-validate nac.yaml sites.yaml -s .schema.yaml -r .rules
+```
+
+That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml`. `.rules/` also reads `tacacs_authz.csv` and Terraform (`local.ise_tacacs_name` in `locals.tf`, `permit_unmatched` in `main.tf`) — the names apply POSTs to ISE, not only `nac.yaml` (those drifted once):
+
+1. TACACS **command-set** and **profile** names may only use letters, digits, underscore, and space. Hyphens fail. NDG hyphens (`access-marketing`) stay.
+2. Empty command sets with `permit_unmatched = false` are invalid (Terraform resource and YAML).
+
+If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed.
+
+Optional git hook (same check on commit):
+
+```
+pip install pre-commit
+pre-commit install
+```
+
 ## Commands
+
+Validate YAML first (`nac-validate` above). Then Terraform.
 
 `terraform init` only downloads the Cisco ISE plugin. The PAN does **not** need to be reachable.
 
@@ -81,9 +106,9 @@ These still produce a valid `terraform init`. They are incomplete because the CS
 
 | Object | In Git | On apply |
 | --- | --- | --- |
-| TACACS command sets | CSV names (`T1`–`T4`, vendor, contractor, auditor-*) | ISE names with hyphen → underscore (`auditor_external`). No IOS commands. `permit_unmatched = true` so an empty set is valid. |
-| TACACS shell profiles | CSV names | Same hyphen → underscore map. ISE 3.5 rejects empty profiles, so each profile has a privilege-1 stub (`priv-lvl=1`). Not a full shell. |
-| `time_bound=yes` | Flag only (vendor, auditor-external) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
+| TACACS command sets | CSV `command_set` (`T1`–`T4`, vendor, contractor, `auditor_internal` / `auditor_external`) | Terraform POSTs ISE names (hyphen → underscore). No IOS commands. `permit_unmatched = true` so an empty set is valid. |
+| TACACS shell profiles | CSV `shell_profile` (same names) | Same hyphen → underscore map. ISE 3.5 rejects empty profiles, so each profile has a privilege-1 stub (`priv-lvl=1`). Not a full shell. |
+| `time_bound=yes` | Flag only (vendor, auditor-external identity) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
 | Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |
 | NAD → NDG | `devices.csv` has no NDG column | Sample NADs (if `nad_count=2`) go in `access-marketing`. |

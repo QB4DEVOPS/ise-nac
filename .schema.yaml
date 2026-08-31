@@ -1,0 +1,75 @@
+# Yamale schema for this repo's YAML (nac.yaml / sites.yaml).
+# Not an ACI schema. Keys are optional so each file can validate on its own:
+# sites.yaml only has sites; nac.yaml has lab, ndgs, sites, tacacs, devices.
+lab: include('lab', required=False)
+ndgs: list(include('ndg'), required=False)
+sites: list(include('site'), required=False)
+tacacs_authc: list(include('tacacs_authc_rule'), required=False)
+tacacs_authz: list(include('tacacs_authz_rule'), required=False)
+devices: list(include('device'), required=False)
+command_sets: list(include('command_set'), required=False)
+shell_profiles: list(include('shell_profile'), required=False)
+---
+lab:
+  pan: include('pan')
+
+pan:
+  count: int()
+  hostname: str()
+  datastore: str()
+  network: str()
+  cpu_reservation: bool()
+  memory_reservation: bool()
+  ova: str()
+
+ndg:
+  ndg: str()
+  description: str()
+  min_tier: enum('T1', 'T2', 'T3', 'T4')
+
+site:
+  id: str()
+  city: str()
+  admin1: str()
+  cc: regex('^[a-z]{2}$')
+  type: enum('regional', 'branch')
+
+tacacs_authc_rule:
+  order: int()
+  name: str()
+  protocol: str()
+  identity_source: str()
+  if_auth_fail: enum('REJECT', 'DROP', 'CONTINUE')
+  if_user_not_found: enum('REJECT', 'DROP', 'CONTINUE')
+  if_process_fail: enum('REJECT', 'DROP', 'CONTINUE')
+
+tacacs_authz_rule:
+  order: int()
+  name: str()
+  identity_group: str()
+  ndg: str()
+  command_set: str()
+  shell_profile: str()
+  time_bound: enum('yes', 'no')
+
+device:
+  hostname: str()
+  site: str()
+  mgmt_ip: str()
+  role: enum('sw')
+  type: enum('access')
+
+command_set:
+  name: str()
+  description: str(required=False)
+  permit_unmatched: bool(required=False)
+  commands: list(include('tacacs_command'), required=False)
+
+tacacs_command:
+  command: str()
+  arguments: str(required=False)
+  grant: enum('permit', 'deny', required=False)
+
+shell_profile:
+  name: str()
+  description: str(required=False)

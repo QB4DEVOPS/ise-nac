@@ -2042,57 +2042,57 @@ tacacs_authz:
     name: auditor-external-access-marketing
     identity_group: auditor-external
     ndg: access-marketing
-    command_set: auditor-external
-    shell_profile: auditor-external
+    command_set: auditor_external
+    shell_profile: auditor_external
     time_bound: "yes"
   - order: 2
     name: auditor-external-access-hr
     identity_group: auditor-external
     ndg: access-hr
-    command_set: auditor-external
-    shell_profile: auditor-external
+    command_set: auditor_external
+    shell_profile: auditor_external
     time_bound: "yes"
   - order: 3
     name: auditor-external-access-ceo
     identity_group: auditor-external
     ndg: access-ceo
-    command_set: auditor-external
-    shell_profile: auditor-external
+    command_set: auditor_external
+    shell_profile: auditor_external
     time_bound: "yes"
   - order: 4
     name: auditor-external-access-sourcecode
     identity_group: auditor-external
     ndg: access-sourcecode
-    command_set: auditor-external
-    shell_profile: auditor-external
+    command_set: auditor_external
+    shell_profile: auditor_external
     time_bound: "yes"
   - order: 5
     name: auditor-internal-access-marketing
     identity_group: auditor-internal
     ndg: access-marketing
-    command_set: auditor-internal
-    shell_profile: auditor-internal
+    command_set: auditor_internal
+    shell_profile: auditor_internal
     time_bound: "no"
   - order: 6
     name: auditor-internal-access-hr
     identity_group: auditor-internal
     ndg: access-hr
-    command_set: auditor-internal
-    shell_profile: auditor-internal
+    command_set: auditor_internal
+    shell_profile: auditor_internal
     time_bound: "no"
   - order: 7
     name: auditor-internal-access-ceo
     identity_group: auditor-internal
     ndg: access-ceo
-    command_set: auditor-internal
-    shell_profile: auditor-internal
+    command_set: auditor_internal
+    shell_profile: auditor_internal
     time_bound: "no"
   - order: 8
     name: auditor-internal-access-sourcecode
     identity_group: auditor-internal
     ndg: access-sourcecode
-    command_set: auditor-internal
-    shell_profile: auditor-internal
+    command_set: auditor_internal
+    shell_profile: auditor_internal
     time_bound: "no"
   - order: 9
     name: vendor-access-marketing
@@ -2220,6 +2220,42 @@ tacacs_authz:
     command_set: T1
     shell_profile: T1
     time_bound: "no"
+
+command_sets:
+  - name: auditor_external
+    permit_unmatched: true
+    commands: []
+  - name: auditor_internal
+    permit_unmatched: true
+    commands: []
+  - name: vendor
+    permit_unmatched: true
+    commands: []
+  - name: contractor
+    permit_unmatched: true
+    commands: []
+  - name: T4
+    permit_unmatched: true
+    commands: []
+  - name: T3
+    permit_unmatched: true
+    commands: []
+  - name: T2
+    permit_unmatched: true
+    commands: []
+  - name: T1
+    permit_unmatched: true
+    commands: []
+
+shell_profiles:
+  - name: auditor_external
+  - name: auditor_internal
+  - name: vendor
+  - name: contractor
+  - name: T4
+  - name: T3
+  - name: T2
+  - name: T1
 
 devices:
   - hostname: ushun-sw-01

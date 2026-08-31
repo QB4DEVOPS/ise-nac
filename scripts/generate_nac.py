@@ -143,6 +143,42 @@ def main() -> int:
             )
         )
 
+    # Unique TACACS objects from authz. CSVs have names only, no IOS commands.
+    command_set_names: list[str] = []
+    shell_profile_names: list[str] = []
+    for row in authz:
+        if row["command_set"] not in command_set_names:
+            command_set_names.append(row["command_set"])
+        if row["shell_profile"] not in shell_profile_names:
+            shell_profile_names.append(row["shell_profile"])
+
+    lines.append("")
+    lines.append("command_sets:")
+    for name in command_set_names:
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("name", yq(name)),
+                    # Boolean, not yq(): empty sets must permit unmatched or ISE 400s.
+                    ("permit_unmatched", "true"),
+                    ("commands", "[]"),
+                ],
+            )
+        )
+
+    lines.append("")
+    lines.append("shell_profiles:")
+    for name in shell_profile_names:
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("name", yq(name)),
+                ],
+            )
+        )
+
     lines.append("")
     lines.append("devices:")
     for row in devices:

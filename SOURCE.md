@@ -54,8 +54,10 @@ assume Active Directory.
 `tacacs_authz.csv` is TACACS authorization rules in ISE push order (first match
 wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-bound,
 NDG-scoped), contractor, auditor-internal (all four NDGs, read-only),
-auditor-external (time-bound, read-only). `command_set` and `shell_profile` are
-names only; no IOS command contents. Country is not a condition.
+auditor-external (time-bound, read-only). Identity groups keep hyphens.
+`command_set` and `shell_profile` use ISE-legal names (`auditor_internal`,
+`auditor_external`); no hyphens. Names only; no IOS command contents. Empty
+command sets permit unmatched. Country is not a condition.
 
 No passwords, admin accounts, or lab management addresses.
 
