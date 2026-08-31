@@ -1,11 +1,11 @@
 """Resolve TACACS names and command sets Terraform actually POSTs to ISE.
 
 nac.yaml can drift from apply. Terraform csvdecodes tacacs_authz.csv, then
-sets command-set name = local.ise_tacacs_name[each.value] (hyphen → underscore)
-and profile name = local.ise_tacacs_shell_profile_name[each.value]
-({name}_shell — ISE ERS shares one namespace with command sets),
-and yamldecodes command_sets.yaml / shell_profiles.yaml.
-NDG and identity-group hyphens are out of scope.
+sets command-set name = local.ise_tacacs_command_set_name[each.value]
+({name}_cs) and profile name = local.ise_tacacs_shell_profile_name[each.value]
+({name}_shell). ISE ERS shares one namespace; every TACACS object is suffixed.
+YAML name: values are those ISE names. NDG and identity-group hyphens are
+out of scope. CSV keys stay T1.
 """
 
 from __future__ import annotations
@@ -82,6 +82,20 @@ def _maps_hyphen_to_underscore() -> bool:
     )
 
 
+def _maps_command_set_suffix() -> bool:
+    """True when locals.tf sets command-set ISE names to {name}_cs.
+
+    The map value is ``${local.ise_tacacs_name[n]}_cs``, so a ``}`` from the
+    interpolation sits before ``_cs``. Do not use ``[^}]*``.
+    """
+    return bool(
+        re.search(
+            r"ise_tacacs_command_set_name\s*=\s*\{[\s\S]{0,500}?_cs",
+            _tf_text(),
+        )
+    )
+
+
 def _maps_shell_profile_suffix() -> bool:
     """True when locals.tf sets profile ISE names to {name}_shell.
 
@@ -144,9 +158,10 @@ def posted_records(kind: str) -> list[dict[str, str]]:
 
     kind is ``command_set`` or ``shell_profile``.
     Each record has csv_key, ise_name, path.
-    Command-set ISE names use local.ise_tacacs_name (hyphen → underscore).
+    Command-set ISE names use local.ise_tacacs_command_set_name ({name}_cs)
+    when Terraform wires that map onto ise_tacacs_command_set.this name.
     Profile ISE names use local.ise_tacacs_shell_profile_name ({name}_shell)
-    when Terraform actually wires that map onto ise_tacacs_profile.name.
+    when Terraform wires that map onto ise_tacacs_profile.name.
     """
     cols = local_csv_columns()
     column = cols["command_sets"] if kind == "command_set" else cols["shell_profiles"]
@@ -157,6 +172,7 @@ def posted_records(kind: str) -> list[dict[str, str]]:
     uses_suffix = False
     uses_hyphen_map = False
     map_label = "local.ise_tacacs_name"
+    suffix = ""
     if kind == "shell_profile":
         uses_suffix = _maps_shell_profile_suffix() and _resource_name_uses_local(
             resource_type, "ise_tacacs_shell_profile_name"
@@ -166,10 +182,17 @@ def posted_records(kind: str) -> list[dict[str, str]]:
         )
         if uses_suffix:
             map_label = "local.ise_tacacs_shell_profile_name"
+            suffix = "_shell"
     else:
-        uses_hyphen_map = hyphen and _resource_name_uses_local(
-            resource_type, "ise_tacacs_name"
+        uses_suffix = _maps_command_set_suffix() and _resource_name_uses_local(
+            resource_type, "ise_tacacs_command_set_name"
         )
+        uses_hyphen_map = uses_suffix or (
+            hyphen and _resource_name_uses_local(resource_type, "ise_tacacs_name")
+        )
+        if uses_suffix:
+            map_label = "local.ise_tacacs_command_set_name"
+            suffix = "_cs"
 
     seen: set[str] = set()
     out: list[dict[str, str]] = []
@@ -179,7 +202,7 @@ def posted_records(kind: str) -> list[dict[str, str]]:
             continue
         ise_name = raw.replace("-", "_") if uses_hyphen_map else raw
         if uses_suffix:
-            ise_name = f"{ise_name}_shell"
+            ise_name = f"{ise_name}{suffix}"
         if ise_name in seen:
             continue
         seen.add(ise_name)
@@ -205,7 +228,7 @@ def yaml_lookup_keys(
 ) -> list[str]:
     """YAML ``name:`` keys that may hold session_attributes / commands.
 
-    CSV/YAML tier keys stay T1; profile ISE names are T1_shell.
+    CSV keys stay T1. Command-set ISE names are T1_cs; profile ISE names are T1_shell.
     """
     keys: list[str] = []
     if csv_key:
@@ -215,6 +238,10 @@ def yaml_lookup_keys(
     keys.append(ise_name)
     if kind == "shell_profile" and ise_name.endswith("_shell"):
         stem = ise_name[: -len("_shell")]
+        if stem and stem not in keys:
+            keys.append(stem)
+    if kind == "command_set" and ise_name.endswith("_cs"):
+        stem = ise_name[: -len("_cs")]
         if stem and stem not in keys:
             keys.append(stem)
     seen: set[str] = set()

@@ -7,11 +7,11 @@ provider "ise" {
 
 # GUI canary. TARS owns the NAC; Terraform creates this. Do not click ISE to make it.
 # Apply only this object: terraform apply -target=ise_tacacs_command_set.test
-# ISE name is exactly "test". ISE-legal: show / version / PERMIT. No regex.
-# Do not create a shell profile named test (ERS shares that name namespace).
+# Resource address stays .test. ISE name is test_cs (every TACACS object is suffixed).
+# ISE-legal: show / version / PERMIT. No regex. No profile named test_cs.
 # May 400 until Device Admin / TACACS is licensed; still ship the resource.
 resource "ise_tacacs_command_set" "test" {
-  name             = "test"
+  name             = "test_cs"
   description      = "TARS GUI canary. show version only."
   permit_unmatched = false
   commands = [
@@ -46,13 +46,14 @@ resource "ise_user_identity_group" "this" {
 }
 
 # IOS-XE command sets from command_sets.yaml. T4 may permit unmatched; others do not.
+# ISE name is T1_cs (YAML name: and Terraform POST). CSV keys stay T1.
 resource "ise_tacacs_command_set" "this" {
   for_each         = local.command_sets
-  name             = local.ise_tacacs_name[each.value]
-  description      = try(local.command_set_by_name[local.ise_tacacs_name[each.value]].description, "TACACS command set ${local.ise_tacacs_name[each.value]}")
-  permit_unmatched = try(local.command_set_by_name[local.ise_tacacs_name[each.value]].permit_unmatched, false)
+  name             = local.ise_tacacs_command_set_name[each.value]
+  description      = try(local.command_set_by_name[local.ise_tacacs_command_set_name[each.value]].description, "TACACS command set ${local.ise_tacacs_command_set_name[each.value]}")
+  permit_unmatched = try(local.command_set_by_name[local.ise_tacacs_command_set_name[each.value]].permit_unmatched, false)
   commands = [
-    for c in try(local.command_set_by_name[local.ise_tacacs_name[each.value]].commands, []) : {
+    for c in try(local.command_set_by_name[local.ise_tacacs_command_set_name[each.value]].commands, []) : {
       grant     = c.grant
       command   = c.command
       arguments = c.arguments
@@ -141,7 +142,7 @@ resource "ise_device_admin_authorization_rule" "authz" {
   name          = each.value.name
   default       = false
   state         = "enabled"
-  # .name is the ISE POST name (T1 / T1_shell), not a hardcoded CSV string.
+  # .name is the ISE POST name (T1_cs / T1_shell), not a hardcoded CSV string.
   command_sets   = [ise_tacacs_command_set.this[each.value.command_set].name]
   profile        = ise_tacacs_profile.this[each.value.shell_profile].name
   condition_type = "ConditionAndBlock"

@@ -23,7 +23,7 @@ _tf = importlib.util.module_from_spec(_spec)
 sys.modules["tf_ise_post"] = _tf
 _spec.loader.exec_module(_tf)
 
-_T4 = "T4"
+_T4 = frozenset({"T4", "T4_cs"})
 
 
 def _has_commands(entry: dict[str, Any] | None) -> bool:
@@ -52,7 +52,7 @@ def _check_entry(
 ) -> Violation | None:
     has = _has_commands(entry)
     permit = _permits_unmatched(entry)
-    if name == _T4:
+    if name in _T4:
         if not permit:
             return Violation(
                 message=(
@@ -151,10 +151,10 @@ resource.ise_tacacs_command_set commands in main.tf."""
             if isinstance(item, dict) and isinstance(item.get("name"), str):
                 yaml_defs[item["name"]] = item
 
-        non_t4 = [name for name, _ in posted if name != _T4]
+        non_t4 = [name for name, _ in posted if name not in _T4]
         if non_t4 and not resource["has_commands"]:
             for name, _csv_path in posted:
-                if name == _T4:
+                if name in _T4:
                     continue
                 add(
                     Violation(
@@ -175,7 +175,7 @@ resource.ise_tacacs_command_set commands in main.tf."""
 
         if resource["permit_unmatched"] is True and non_t4:
             for name, _csv_path in posted:
-                if name == _T4:
+                if name in _T4:
                     continue
                 add(
                     Violation(
@@ -193,8 +193,15 @@ resource.ise_tacacs_command_set commands in main.tf."""
                     )
                 )
 
-        for name, csv_path in posted:
-            entry = file_defs.get(name)
+        for rec in _tf.posted_records("command_set"):
+            name = rec["ise_name"]
+            csv_path = rec["path"]
+            keys = _tf.yaml_lookup_keys("command_set", name, rec.get("csv_key"))
+            entry = None
+            for key in keys:
+                if key in file_defs:
+                    entry = file_defs[key]
+                    break
             if entry is None:
                 add(
                     Violation(

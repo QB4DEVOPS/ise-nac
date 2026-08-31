@@ -3,9 +3,10 @@
 # ISE ERS does NOT accept PCRE in arguments (parentheses, ?, .*). Use a
 # command token plus literal arguments. * is the ISE wildcard.
 # command = first word only. grant PERMIT. permit_unmatched false except T4.
+# YAML name: is the ISE POST name (T1_cs, T2_cs, …). CSV keys stay T1.
 # No reload, aaa, or username except T4 (unmatched permitted).
 command_sets:
-  - name: T1
+  - name: T1_cs
     description: Read-only access-switch ops (show, ping, traceroute). No configure.
     permit_unmatched: false
     commands:
@@ -28,7 +29,7 @@ command_sets:
         command: traceroute
         arguments: "*"
 
-  - name: T2
+  - name: T2_cs
     description: T1 plus access-port description, shutdown, and access VLAN. No wr mem.
     permit_unmatched: false
     commands:
@@ -78,7 +79,7 @@ command_sets:
         command: exit
         arguments: ""
 
-  - name: T3
+  - name: T3_cs
     description: T2 plus VLAN, spanning-tree, and copy run start. No reload, aaa, username.
     permit_unmatched: false
     commands:
@@ -143,12 +144,12 @@ command_sets:
         command: exit
         arguments: ""
 
-  - name: T4
+  - name: T4_cs
     description: Full device-admin. Unmatched IOS commands are permitted (privilege 15).
     permit_unmatched: true
     commands: []
 
-  - name: vendor
+  - name: vendor_cs
     description: Show plus interface description only. No shutdown, wr mem, reload, aaa, username.
     permit_unmatched: false
     commands:
@@ -174,7 +175,7 @@ command_sets:
         command: exit
         arguments: ""
 
-  - name: contractor
+  - name: contractor_cs
     description: Same as T2. Access-port description, shutdown, and access VLAN. No wr mem.
     permit_unmatched: false
     commands:
@@ -224,7 +225,7 @@ command_sets:
         command: exit
         arguments: ""
 
-  - name: auditor_internal
+  - name: auditor_internal_cs
     description: Internal auditor read-only. show run, version, inventory, logging. No config.
     permit_unmatched: false
     commands:
@@ -241,7 +242,7 @@ command_sets:
         command: show
         arguments: logging
 
-  - name: auditor_external
+  - name: auditor_external_cs
     description: External auditor. show version and inventory only. No show run, no config.
     permit_unmatched: false
     commands:

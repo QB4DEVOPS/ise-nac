@@ -1,8 +1,8 @@
 # TACACS shell profiles. Source for Terraform and nac.yaml.
 # CiscoDevNet/ise 0.3.4 ise_tacacs_profile session_attributes:
 #   type MANDATORY|OPTIONAL, name, value (strings).
-# YAML name: is the ISE POST name. Command sets keep T1; profiles are T1_shell.
-# CSV keys stay T1. No two ISE names may match. No profile named test.
+# YAML name: is the ISE POST name. Command sets are T1_cs; profiles are T1_shell.
+# CSV keys stay T1. No two ISE names may match. No profile named test_cs.
 # T1_shell and auditor_*_shell priv-lvl 1. Everyone else priv-lvl 15.
 shell_profiles:
   - name: T1_shell

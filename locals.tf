@@ -14,21 +14,23 @@ locals {
   shell_profiles  = toset([for row in local.authz : row.shell_profile])
   identity_groups = toset([for row in local.authz : row.identity_group])
 
-  # ISE TACACS command-set names: alphanumeric, underscore, space.
-  # Hyphen is illegal (auditor-external → auditor_external). Identity groups keep hyphens.
-  # CSV/YAML tier keys stay T1, vendor, contractor, auditor_internal, …
+  # ISE TACACS names: alphanumeric, underscore, space. Hyphen is illegal
+  # (auditor-external → auditor_external). Identity groups keep hyphens.
+  # CSV keys stay T1.
   ise_tacacs_name = {
     for n in setunion(local.command_sets, local.shell_profiles) : n => replace(n, "-", "_")
   }
 
-  # ISE ERS uses ONE shared name namespace for TACACS command sets AND shell
-  # profiles. Locked ISE POST names (underscore only; no two strings match):
-  #   command sets: T1 T2 T3 T4 vendor contractor auditor_internal
-  #                 auditor_external test
+  # ISE ERS uses ONE shared name namespace. Every TACACS object gets a suffix
+  # (underscore only). Locked ISE POST names; no two strings match:
+  #   command sets: T1_cs T2_cs T3_cs T4_cs vendor_cs contractor_cs
+  #                 auditor_internal_cs auditor_external_cs test_cs
   #   profiles:     T1_shell T2_shell T3_shell T4_shell vendor_shell
   #                 contractor_shell auditor_internal_shell auditor_external_shell
-  # CSV keys stay T1. YAML profile name: is T1_shell (the ISE POST name).
-  # Identity groups / NDGs / authz rule names are not this map.
+  # CSV keys stay T1. Identity groups / NDGs / authz rule names are not this map.
+  ise_tacacs_command_set_name = {
+    for n in local.command_sets : n => "${local.ise_tacacs_name[n]}_cs"
+  }
   ise_tacacs_shell_profile_name = {
     for n in local.shell_profiles : n => "${local.ise_tacacs_name[n]}_shell"
   }

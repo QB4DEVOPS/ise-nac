@@ -1,9 +1,10 @@
-"""FAIL if a TACACS command-set ISE name equals a TACACS profile ISE name.
+"""FAIL on any duplicate in the combined TACACS ISE name set.
 
 Cisco ISE ERS uses ONE shared name namespace for TACACS command sets and
-TACACS shell profiles. The ISE POST names are a locked list (underscore
-only). CSV/YAML tier keys may stay T1. Identity groups, NDGs, and authz
-rule names are not this namespace and are not renamed here.
+TACACS shell profiles. Every command-set ISE name and every profile ISE
+name is one bag of strings. Any string that appears more than once in
+that bag FAILS. Every TACACS object is suffixed (_cs or _shell). CSV keys
+stay T1. Identity groups, NDGs, and authz rule names are not this namespace.
 """
 
 from __future__ import annotations
@@ -11,6 +12,7 @@ from __future__ import annotations
 import importlib.util
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -28,15 +30,15 @@ _spec.loader.exec_module(_tf)
 # Locked ISE POST names. Underscore only. No two strings in the union match.
 _LOCKED_COMMAND_SETS = frozenset(
     {
-        "T1",
-        "T2",
-        "T3",
-        "T4",
-        "vendor",
-        "contractor",
-        "auditor_internal",
-        "auditor_external",
-        "test",
+        "T1_cs",
+        "T2_cs",
+        "T3_cs",
+        "T4_cs",
+        "vendor_cs",
+        "contractor_cs",
+        "auditor_internal_cs",
+        "auditor_external_cs",
+        "test_cs",
     }
 )
 _LOCKED_PROFILES = frozenset(
@@ -52,6 +54,16 @@ _LOCKED_PROFILES = frozenset(
     }
 )
 _NAME_RE = re.compile(r"^[A-Za-z0-9_]+$")
+
+
+def _item_names(items: Any) -> list[str]:
+    out: list[str] = []
+    if not isinstance(items, list):
+        return out
+    for item in items:
+        if isinstance(item, dict) and isinstance(item.get("name"), str) and item["name"]:
+            out.append(item["name"])
+    return out
 
 
 def _collect_command_set_ise_names(data: dict[str, Any]) -> list[tuple[str, str]]:
@@ -103,27 +115,28 @@ def _collect_profile_ise_names(data: dict[str, Any]) -> list[tuple[str, str]]:
 class Rule(RuleBase):
     id = "105"
     description = (
-        "FAIL if a TACACS command-set ISE name equals a TACACS profile ISE name; "
-        "ISE POST names must match the locked unique list (underscore only)"
+        "FAIL on any duplicate in the combined set of all TACACS command-set "
+        "ISE names and all TACACS profile ISE names (one ERS namespace)"
     )
     severity = "HIGH"
     title = "TACACS COMMAND SET AND PROFILE ISE NAMES MUST BE UNIQUE"
     affected_items_label = "ISE names"
     explanation = """\
 Cisco ISE ERS uses one shared name namespace for TACACS command sets and
-TACACS shell profiles. No two ISE names on this locked list may match.
-Command-set ISE names: T1 T2 T3 T4 vendor contractor auditor_internal
-auditor_external test.
-Profile ISE names: T1_shell T2_shell T3_shell T4_shell vendor_shell
+TACACS shell profiles. All command-set ISE names and all profile ISE
+names are ONE set. Any duplicate string in that combined set FAILS.
+Locked names (underscore only; every TACACS object is suffixed):
+Command sets: T1_cs T2_cs T3_cs T4_cs vendor_cs contractor_cs
+auditor_internal_cs auditor_external_cs test_cs.
+Profiles: T1_shell T2_shell T3_shell T4_shell vendor_shell
 contractor_shell auditor_internal_shell auditor_external_shell.
-Underscore only (no hyphens). CSV keys stay T1. YAML profile name: values
-are the ISE names (T1_shell). Identity groups, NDGs, and authz rule names
-are unchanged and are not this check."""
+No profile named test_cs. CSV keys stay T1. YAML name: values are the
+ISE names. Identity groups, NDGs, and authz rule names are not this check."""
     recommendation = """\
-POST exactly the locked lists. Keep command-set ISE names unsuffixed.
-shell_profiles.yaml name: must be T1_shell (not T1). Keep CSV keys as T1.
-Wire ise_tacacs_profile.this name to local.ise_tacacs_shell_profile_name.
-Do not rename identity groups, NDGs, or authz rule names for this."""
+Every ISE name in command_sets.yaml, shell_profiles.yaml, and Terraform
+POSTs must be unique across BOTH object types. Command sets are T1_cs.
+Profiles are T1_shell. Canary ise_tacacs_command_set.test POSTs test_cs.
+Keep CSV keys as T1."""
     references = [
         "https://github.com/netascode/nac-validate",
         "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/tacacs_profile",
@@ -172,6 +185,56 @@ Do not rename identity groups, NDGs, or authz rule names for this."""
         command_set_names = {name: path for name, path in command_sets}
         profile_names = {name: path for name, path in profiles}
 
+        def fail_list_duplicates(
+            names: list[str], path: str, kind: str, source: str
+        ) -> None:
+            for name, count in sorted(Counter(names).items()):
+                if count < 2 or not name:
+                    continue
+                add(
+                    Violation(
+                        message=(
+                            f"TACACS {kind} ISE name '{name}' appears {count} "
+                            f"times in {path}. Combined command-set + profile "
+                            "names must be unique."
+                        ),
+                        path=path,
+                        details={
+                            "name": name,
+                            "kind": "combined_duplicate",
+                            "count": count,
+                            "source": source,
+                        },
+                    )
+                )
+
+        fail_list_duplicates(
+            _item_names(_tf._load_yaml_list(_tf.COMMAND_SETS_YAML, "command_sets")),
+            "command_sets.yaml",
+            "command-set",
+            "command_sets.yaml",
+        )
+        fail_list_duplicates(
+            _item_names(
+                _tf._load_yaml_list(_tf.SHELL_PROFILES_YAML, "shell_profiles")
+            ),
+            "shell_profiles.yaml",
+            "profile",
+            "shell_profiles.yaml",
+        )
+        fail_list_duplicates(
+            _item_names(data.get("command_sets")),
+            "command_sets",
+            "command-set",
+            "nac.yaml",
+        )
+        fail_list_duplicates(
+            _item_names(data.get("shell_profiles")),
+            "shell_profiles",
+            "profile",
+            "nac.yaml",
+        )
+
         def check_charset(kind: str, name: str, path: str) -> None:
             if _NAME_RE.fullmatch(name):
                 return
@@ -205,8 +268,9 @@ Do not rename identity groups, NDGs, or authz rule names for this."""
                 Violation(
                     message=(
                         f"TACACS command-set ISE name '{name}' is not on the "
-                        "locked list (T1 T2 T3 T4 vendor contractor "
-                        "auditor_internal auditor_external test)."
+                        "locked list (T1_cs T2_cs T3_cs T4_cs vendor_cs "
+                        "contractor_cs auditor_internal_cs auditor_external_cs "
+                        "test_cs)."
                     ),
                     path=command_set_names[name],
                     details={
@@ -264,29 +328,78 @@ Do not rename identity groups, NDGs, or authz rule names for this."""
                 )
             )
 
-        # MUST fail if a command-set ISE name equals a profile ISE name.
-        for name in sorted(posted_cs & posted_pr):
+        # ONE set: every command-set ISE name and every profile ISE name.
+        # Fail on any duplicate string in that bag.
+        combined_paths: dict[str, list[str]] = {}
+        for name, path in command_sets:
+            combined_paths.setdefault(name, []).append(path)
+        for name, path in profiles:
+            combined_paths.setdefault(name, []).append(path)
+        for name in sorted(combined_paths):
+            paths = combined_paths[name]
+            if len(paths) < 2:
+                continue
             add(
                 Violation(
                     message=(
-                        f"TACACS command-set ISE name '{name}' equals profile "
-                        f"ISE name '{name}'. ISE ERS shares one namespace; "
-                        "this 400s on apply. Command sets stay T1; profiles "
-                        "are T1_shell. No two locked ISE names may match."
+                        f"TACACS ISE name '{name}' is duplicated {len(paths)} "
+                        "times in the combined command-set + profile name set. "
+                        "ISE ERS shares one namespace; any duplicate 400s on "
+                        "apply. All command-set names and all profile names "
+                        "must be unique together."
                     ),
-                    path=profile_names[name],
+                    path=paths[-1],
                     details={
                         "name": name,
-                        "kind": "collision",
-                        "command_set_path": command_set_names[name],
-                        "source": "terraform",
+                        "kind": "combined_duplicate",
+                        "count": len(paths),
+                        "paths": paths,
+                        "source": "combined",
                     },
                 )
             )
 
+        if "test_cs" in profile_names:
+            add(
+                Violation(
+                    message=(
+                        "TACACS profile ISE name 'test_cs' collides with the GUI "
+                        "canary command set named test_cs. Do not create a "
+                        "profile named test_cs."
+                    ),
+                    path=profile_names["test_cs"],
+                    details={
+                        "name": "test_cs",
+                        "kind": "combined_duplicate",
+                        "source": "canary",
+                    },
+                )
+            )
+
+        tf_text = _tf.MAIN_TF.read_text(encoding="utf-8") if _tf.MAIN_TF.is_file() else ""
+        if not re.search(
+            r"command_sets\s*=\s*\[ise_tacacs_command_set\.this\[each\.value\.command_set\]\.name\]",
+            tf_text,
+        ):
+            add(
+                Violation(
+                    message=(
+                        "Authorization rules must set command_sets = "
+                        "[ise_tacacs_command_set.this[each.value.command_set].name] "
+                        "so they POST the suffixed ISE name (T1_cs), not the "
+                        "CSV tier key (T1)."
+                    ),
+                    path="main.tf:ise_device_admin_authorization_rule.authz",
+                    details={
+                        "name": "command_sets",
+                        "kind": "authz",
+                        "source": "terraform",
+                    },
+                )
+            )
         if not re.search(
             r"profile\s*=\s*ise_tacacs_profile\.this\[each\.value\.shell_profile\]\.name",
-            _tf.MAIN_TF.read_text(encoding="utf-8") if _tf.MAIN_TF.is_file() else "",
+            tf_text,
         ):
             add(
                 Violation(
