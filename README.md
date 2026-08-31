@@ -1,2 +1,5 @@
 # ise-nac
-ISE device-admin Network as Code. Plan and generators. Public by design.
+
+ISE device-admin Network as Code.
+
+See [PLAN.md](PLAN.md).
