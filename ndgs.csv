@@ -1,0 +1,5 @@
+﻿ndg,description,min_tier
+access-marketing,T1 and above may administer NADs in this group,T1
+access-hr,T2 and above may administer NADs in this group,T2
+access-ceo,T3 and above may administer NADs in this group,T3
+access-sourcecode,T4 may administer NADs in this group,T4

@@ -34,7 +34,7 @@ Pattern: `{cc}{site}` lowercase, no spaces.
 - `{site}` 3–4 char location (`nyc`, `fra`, `blr`, `spo`)
 - Hostname: `{cc}{site}-{role}-{nn}` e.g. `usnyc-sw-01`, `defra-wlc-01`
 
-400+ sites live in `sites.yaml`. Do not encode site in NDG.
+400+ sites live in `sites.yaml`. Do not encode site in NDG. Excel copies: `sites.csv`, `ndgs.csv`, `tacacs_authc.csv`, `tacacs_authz.csv`, `devices.csv`.
 
 ## Management loopbacks
 

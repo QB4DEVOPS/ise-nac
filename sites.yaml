@@ -1,0 +1,2004 @@
+# 400 unique real cities. No invented names.
+# US: Census Bureau Vintage 2025 incorporated-place estimates (SUB-IP-EST2025-ANNRNK).
+# Non-US: GeoNames cities15000 (CC-BY 4.0). See SOURCE.md.
+sites:
+  - id: us-huntsville
+    city: Huntsville
+    admin1: Alabama
+    cc: us
+    type: regional
+  - id: us-anchorage
+    city: Anchorage
+    admin1: Alaska
+    cc: us
+    type: regional
+  - id: us-phoenix
+    city: Phoenix
+    admin1: Arizona
+    cc: us
+    type: regional
+  - id: us-little-rock
+    city: Little Rock
+    admin1: Arkansas
+    cc: us
+    type: regional
+  - id: us-los-angeles
+    city: Los Angeles
+    admin1: California
+    cc: us
+    type: regional
+  - id: us-denver
+    city: Denver
+    admin1: Colorado
+    cc: us
+    type: regional
+  - id: us-bridgeport
+    city: Bridgeport
+    admin1: Connecticut
+    cc: us
+    type: regional
+  - id: us-wilmington-de
+    city: Wilmington
+    admin1: Delaware
+    cc: us
+    type: regional
+  - id: us-jacksonville
+    city: Jacksonville
+    admin1: Florida
+    cc: us
+    type: regional
+  - id: us-atlanta
+    city: Atlanta
+    admin1: Georgia
+    cc: us
+    type: regional
+  - id: us-honolulu
+    city: Honolulu
+    admin1: Hawaii
+    cc: us
+    type: regional
+  - id: us-boise
+    city: Boise
+    admin1: Idaho
+    cc: us
+    type: regional
+  - id: us-chicago
+    city: Chicago
+    admin1: Illinois
+    cc: us
+    type: regional
+  - id: us-indianapolis
+    city: Indianapolis
+    admin1: Indiana
+    cc: us
+    type: regional
+  - id: us-des-moines
+    city: Des Moines
+    admin1: Iowa
+    cc: us
+    type: regional
+  - id: us-wichita
+    city: Wichita
+    admin1: Kansas
+    cc: us
+    type: regional
+  - id: us-louisville
+    city: Louisville
+    admin1: Kentucky
+    cc: us
+    type: regional
+  - id: us-new-orleans
+    city: New Orleans
+    admin1: Louisiana
+    cc: us
+    type: regional
+  - id: us-portland-me
+    city: Portland
+    admin1: Maine
+    cc: us
+    type: regional
+  - id: us-baltimore
+    city: Baltimore
+    admin1: Maryland
+    cc: us
+    type: regional
+  - id: us-boston
+    city: Boston
+    admin1: Massachusetts
+    cc: us
+    type: regional
+  - id: us-detroit
+    city: Detroit
+    admin1: Michigan
+    cc: us
+    type: regional
+  - id: us-minneapolis
+    city: Minneapolis
+    admin1: Minnesota
+    cc: us
+    type: regional
+  - id: us-jackson
+    city: Jackson
+    admin1: Mississippi
+    cc: us
+    type: regional
+  - id: us-kansas-city-mo
+    city: Kansas City
+    admin1: Missouri
+    cc: us
+    type: regional
+  - id: us-billings
+    city: Billings
+    admin1: Montana
+    cc: us
+    type: regional
+  - id: us-omaha
+    city: Omaha
+    admin1: Nebraska
+    cc: us
+    type: regional
+  - id: us-las-vegas
+    city: Las Vegas
+    admin1: Nevada
+    cc: us
+    type: regional
+  - id: us-manchester
+    city: Manchester
+    admin1: New Hampshire
+    cc: us
+    type: regional
+  - id: us-newark
+    city: Newark
+    admin1: New Jersey
+    cc: us
+    type: regional
+  - id: us-albuquerque
+    city: Albuquerque
+    admin1: New Mexico
+    cc: us
+    type: regional
+  - id: us-new-york
+    city: New York
+    admin1: New York
+    cc: us
+    type: regional
+  - id: us-charlotte
+    city: Charlotte
+    admin1: North Carolina
+    cc: us
+    type: regional
+  - id: us-fargo
+    city: Fargo
+    admin1: North Dakota
+    cc: us
+    type: regional
+  - id: us-columbus-oh
+    city: Columbus
+    admin1: Ohio
+    cc: us
+    type: regional
+  - id: us-oklahoma-city
+    city: Oklahoma City
+    admin1: Oklahoma
+    cc: us
+    type: regional
+  - id: us-portland-or
+    city: Portland
+    admin1: Oregon
+    cc: us
+    type: regional
+  - id: us-philadelphia
+    city: Philadelphia
+    admin1: Pennsylvania
+    cc: us
+    type: regional
+  - id: us-providence
+    city: Providence
+    admin1: Rhode Island
+    cc: us
+    type: regional
+  - id: us-charleston-sc
+    city: Charleston
+    admin1: South Carolina
+    cc: us
+    type: regional
+  - id: us-sioux-falls
+    city: Sioux Falls
+    admin1: South Dakota
+    cc: us
+    type: regional
+  - id: us-nashville
+    city: Nashville
+    admin1: Tennessee
+    cc: us
+    type: regional
+  - id: us-houston
+    city: Houston
+    admin1: Texas
+    cc: us
+    type: regional
+  - id: us-salt-lake-city
+    city: Salt Lake City
+    admin1: Utah
+    cc: us
+    type: regional
+  - id: us-burlington
+    city: Burlington
+    admin1: Vermont
+    cc: us
+    type: regional
+  - id: us-virginia-beach
+    city: Virginia Beach
+    admin1: Virginia
+    cc: us
+    type: regional
+  - id: us-seattle
+    city: Seattle
+    admin1: Washington
+    cc: us
+    type: regional
+  - id: us-charleston-wv
+    city: Charleston
+    admin1: West Virginia
+    cc: us
+    type: regional
+  - id: us-milwaukee
+    city: Milwaukee
+    admin1: Wisconsin
+    cc: us
+    type: regional
+  - id: us-cheyenne
+    city: Cheyenne
+    admin1: Wyoming
+    cc: us
+    type: regional
+  - id: us-abilene
+    city: Abilene
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-akron
+    city: Akron
+    admin1: Ohio
+    cc: us
+    type: branch
+  - id: us-alexandria
+    city: Alexandria
+    admin1: Virginia
+    cc: us
+    type: branch
+  - id: us-allen
+    city: Allen
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-allentown
+    city: Allentown
+    admin1: Pennsylvania
+    cc: us
+    type: branch
+  - id: us-amarillo
+    city: Amarillo
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-anaheim
+    city: Anaheim
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-ann-arbor
+    city: Ann Arbor
+    admin1: Michigan
+    cc: us
+    type: branch
+  - id: us-antioch
+    city: Antioch
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-arlington
+    city: Arlington
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-arvada
+    city: Arvada
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-athens
+    city: Athens
+    admin1: Georgia
+    cc: us
+    type: branch
+  - id: us-augusta
+    city: Augusta
+    admin1: Georgia
+    cc: us
+    type: branch
+  - id: us-aurora-co
+    city: Aurora
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-aurora-il
+    city: Aurora
+    admin1: Illinois
+    cc: us
+    type: branch
+  - id: us-austin
+    city: Austin
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-bakersfield
+    city: Bakersfield
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-baton-rouge
+    city: Baton Rouge
+    admin1: Louisiana
+    cc: us
+    type: branch
+  - id: us-beaumont
+    city: Beaumont
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-bellevue
+    city: Bellevue
+    admin1: Washington
+    cc: us
+    type: branch
+  - id: us-berkeley
+    city: Berkeley
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-birmingham
+    city: Birmingham
+    admin1: Alabama
+    cc: us
+    type: branch
+  - id: us-broken-arrow
+    city: Broken Arrow
+    admin1: Oklahoma
+    cc: us
+    type: branch
+  - id: us-brownsville
+    city: Brownsville
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-buckeye
+    city: Buckeye
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-buffalo
+    city: Buffalo
+    admin1: New York
+    cc: us
+    type: branch
+  - id: us-cambridge
+    city: Cambridge
+    admin1: Massachusetts
+    cc: us
+    type: branch
+  - id: us-cape-coral
+    city: Cape Coral
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-carlsbad
+    city: Carlsbad
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-carrollton
+    city: Carrollton
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-cary
+    city: Cary
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-cedar-rapids
+    city: Cedar Rapids
+    admin1: Iowa
+    cc: us
+    type: branch
+  - id: us-chandler
+    city: Chandler
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-chattanooga
+    city: Chattanooga
+    admin1: Tennessee
+    cc: us
+    type: branch
+  - id: us-chesapeake
+    city: Chesapeake
+    admin1: Virginia
+    cc: us
+    type: branch
+  - id: us-chula-vista
+    city: Chula Vista
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-cincinnati
+    city: Cincinnati
+    admin1: Ohio
+    cc: us
+    type: branch
+  - id: us-clarksville
+    city: Clarksville
+    admin1: Tennessee
+    cc: us
+    type: branch
+  - id: us-clearwater
+    city: Clearwater
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-cleveland
+    city: Cleveland
+    admin1: Ohio
+    cc: us
+    type: branch
+  - id: us-clovis
+    city: Clovis
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-college-station
+    city: College Station
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-colorado-springs
+    city: Colorado Springs
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-columbia-mo
+    city: Columbia
+    admin1: Missouri
+    cc: us
+    type: branch
+  - id: us-columbia-sc
+    city: Columbia
+    admin1: South Carolina
+    cc: us
+    type: branch
+  - id: us-columbus-ga
+    city: Columbus
+    admin1: Georgia
+    cc: us
+    type: branch
+  - id: us-concord-ca
+    city: Concord
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-concord-nc
+    city: Concord
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-conroe
+    city: Conroe
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-coral-springs
+    city: Coral Springs
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-corona
+    city: Corona
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-corpus-christi
+    city: Corpus Christi
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-dallas
+    city: Dallas
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-davie
+    city: Davie
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-dayton
+    city: Dayton
+    admin1: Ohio
+    cc: us
+    type: branch
+  - id: us-denton
+    city: Denton
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-durham
+    city: Durham
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-edinburg
+    city: Edinburg
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-el-paso
+    city: El Paso
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-elgin
+    city: Elgin
+    admin1: Illinois
+    cc: us
+    type: branch
+  - id: us-elizabeth
+    city: Elizabeth
+    admin1: New Jersey
+    cc: us
+    type: branch
+  - id: us-elk-grove
+    city: Elk Grove
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-escondido
+    city: Escondido
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-eugene
+    city: Eugene
+    admin1: Oregon
+    cc: us
+    type: branch
+  - id: us-evansville
+    city: Evansville
+    admin1: Indiana
+    cc: us
+    type: branch
+  - id: us-everett
+    city: Everett
+    admin1: Washington
+    cc: us
+    type: branch
+  - id: us-fairfield
+    city: Fairfield
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-fayetteville
+    city: Fayetteville
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-fontana
+    city: Fontana
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-fort-collins
+    city: Fort Collins
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-fort-lauderdale
+    city: Fort Lauderdale
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-fort-wayne
+    city: Fort Wayne
+    admin1: Indiana
+    cc: us
+    type: branch
+  - id: us-fort-worth
+    city: Fort Worth
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-fremont
+    city: Fremont
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-fresno
+    city: Fresno
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-frisco
+    city: Frisco
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-fullerton
+    city: Fullerton
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-gainesville
+    city: Gainesville
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-garden-grove
+    city: Garden Grove
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-garland
+    city: Garland
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-gilbert
+    city: Gilbert
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-glendale-az
+    city: Glendale
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-glendale-ca
+    city: Glendale
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-goodyear
+    city: Goodyear
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-grand-prairie
+    city: Grand Prairie
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-grand-rapids
+    city: Grand Rapids
+    admin1: Michigan
+    cc: us
+    type: branch
+  - id: us-greeley
+    city: Greeley
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-greensboro
+    city: Greensboro
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-gresham
+    city: Gresham
+    admin1: Oregon
+    cc: us
+    type: branch
+  - id: us-hampton
+    city: Hampton
+    admin1: Virginia
+    cc: us
+    type: branch
+  - id: us-hartford
+    city: Hartford
+    admin1: Connecticut
+    cc: us
+    type: branch
+  - id: us-hayward
+    city: Hayward
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-henderson
+    city: Henderson
+    admin1: Nevada
+    cc: us
+    type: branch
+  - id: us-hialeah
+    city: Hialeah
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-high-point
+    city: High Point
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-hillsboro
+    city: Hillsboro
+    admin1: Oregon
+    cc: us
+    type: branch
+  - id: us-hollywood
+    city: Hollywood
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-huntington-beach
+    city: Huntington Beach
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-independence
+    city: Independence
+    admin1: Missouri
+    cc: us
+    type: branch
+  - id: us-irvine
+    city: Irvine
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-irving
+    city: Irving
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-jersey-city
+    city: Jersey City
+    admin1: New Jersey
+    cc: us
+    type: branch
+  - id: us-joliet
+    city: Joliet
+    admin1: Illinois
+    cc: us
+    type: branch
+  - id: us-kansas-city-ks
+    city: Kansas City
+    admin1: Kansas
+    cc: us
+    type: branch
+  - id: us-kent
+    city: Kent
+    admin1: Washington
+    cc: us
+    type: branch
+  - id: us-killeen
+    city: Killeen
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-knoxville
+    city: Knoxville
+    admin1: Tennessee
+    cc: us
+    type: branch
+  - id: us-lafayette
+    city: Lafayette
+    admin1: Louisiana
+    cc: us
+    type: branch
+  - id: us-lakeland
+    city: Lakeland
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-lakewood
+    city: Lakewood
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-lancaster
+    city: Lancaster
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-lansing
+    city: Lansing
+    admin1: Michigan
+    cc: us
+    type: branch
+  - id: us-laredo
+    city: Laredo
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-las-cruces
+    city: Las Cruces
+    admin1: New Mexico
+    cc: us
+    type: branch
+  - id: us-league-city
+    city: League City
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-lewisville
+    city: Lewisville
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-lexington
+    city: Lexington
+    admin1: Kentucky
+    cc: us
+    type: branch
+  - id: us-lincoln
+    city: Lincoln
+    admin1: Nebraska
+    cc: us
+    type: branch
+  - id: us-long-beach
+    city: Long Beach
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-lowell
+    city: Lowell
+    admin1: Massachusetts
+    cc: us
+    type: branch
+  - id: us-lubbock
+    city: Lubbock
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-macon
+    city: Macon
+    admin1: Georgia
+    cc: us
+    type: branch
+  - id: us-madison
+    city: Madison
+    admin1: Wisconsin
+    cc: us
+    type: branch
+  - id: us-mcallen
+    city: McAllen
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-mckinney
+    city: McKinney
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-memphis
+    city: Memphis
+    admin1: Tennessee
+    cc: us
+    type: branch
+  - id: us-menifee
+    city: Menifee
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-meridian
+    city: Meridian
+    admin1: Idaho
+    cc: us
+    type: branch
+  - id: us-mesa
+    city: Mesa
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-mesquite
+    city: Mesquite
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-miami
+    city: Miami
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-miami-gardens
+    city: Miami Gardens
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-midland
+    city: Midland
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-miramar
+    city: Miramar
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-mobile
+    city: Mobile
+    admin1: Alabama
+    cc: us
+    type: branch
+  - id: us-modesto
+    city: Modesto
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-montgomery
+    city: Montgomery
+    admin1: Alabama
+    cc: us
+    type: branch
+  - id: us-moreno-valley
+    city: Moreno Valley
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-murfreesboro
+    city: Murfreesboro
+    admin1: Tennessee
+    cc: us
+    type: branch
+  - id: us-murrieta
+    city: Murrieta
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-nampa
+    city: Nampa
+    admin1: Idaho
+    cc: us
+    type: branch
+  - id: us-naperville
+    city: Naperville
+    admin1: Illinois
+    cc: us
+    type: branch
+  - id: us-new-braunfels
+    city: New Braunfels
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-new-haven
+    city: New Haven
+    admin1: Connecticut
+    cc: us
+    type: branch
+  - id: us-newport-news
+    city: Newport News
+    admin1: Virginia
+    cc: us
+    type: branch
+  - id: us-norfolk
+    city: Norfolk
+    admin1: Virginia
+    cc: us
+    type: branch
+  - id: us-norman
+    city: Norman
+    admin1: Oklahoma
+    cc: us
+    type: branch
+  - id: us-north-charleston
+    city: North Charleston
+    admin1: South Carolina
+    cc: us
+    type: branch
+  - id: us-north-las-vegas
+    city: North Las Vegas
+    admin1: Nevada
+    cc: us
+    type: branch
+  - id: us-oakland
+    city: Oakland
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-oceanside
+    city: Oceanside
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-odessa
+    city: Odessa
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-olathe
+    city: Olathe
+    admin1: Kansas
+    cc: us
+    type: branch
+  - id: us-ontario
+    city: Ontario
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-orange
+    city: Orange
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-orlando
+    city: Orlando
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-overland-park
+    city: Overland Park
+    admin1: Kansas
+    cc: us
+    type: branch
+  - id: us-oxnard
+    city: Oxnard
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-palm-bay
+    city: Palm Bay
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-palmdale
+    city: Palmdale
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-pasadena-ca
+    city: Pasadena
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-pasadena-tx
+    city: Pasadena
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-paterson
+    city: Paterson
+    admin1: New Jersey
+    cc: us
+    type: branch
+  - id: us-pearland
+    city: Pearland
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-pembroke-pines
+    city: Pembroke Pines
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-peoria-az
+    city: Peoria
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-peoria-il
+    city: Peoria
+    admin1: Illinois
+    cc: us
+    type: branch
+  - id: us-pittsburgh
+    city: Pittsburgh
+    admin1: Pennsylvania
+    cc: us
+    type: branch
+  - id: us-plano
+    city: Plano
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-pomona
+    city: Pomona
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-pompano-beach
+    city: Pompano Beach
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-port-st-lucie
+    city: Port St. Lucie
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-provo
+    city: Provo
+    admin1: Utah
+    cc: us
+    type: branch
+  - id: us-pueblo
+    city: Pueblo
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-raleigh
+    city: Raleigh
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-rancho-cucamonga
+    city: Rancho Cucamonga
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-reno
+    city: Reno
+    admin1: Nevada
+    cc: us
+    type: branch
+  - id: us-richardson
+    city: Richardson
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-richmond-ca
+    city: Richmond
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-richmond-va
+    city: Richmond
+    admin1: Virginia
+    cc: us
+    type: branch
+  - id: us-rio-rancho
+    city: Rio Rancho
+    admin1: New Mexico
+    cc: us
+    type: branch
+  - id: us-riverside
+    city: Riverside
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-rochester-mn
+    city: Rochester
+    admin1: Minnesota
+    cc: us
+    type: branch
+  - id: us-rochester-ny
+    city: Rochester
+    admin1: New York
+    cc: us
+    type: branch
+  - id: us-rockford
+    city: Rockford
+    admin1: Illinois
+    cc: us
+    type: branch
+  - id: us-roseville
+    city: Roseville
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-round-rock
+    city: Round Rock
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-sacramento
+    city: Sacramento
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-salem
+    city: Salem
+    admin1: Oregon
+    cc: us
+    type: branch
+  - id: us-salinas
+    city: Salinas
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-san-antonio
+    city: San Antonio
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-san-bernardino
+    city: San Bernardino
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-san-buenaventura-ventura
+    city: San Buenaventura (Ventura)
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-san-diego
+    city: San Diego
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-san-francisco
+    city: San Francisco
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-san-jose
+    city: San Jose
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-santa-ana
+    city: Santa Ana
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-santa-clara
+    city: Santa Clara
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-santa-clarita
+    city: Santa Clarita
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-santa-maria
+    city: Santa Maria
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-santa-rosa
+    city: Santa Rosa
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-savannah
+    city: Savannah
+    admin1: Georgia
+    cc: us
+    type: branch
+  - id: us-scottsdale
+    city: Scottsdale
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-shreveport
+    city: Shreveport
+    admin1: Louisiana
+    cc: us
+    type: branch
+  - id: us-simi-valley
+    city: Simi Valley
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-south-fulton
+    city: South Fulton
+    admin1: Georgia
+    cc: us
+    type: branch
+  - id: us-sparks
+    city: Sparks
+    admin1: Nevada
+    cc: us
+    type: branch
+  - id: us-spokane
+    city: Spokane
+    admin1: Washington
+    cc: us
+    type: branch
+  - id: us-springfield-il
+    city: Springfield
+    admin1: Illinois
+    cc: us
+    type: branch
+  - id: us-springfield-ma
+    city: Springfield
+    admin1: Massachusetts
+    cc: us
+    type: branch
+  - id: us-springfield-mo
+    city: Springfield
+    admin1: Missouri
+    cc: us
+    type: branch
+  - id: us-st-louis
+    city: St. Louis
+    admin1: Missouri
+    cc: us
+    type: branch
+  - id: us-st-paul
+    city: St. Paul
+    admin1: Minnesota
+    cc: us
+    type: branch
+  - id: us-st-petersburg
+    city: St. Petersburg
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-stamford
+    city: Stamford
+    admin1: Connecticut
+    cc: us
+    type: branch
+  - id: us-sterling-heights
+    city: Sterling Heights
+    admin1: Michigan
+    cc: us
+    type: branch
+  - id: us-stockton
+    city: Stockton
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-sunnyvale
+    city: Sunnyvale
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-surprise
+    city: Surprise
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-syracuse
+    city: Syracuse
+    admin1: New York
+    cc: us
+    type: branch
+  - id: us-tacoma
+    city: Tacoma
+    admin1: Washington
+    cc: us
+    type: branch
+  - id: us-tallahassee
+    city: Tallahassee
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-tampa
+    city: Tampa
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-temecula
+    city: Temecula
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-tempe
+    city: Tempe
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-thornton
+    city: Thornton
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-thousand-oaks
+    city: Thousand Oaks
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-toledo
+    city: Toledo
+    admin1: Ohio
+    cc: us
+    type: branch
+  - id: us-topeka
+    city: Topeka
+    admin1: Kansas
+    cc: us
+    type: branch
+  - id: us-torrance
+    city: Torrance
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-tucson
+    city: Tucson
+    admin1: Arizona
+    cc: us
+    type: branch
+  - id: us-tulsa
+    city: Tulsa
+    admin1: Oklahoma
+    cc: us
+    type: branch
+  - id: us-tuscaloosa
+    city: Tuscaloosa
+    admin1: Alabama
+    cc: us
+    type: branch
+  - id: us-tyler
+    city: Tyler
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-vallejo
+    city: Vallejo
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-vancouver
+    city: Vancouver
+    admin1: Washington
+    cc: us
+    type: branch
+  - id: us-victorville
+    city: Victorville
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-visalia
+    city: Visalia
+    admin1: California
+    cc: us
+    type: branch
+  - id: us-waco
+    city: Waco
+    admin1: Texas
+    cc: us
+    type: branch
+  - id: us-warren
+    city: Warren
+    admin1: Michigan
+    cc: us
+    type: branch
+  - id: us-washington
+    city: Washington
+    admin1: District of Columbia
+    cc: us
+    type: branch
+  - id: us-waterbury
+    city: Waterbury
+    admin1: Connecticut
+    cc: us
+    type: branch
+  - id: us-west-jordan
+    city: West Jordan
+    admin1: Utah
+    cc: us
+    type: branch
+  - id: us-west-palm-beach
+    city: West Palm Beach
+    admin1: Florida
+    cc: us
+    type: branch
+  - id: us-west-valley-city
+    city: West Valley City
+    admin1: Utah
+    cc: us
+    type: branch
+  - id: us-westminster
+    city: Westminster
+    admin1: Colorado
+    cc: us
+    type: branch
+  - id: us-wilmington-nc
+    city: Wilmington
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-winston-salem
+    city: Winston-Salem
+    admin1: North Carolina
+    cc: us
+    type: branch
+  - id: us-worcester
+    city: Worcester
+    admin1: Massachusetts
+    cc: us
+    type: branch
+  - id: us-yonkers
+    city: Yonkers
+    admin1: New York
+    cc: us
+    type: branch
+  - id: ae-dubai
+    city: Dubai
+    admin1: Dubai
+    cc: ae
+    type: branch
+  - id: af-kabul
+    city: Kabul
+    admin1: Kabul
+    cc: af
+    type: branch
+  - id: am-yerevan
+    city: Yerevan
+    admin1: Yerevan
+    cc: am
+    type: branch
+  - id: ao-luanda
+    city: Luanda
+    admin1: Luanda
+    cc: ao
+    type: branch
+  - id: ar-buenos-aires
+    city: Buenos Aires
+    admin1: Buenos Aires F.D.
+    cc: ar
+    type: branch
+  - id: at-vienna
+    city: Vienna
+    admin1: Vienna
+    cc: at
+    type: branch
+  - id: au-sydney
+    city: Sydney
+    admin1: New South Wales
+    cc: au
+    type: branch
+  - id: az-baku
+    city: Baku
+    admin1: Baki
+    cc: az
+    type: branch
+  - id: bd-dhaka
+    city: Dhaka
+    admin1: Dhaka Division
+    cc: bd
+    type: branch
+  - id: bf-ouagadougou
+    city: Ouagadougou
+    admin1: Centre
+    cc: bf
+    type: branch
+  - id: bg-sofia
+    city: Sofia
+    admin1: Sofia-Capital
+    cc: bg
+    type: branch
+  - id: bo-la-paz
+    city: La Paz
+    admin1: La Paz Department
+    cc: bo
+    type: branch
+  - id: br-sao-paulo
+    city: São Paulo
+    admin1: São Paulo
+    cc: br
+    type: branch
+  - id: by-minsk
+    city: Minsk
+    admin1: Minsk City
+    cc: by
+    type: branch
+  - id: ca-toronto
+    city: Toronto
+    admin1: Ontario
+    cc: ca
+    type: branch
+  - id: cd-kinshasa
+    city: Kinshasa
+    admin1: Kinshasa
+    cc: cd
+    type: branch
+  - id: cg-brazzaville
+    city: Brazzaville
+    admin1: Brazzaville
+    cc: cg
+    type: branch
+  - id: ci-abidjan
+    city: Abidjan
+    admin1: Abidjan Autonomous District
+    cc: ci
+    type: branch
+  - id: cl-santiago
+    city: Santiago
+    admin1: Santiago Metropolitan
+    cc: cl
+    type: branch
+  - id: cm-douala
+    city: Douala
+    admin1: Littoral
+    cc: cm
+    type: branch
+  - id: cn-chongqing
+    city: Chongqing
+    admin1: Chongqing
+    cc: cn
+    type: branch
+  - id: co-bogota
+    city: Bogotá
+    admin1: Bogota D.C.
+    cc: co
+    type: branch
+  - id: cu-havana
+    city: Havana
+    admin1: Havana
+    cc: cu
+    type: branch
+  - id: cz-prague
+    city: Prague
+    admin1: Prague
+    cc: cz
+    type: branch
+  - id: de-berlin
+    city: Berlin
+    admin1: State of Berlin
+    cc: de
+    type: branch
+  - id: dk-copenhagen
+    city: Copenhagen
+    admin1: Capital Region
+    cc: dk
+    type: branch
+  - id: do-santo-domingo
+    city: Santo Domingo
+    admin1: Nacional
+    cc: do
+    type: branch
+  - id: dz-algiers
+    city: Algiers
+    admin1: Algiers
+    cc: dz
+    type: branch
+  - id: ec-quito
+    city: Quito
+    admin1: Pichincha
+    cc: ec
+    type: branch
+  - id: eg-cairo
+    city: Cairo
+    admin1: Cairo
+    cc: eg
+    type: branch
+  - id: es-madrid
+    city: Madrid
+    admin1: Madrid
+    cc: es
+    type: branch
+  - id: et-addis-ababa
+    city: Addis Ababa
+    admin1: Addis Ababa
+    cc: et
+    type: branch
+  - id: fr-paris
+    city: Paris
+    admin1: Île-de-France
+    cc: fr
+    type: branch
+  - id: gb-london
+    city: London
+    admin1: England
+    cc: gb
+    type: branch
+  - id: gh-kumasi
+    city: Kumasi
+    admin1: Ashanti
+    cc: gh
+    type: branch
+  - id: gn-conakry
+    city: Conakry
+    admin1: Conakry
+    cc: gn
+    type: branch
+  - id: hk-hong-kong
+    city: Hong Kong
+    admin1: ""
+    cc: hk
+    type: branch
+  - id: ht-port-au-prince
+    city: Port-au-Prince
+    admin1: Ouest
+    cc: ht
+    type: branch
+  - id: hu-budapest
+    city: Budapest
+    admin1: Budapest
+    cc: hu
+    type: branch
+  - id: id-jakarta
+    city: Jakarta
+    admin1: Jakarta
+    cc: id
+    type: branch
+  - id: in-mumbai
+    city: Mumbai
+    admin1: Maharashtra
+    cc: in
+    type: branch
+  - id: iq-baghdad
+    city: Baghdad
+    admin1: Baghdad
+    cc: iq
+    type: branch
+  - id: ir-tehran
+    city: Tehran
+    admin1: Tehran
+    cc: ir
+    type: branch
+  - id: it-rome
+    city: Rome
+    admin1: Lazio
+    cc: it
+    type: branch
+  - id: jo-amman
+    city: Amman
+    admin1: Amman
+    cc: jo
+    type: branch
+  - id: jp-tokyo
+    city: Tokyo
+    admin1: Tokyo
+    cc: jp
+    type: branch
+  - id: ke-nairobi
+    city: Nairobi
+    admin1: Nairobi County
+    cc: ke
+    type: branch
+  - id: kh-phnom-penh
+    city: Phnom Penh
+    admin1: Phnom Penh
+    cc: kh
+    type: branch
+  - id: kp-pyongyang
+    city: Pyongyang
+    admin1: Pyongyang
+    cc: kp
+    type: branch
+  - id: kr-seoul
+    city: Seoul
+    admin1: Seoul
+    cc: kr
+    type: branch
+  - id: kz-almaty
+    city: Almaty
+    admin1: Almaty
+    cc: kz
+    type: branch
+  - id: lb-beirut
+    city: Beirut
+    admin1: Beirut
+    cc: lb
+    type: branch
+  - id: lr-monrovia
+    city: Monrovia
+    admin1: Montserrado County
+    cc: lr
+    type: branch
+  - id: ly-tripoli
+    city: Tripoli
+    admin1: Tripoli
+    cc: ly
+    type: branch
+  - id: ma-casablanca
+    city: Casablanca
+    admin1: Casablanca-Settat
+    cc: ma
+    type: branch
+  - id: mg-antananarivo
+    city: Antananarivo
+    admin1: Analamanga
+    cc: mg
+    type: branch
+  - id: ml-bamako
+    city: Bamako
+    admin1: Bamako
+    cc: ml
+    type: branch
+  - id: mm-yangon
+    city: Yangon
+    admin1: Yangon
+    cc: mm
+    type: branch
+  - id: mr-nouakchott
+    city: Nouakchott
+    admin1: ""
+    cc: mr
+    type: branch
+  - id: mw-lilongwe
+    city: Lilongwe
+    admin1: Central Region
+    cc: mw
+    type: branch
+  - id: mx-mexico-city
+    city: Mexico City
+    admin1: Mexico City
+    cc: mx
+    type: branch
+  - id: my-kuala-lumpur
+    city: Kuala Lumpur
+    admin1: Kuala Lumpur
+    cc: my
+    type: branch
+  - id: mz-maputo
+    city: Maputo
+    admin1: Maputo City
+    cc: mz
+    type: branch
+  - id: ne-niamey
+    city: Niamey
+    admin1: Niamey
+    cc: ne
+    type: branch
+  - id: ng-lagos
+    city: Lagos
+    admin1: Lagos
+    cc: ng
+    type: branch
+  - id: no-oslo
+    city: Oslo
+    admin1: Oslo
+    cc: no
+    type: branch
+  - id: np-kathmandu
+    city: Kathmandu
+    admin1: Bagmati Province
+    cc: np
+    type: branch
+  - id: nz-auckland
+    city: Auckland
+    admin1: Auckland
+    cc: nz
+    type: branch
+  - id: pe-lima
+    city: Lima
+    admin1: Lima Province
+    cc: pe
+    type: branch
+  - id: ph-quezon-city
+    city: Quezon City
+    admin1: National Capital Region
+    cc: ph
+    type: branch
+  - id: pk-lahore
+    city: Lahore
+    admin1: Punjab
+    cc: pk
+    type: branch
+  - id: pl-warsaw
+    city: Warsaw
+    admin1: Mazovia
+    cc: pl
+    type: branch
+  - id: py-asuncion
+    city: Asunción
+    admin1: Asuncion
+    cc: py
+    type: branch
+  - id: ro-bucharest
+    city: Bucharest
+    admin1: Bucharest
+    cc: ro
+    type: branch
+  - id: rs-belgrade
+    city: Belgrade
+    admin1: Central Serbia
+    cc: rs
+    type: branch
+  - id: ru-moscow
+    city: Moscow
+    admin1: Moscow
+    cc: ru
+    type: branch
+  - id: rw-kigali
+    city: Kigali
+    admin1: Kigali
+    cc: rw
+    type: branch
+  - id: sa-jeddah
+    city: Jeddah
+    admin1: Mecca Region
+    cc: sa
+    type: branch
+  - id: sd-khartoum
+    city: Khartoum
+    admin1: Khartoum
+    cc: sd
+    type: branch
+  - id: se-stockholm
+    city: Stockholm
+    admin1: Stockholm
+    cc: se
+    type: branch
+  - id: sg-singapore
+    city: Singapore
+    admin1: ""
+    cc: sg
+    type: branch
+  - id: sn-dakar
+    city: Dakar
+    admin1: Dakar
+    cc: sn
+    type: branch
+  - id: so-mogadishu
+    city: Mogadishu
+    admin1: Banaadir
+    cc: so
+    type: branch
+  - id: sy-aleppo
+    city: Aleppo
+    admin1: Aleppo
+    cc: sy
+    type: branch
+  - id: td-n-djamena
+    city: "N'Djamena"
+    admin1: N’Djaména
+    cc: td
+    type: branch
+  - id: tg-lome
+    city: Lomé
+    admin1: Maritime
+    cc: tg
+    type: branch
+  - id: th-bangkok
+    city: Bangkok
+    admin1: Bangkok
+    cc: th
+    type: branch
+  - id: tr-istanbul
+    city: Istanbul
+    admin1: Istanbul
+    cc: tr
+    type: branch
+  - id: tw-taipei
+    city: Taipei
+    admin1: Taiwan
+    cc: tw
+    type: branch
+  - id: tz-dar-es-salaam
+    city: Dar es Salaam
+    admin1: Dar es Salaam Region
+    cc: tz
+    type: branch
+  - id: ua-kyiv
+    city: Kyiv
+    admin1: Kyiv City
+    cc: ua
+    type: branch
+  - id: ug-kampala
+    city: Kampala
+    admin1: Central Region
+    cc: ug
+    type: branch
+  - id: uy-montevideo
+    city: Montevideo
+    admin1: Montevideo Department
+    cc: uy
+    type: branch
+  - id: uz-tashkent
+    city: Tashkent
+    admin1: Tashkent
+    cc: uz
+    type: branch
+  - id: ve-caracas
+    city: Caracas
+    admin1: Distrito Federal
+    cc: ve
+    type: branch
+  - id: vn-ho-chi-minh-city
+    city: Ho Chi Minh City
+    admin1: Ho Chi Minh City (HCMC)
+    cc: vn
+    type: branch
+  - id: ye-sanaa
+    city: Sanaa
+    admin1: Amanat Alasimah
+    cc: ye
+    type: branch
+  - id: za-johannesburg
+    city: Johannesburg
+    admin1: Gauteng
+    cc: za
+    type: branch
+  - id: zm-lusaka
+    city: Lusaka
+    admin1: Lusaka Province
+    cc: zm
+    type: branch
+  - id: zw-harare
+    city: Harare
+    admin1: Harare
+    cc: zw
+    type: branch

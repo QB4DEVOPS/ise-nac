@@ -1,0 +1,2 @@
+﻿order,name,protocol,identity_source,if_auth_fail,if_user_not_found,if_process_fail
+1,TACACS Internal Users,TACACS,ISE Internal Users,REJECT,REJECT,DROP
