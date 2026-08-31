@@ -1,6 +1,7 @@
 # Generated ISE-as-code feed. Do not edit by hand.
 # Rebuild: python3 scripts/generate_nac.py
 # Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv
+# TACACS objects: command_sets.yaml shell_profiles.yaml
 
 lab:
   pan:
@@ -2221,41 +2222,282 @@ tacacs_authz:
     shell_profile: T1
     time_bound: "no"
 
+# IOS-XE access-switch TACACS command sets. Source for Terraform and nac.yaml.
+# grant/command/arguments match CiscoDevNet/ise ise_tacacs_command_set.
+# permit_unmatched is false except T4 (full device-admin).
+# No reload, aaa, or username in any set except T4 (unmatched permitted).
 command_sets:
-  - name: auditor_external
-    permit_unmatched: true
-    commands: []
-  - name: auditor_internal
-    permit_unmatched: true
-    commands: []
-  - name: vendor
-    permit_unmatched: true
-    commands: []
-  - name: contractor
-    permit_unmatched: true
-    commands: []
-  - name: T4
-    permit_unmatched: true
-    commands: []
-  - name: T3
-    permit_unmatched: true
-    commands: []
-  - name: T2
-    permit_unmatched: true
-    commands: []
   - name: T1
+    description: Read-only access-switch ops (show, ping, traceroute). No configure.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: ver(sion)?.*
+      - grant: PERMIT
+        command: show
+        arguments: ip int(erface)? br(ief)?.*
+      - grant: PERMIT
+        command: show
+        arguments: run(ning-config)?.*
+      - grant: PERMIT
+        command: show
+        arguments: log(ging)?.*
+      - grant: PERMIT
+        command: ping
+        arguments: ".*"
+      - grant: PERMIT
+        command: traceroute
+        arguments: ".*"
+
+  - name: T2
+    description: T1 plus access-port description, shutdown, and access VLAN. No wr mem.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: ver(sion)?.*
+      - grant: PERMIT
+        command: show
+        arguments: ip int(erface)? br(ief)?.*
+      - grant: PERMIT
+        command: show
+        arguments: run(ning-config)?.*
+      - grant: PERMIT
+        command: show
+        arguments: log(ging)?.*
+      - grant: PERMIT
+        command: ping
+        arguments: ".*"
+      - grant: PERMIT
+        command: traceroute
+        arguments: ".*"
+      - grant: PERMIT
+        command: configure
+        arguments: t(erminal)?
+      - grant: PERMIT
+        command: config
+        arguments: t(erminal)?
+      - grant: PERMIT
+        command: interface
+        arguments: ".*"
+      - grant: PERMIT
+        command: description
+        arguments: ".*"
+      - grant: PERMIT
+        command: shutdown
+        arguments: ".*"
+      - grant: PERMIT
+        command: "no"
+        arguments: shutdown
+      - grant: PERMIT
+        command: switchport
+        arguments: access vlan .*
+      - grant: PERMIT
+        command: end
+        arguments: ""
+      - grant: PERMIT
+        command: exit
+        arguments: ""
+
+  - name: T3
+    description: T2 plus VLAN, spanning-tree, and copy run start. No reload, aaa, username.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: ver(sion)?.*
+      - grant: PERMIT
+        command: show
+        arguments: ip int(erface)? br(ief)?.*
+      - grant: PERMIT
+        command: show
+        arguments: run(ning-config)?.*
+      - grant: PERMIT
+        command: show
+        arguments: log(ging)?.*
+      - grant: PERMIT
+        command: ping
+        arguments: ".*"
+      - grant: PERMIT
+        command: traceroute
+        arguments: ".*"
+      - grant: PERMIT
+        command: configure
+        arguments: t(erminal)?
+      - grant: PERMIT
+        command: config
+        arguments: t(erminal)?
+      - grant: PERMIT
+        command: interface
+        arguments: ".*"
+      - grant: PERMIT
+        command: description
+        arguments: ".*"
+      - grant: PERMIT
+        command: shutdown
+        arguments: ".*"
+      - grant: PERMIT
+        command: "no"
+        arguments: (shutdown|spanning-tree .*|vlan .*)
+      - grant: PERMIT
+        command: switchport
+        arguments: access vlan .*
+      - grant: PERMIT
+        command: vlan
+        arguments: ".*"
+      - grant: PERMIT
+        command: name
+        arguments: ".*"
+      - grant: PERMIT
+        command: spanning-tree
+        arguments: ".*"
+      - grant: PERMIT
+        command: copy
+        arguments: running-config startup-config
+      - grant: PERMIT
+        command: end
+        arguments: ""
+      - grant: PERMIT
+        command: exit
+        arguments: ""
+
+  - name: T4
+    description: Full device-admin. Unmatched IOS commands are permitted (privilege 15).
     permit_unmatched: true
     commands: []
 
-shell_profiles:
-  - name: auditor_external
-  - name: auditor_internal
   - name: vendor
+    description: Show plus interface description only. No shutdown, wr mem, reload, aaa, username.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: ".*"
+      - grant: PERMIT
+        command: configure
+        arguments: t(erminal)?
+      - grant: PERMIT
+        command: config
+        arguments: t(erminal)?
+      - grant: PERMIT
+        command: interface
+        arguments: ".*"
+      - grant: PERMIT
+        command: description
+        arguments: ".*"
+      - grant: PERMIT
+        command: end
+        arguments: ""
+      - grant: PERMIT
+        command: exit
+        arguments: ""
+
   - name: contractor
-  - name: T4
-  - name: T3
-  - name: T2
+    description: Same as T2. Access-port description, shutdown, and access VLAN. No wr mem.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: ver(sion)?.*
+      - grant: PERMIT
+        command: show
+        arguments: ip int(erface)? br(ief)?.*
+      - grant: PERMIT
+        command: show
+        arguments: run(ning-config)?.*
+      - grant: PERMIT
+        command: show
+        arguments: log(ging)?.*
+      - grant: PERMIT
+        command: ping
+        arguments: ".*"
+      - grant: PERMIT
+        command: traceroute
+        arguments: ".*"
+      - grant: PERMIT
+        command: configure
+        arguments: t(erminal)?
+      - grant: PERMIT
+        command: config
+        arguments: t(erminal)?
+      - grant: PERMIT
+        command: interface
+        arguments: ".*"
+      - grant: PERMIT
+        command: description
+        arguments: ".*"
+      - grant: PERMIT
+        command: shutdown
+        arguments: ".*"
+      - grant: PERMIT
+        command: "no"
+        arguments: shutdown
+      - grant: PERMIT
+        command: switchport
+        arguments: access vlan .*
+      - grant: PERMIT
+        command: end
+        arguments: ""
+      - grant: PERMIT
+        command: exit
+        arguments: ""
+
+  - name: auditor_internal
+    description: Internal auditor read-only. show run, version, inventory, logging. No config.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: run(ning-config)?.*
+      - grant: PERMIT
+        command: show
+        arguments: ver(sion)?.*
+      - grant: PERMIT
+        command: show
+        arguments: inv(entory)?.*
+      - grant: PERMIT
+        command: show
+        arguments: log(ging)?.*
+
+  - name: auditor_external
+    description: External auditor. show version and inventory only. No show run, no config.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: ver(sion)?.*
+      - grant: PERMIT
+        command: show
+        arguments: inv(entory)?.*
+
+# TACACS shell profiles. Source for Terraform and nac.yaml.
+# auditor_* and T1 are priv-lvl 1. T2/T3/T4/vendor/contractor are priv-lvl 15.
+shell_profiles:
   - name: T1
+    description: Read-only device admin (privilege 1).
+    priv_lvl: 1
+  - name: T2
+    description: Access-switch interface admin (privilege 15).
+    priv_lvl: 15
+  - name: T3
+    description: Access-switch VLAN and spanning-tree admin (privilege 15).
+    priv_lvl: 15
+  - name: T4
+    description: Full device-admin (privilege 15).
+    priv_lvl: 15
+  - name: vendor
+    description: Vendor interface-description admin (privilege 15).
+    priv_lvl: 15
+  - name: contractor
+    description: Contractor interface admin, same as T2 (privilege 15).
+    priv_lvl: 15
+  - name: auditor_internal
+    description: Internal auditor read-only (privilege 1).
+    priv_lvl: 1
+  - name: auditor_external
+    description: External auditor read-only (privilege 1).
+    priv_lvl: 1
 
 devices:
   - hostname: ushun-sw-01

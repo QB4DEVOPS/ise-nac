@@ -3,7 +3,7 @@ repos:
     rev: v2.0.0
     hooks:
       - id: nac-validate
-        files: '^(nac|sites)\.yaml$'
+        files: '^(nac|sites|command_sets|shell_profiles)\.yaml$'
         pass_filenames: false
         args:
           - "-s"

@@ -27,24 +27,31 @@ resource "ise_user_identity_group" "this" {
   description = "Device-admin identity group from tacacs_authz.csv"
 }
 
-# Names only. CSVs have no IOS command contents. Empty + deny-unmatched is invalid on ISE.
+# IOS-XE command sets from command_sets.yaml. T4 may permit unmatched; others do not.
 resource "ise_tacacs_command_set" "this" {
   for_each         = local.command_sets
   name             = local.ise_tacacs_name[each.value]
-  description      = "Name from tacacs_authz.csv. Command contents were not provided."
-  permit_unmatched = true
+  description      = try(local.command_set_by_name[local.ise_tacacs_name[each.value]].description, "TACACS command set ${local.ise_tacacs_name[each.value]}")
+  permit_unmatched = try(local.command_set_by_name[local.ise_tacacs_name[each.value]].permit_unmatched, false)
+  commands = [
+    for c in try(local.command_set_by_name[local.ise_tacacs_name[each.value]].commands, []) : {
+      grant     = c.grant
+      command   = c.command
+      arguments = c.arguments
+    }
+  ]
 }
 
-# Minimal valid ISE TACACS profile (priv-lvl 1 stub). Empty name-only is invalid on ISE 3.5.
+# Shell profiles from shell_profiles.yaml (priv-lvl 1 for T1/auditor_*; 15 otherwise).
 resource "ise_tacacs_profile" "this" {
   for_each    = local.shell_profiles
   name        = local.ise_tacacs_name[each.value]
-  description = "Name from tacacs_authz.csv. Privilege 1 lab stub; no full shell attributes."
+  description = try(local.shell_profile_by_name[local.ise_tacacs_name[each.value]].description, "TACACS shell profile ${local.ise_tacacs_name[each.value]}")
   session_attributes = [
     {
       type  = "MANDATORY"
       name  = "priv-lvl"
-      value = "1"
+      value = tostring(local.shell_profile_by_name[local.ise_tacacs_name[each.value]].priv_lvl)
     }
   ]
 }

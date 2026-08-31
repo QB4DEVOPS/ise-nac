@@ -1,7 +1,8 @@
-"""Resolve TACACS names Terraform actually POSTs to ISE.
+"""Resolve TACACS names and command sets Terraform actually POSTs to ISE.
 
 nac.yaml can drift from apply. Terraform csvdecodes tacacs_authz.csv, then
-sets resource name = local.ise_tacacs_name[each.value] (hyphen → underscore).
+sets resource name = local.ise_tacacs_name[each.value] (hyphen → underscore),
+and yamldecodes command_sets.yaml / shell_profiles.yaml.
 NDG and identity-group hyphens are out of scope.
 """
 
@@ -16,6 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 AUTHZ_CSV = ROOT / "tacacs_authz.csv"
 LOCALS_TF = ROOT / "locals.tf"
 MAIN_TF = ROOT / "main.tf"
+COMMAND_SETS_YAML = ROOT / "command_sets.yaml"
+SHELL_PROFILES_YAML = ROOT / "shell_profiles.yaml"
 
 _LOCAL_COL = re.compile(
     r"(command_sets|shell_profiles)\s*=\s*toset\(\[\s*"
@@ -119,12 +122,49 @@ def posted_names(kind: str) -> list[tuple[str, str]]:
     return out
 
 
+def _load_yaml_list(path: Path, key: str) -> list[dict[str, Any]]:
+    if not path.is_file():
+        return []
+    try:
+        import yaml
+    except ImportError:
+        return []
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if not isinstance(data, dict):
+        return []
+    items = data.get(key) or []
+    if not isinstance(items, list):
+        return []
+    return [i for i in items if isinstance(i, dict)]
+
+
+def command_set_defs() -> dict[str, dict[str, Any]]:
+    """Command sets Terraform yamldecodes from command_sets.yaml."""
+    out: dict[str, dict[str, Any]] = {}
+    for item in _load_yaml_list(COMMAND_SETS_YAML, "command_sets"):
+        name = item.get("name")
+        if isinstance(name, str) and name:
+            out[name] = item
+    return out
+
+
+def shell_profile_defs() -> dict[str, dict[str, Any]]:
+    out: dict[str, dict[str, Any]] = {}
+    for item in _load_yaml_list(SHELL_PROFILES_YAML, "shell_profiles"):
+        name = item.get("name")
+        if isinstance(name, str) and name:
+            out[name] = item
+    return out
+
+
 def command_set_resource() -> dict[str, Any]:
     """Attributes of resource ise_tacacs_command_set that Terraform POSTs."""
     text = MAIN_TF.read_text(encoding="utf-8") if MAIN_TF.is_file() else ""
+    tf_all = _tf_text()
     result: dict[str, Any] = {
         "permit_unmatched": None,
         "has_commands": False,
+        "uses_command_sets_yaml": "command_sets.yaml" in tf_all,
         "path": "main.tf:ise_tacacs_command_set",
     }
     for m in _RESOURCE.finditer(text):
@@ -134,6 +174,8 @@ def command_set_resource() -> dict[str, Any]:
         pm = re.search(r"permit_unmatched\s*=\s*(true|false)", block)
         if pm:
             result["permit_unmatched"] = pm.group(1) == "true"
+        elif re.search(r"permit_unmatched\s*=", block):
+            result["permit_unmatched"] = "per-set"
         result["has_commands"] = bool(
             re.search(r"\bcommands\s*=", block) or re.search(r"\bcommand\s*\{", block)
         )

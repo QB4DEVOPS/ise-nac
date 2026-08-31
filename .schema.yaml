@@ -68,8 +68,9 @@ command_set:
 tacacs_command:
   command: str()
   arguments: str(required=False)
-  grant: enum('permit', 'deny', required=False)
+  grant: enum('PERMIT', 'DENY', 'DENY_ALWAYS', required=False)
 
 shell_profile:
   name: str()
   description: str(required=False)
+  priv_lvl: int(required=False)
