@@ -62,9 +62,12 @@ assume Active Directory.
 
 `network_access_authc.csv` / `network_access_authz.csv` are wired 802.1X + MAB
 policy rules in ISE push order (first match wins), same style as the TACACS CSVs.
-YAML originals: `endpoint_identity_groups.yaml`, `allowed_protocols.yaml`,
-`authorization_profiles.yaml`, `network_access.yaml`. Groups only (Workstation,
-IP-Phone, Printer). No MAC list. No guest.
+YAML originals: `endpoint_identity_groups.yaml`, `endpoints.yaml`,
+`allowed_protocols.yaml`, `authorization_profiles.yaml`, `network_access.yaml`.
+Eleven groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS,
+Powerstrips, Linux, Windows, RFID_Readers). `endpoints.csv` is 110 fake
+locally-administered lab MACs (10 per group) from
+`scripts/generate_endpoints.py`. Not hardware. No guest. No 15k dump.
 
 `tacacs_authz.csv` is TACACS authorization rules in ISE push order (first match
 wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-bound,

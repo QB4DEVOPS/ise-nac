@@ -1,8 +1,8 @@
 # Generated ISE-as-code feed. Do not edit by hand.
 # Rebuild: python3 scripts/generate_nac.py
-# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv
+# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv endpoints.csv
 # TACACS objects: command_sets.yaml shell_profiles.yaml
-# Network Access: endpoint_identity_groups.yaml allowed_protocols.yaml authorization_profiles.yaml
+# Network Access: endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml
 #   network_access.yaml network_access_authc.csv network_access_authz.csv
 # Location NDGs: type-level in location_ndgs.yaml; state/city from sites.yaml
 
@@ -4318,17 +4318,49 @@ network_access_authc:
 
 network_access_authz:
   - order: 1
-    name: ip-phone
-    endpoint_identity_group: IP-Phone
+    name: phones
+    endpoint_identity_group: Phones
     profile: Wired_Voice
   - order: 2
-    name: workstation
-    endpoint_identity_group: Workstation
-    profile: Wired_Data
-  - order: 3
-    name: printer
-    endpoint_identity_group: Printer
+    name: printers
+    endpoint_identity_group: Printers
     profile: Wired_Printer
+  - order: 3
+    name: ap
+    endpoint_identity_group: AP
+    profile: Wired_Data
+  - order: 4
+    name: tvs
+    endpoint_identity_group: TVs
+    profile: Wired_Data
+  - order: 5
+    name: badge_readers
+    endpoint_identity_group: Badge_Readers
+    profile: Wired_Data
+  - order: 6
+    name: cameras
+    endpoint_identity_group: Cameras
+    profile: Wired_Data
+  - order: 7
+    name: ups
+    endpoint_identity_group: UPS
+    profile: Wired_Data
+  - order: 8
+    name: powerstrips
+    endpoint_identity_group: Powerstrips
+    profile: Wired_Data
+  - order: 9
+    name: linux
+    endpoint_identity_group: Linux
+    profile: Wired_Data
+  - order: 10
+    name: windows
+    endpoint_identity_group: Windows
+    profile: Wired_Data
+  - order: 11
+    name: rfid_readers
+    endpoint_identity_group: RFID_Readers
+    profile: Wired_Data
 
 # IOS-XE access-switch TACACS command sets. Source for Terraform and nac.yaml.
 # CiscoDevNet/ise 0.3.4 ise_tacacs_command_set: grant, command, arguments.
@@ -4645,20 +4677,384 @@ shell_profiles:
         name: priv-lvl
         value: "1"
 
-# Empty endpoint identity groups. No MAC list. No guest.
+# Endpoint identity groups. 11 groups. Guest stays out.
 # CiscoDevNet/ise 0.3.4: ise_endpoint_identity_group (name, description, system_defined).
 # https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
-# Default endpoint_count=0. Do not generate 300k MACs. ise_endpoint is not used.
+# Replaces Workstation / IP-Phone / Printer. 10 lab MACs each in endpoints.csv.
+# Default endpoint_count=110. Groups-only: TF_VAR_endpoint_count=0.
 endpoint_identity_groups:
-  - name: Workstation
-    description: Wired 802.1X workstations. Empty group. No endpoints.
+  - name: Phones
+    description: Wired IP phones. Voice VLAN 20. 10 lab MACs.
     system_defined: false
-  - name: IP-Phone
-    description: Wired IP phones. Empty group. No endpoints.
+  - name: AP
+    description: Access points. Data VLAN 10. 10 lab MACs.
     system_defined: false
-  - name: Printer
-    description: Wired MAB printers. Empty group. No endpoints.
+  - name: Printers
+    description: Wired MAB printers. VLAN 30. 10 lab MACs.
     system_defined: false
+  - name: TVs
+    description: Displays. Data VLAN 10. 10 lab MACs.
+    system_defined: false
+  - name: Badge_Readers
+    description: Badge readers. Data VLAN 10. 10 lab MACs.
+    system_defined: false
+  - name: Cameras
+    description: Cameras. Data VLAN 10. 10 lab MACs.
+    system_defined: false
+  - name: UPS
+    description: UPS. Data VLAN 10. 10 lab MACs.
+    system_defined: false
+  - name: Powerstrips
+    description: Power strips. Data VLAN 10. 10 lab MACs.
+    system_defined: false
+  - name: Linux
+    description: Linux hosts. Data VLAN 10. 10 lab MACs.
+    system_defined: false
+  - name: Windows
+    description: Windows hosts. Data VLAN 10. 10 lab MACs.
+    system_defined: false
+  - name: RFID_Readers
+    description: RFID readers. Data VLAN 10. 10 lab MACs.
+    system_defined: false
+
+# Generated lab endpoints. Do not edit by hand.
+# Rebuild: python3 scripts/generate_endpoints.py
+# Fake MACs. Locally administered unicast (first octet 02). Not hardware.
+# 11 groups × 10 MACs = 110. No guest. No 15k dump.
+# CiscoDevNet/ise 0.3.4 ise_endpoint: name, mac, group_id,
+# static_group_assignment, static_profile_assignment.
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint
+endpoints:
+  - mac: 02:00:01:00:00:01
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:02
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:03
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:04
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:05
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:06
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:07
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:08
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:09
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:01:00:00:0a
+    endpoint_identity_group: Phones
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:01
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:02
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:03
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:04
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:05
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:06
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:07
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:08
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:09
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:02:00:00:0a
+    endpoint_identity_group: AP
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:01
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:02
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:03
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:04
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:05
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:06
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:07
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:08
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:09
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:03:00:00:0a
+    endpoint_identity_group: Printers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:01
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:02
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:03
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:04
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:05
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:06
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:07
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:08
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:09
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:04:00:00:0a
+    endpoint_identity_group: TVs
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:01
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:02
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:03
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:04
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:05
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:06
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:07
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:08
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:09
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:05:00:00:0a
+    endpoint_identity_group: Badge_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:01
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:02
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:03
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:04
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:05
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:06
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:07
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:08
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:09
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:06:00:00:0a
+    endpoint_identity_group: Cameras
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:01
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:02
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:03
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:04
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:05
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:06
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:07
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:08
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:09
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:07:00:00:0a
+    endpoint_identity_group: UPS
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:01
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:02
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:03
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:04
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:05
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:06
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:07
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:08
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:09
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:08:00:00:0a
+    endpoint_identity_group: Powerstrips
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:01
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:02
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:03
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:04
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:05
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:06
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:07
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:08
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:09
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:09:00:00:0a
+    endpoint_identity_group: Linux
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:01
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:02
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:03
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:04
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:05
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:06
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:07
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:08
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:09
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0a:00:00:0a
+    endpoint_identity_group: Windows
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:01
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:02
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:03
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:04
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:05
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:06
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:07
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:08
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:09
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
+  - mac: 02:00:0b:00:00:0a
+    endpoint_identity_group: RFID_Readers
+    description: Lab MAC. Locally administered unicast (02). Not hardware.
 
 # Network Access Allowed Protocols. Not TACACS (that is ise_allowed_protocols_tacacs).
 # CiscoDevNet/ise 0.3.4: ise_allowed_protocols.

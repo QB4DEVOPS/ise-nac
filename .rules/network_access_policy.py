@@ -1,13 +1,14 @@
 """FAIL unless wired 802.1X + MAB Network Access policy matches the CoS lock.
 
 Checks YAML/CSV sources and the Terraform that POSTs to ISE. Device Admin
-TACACS stays as-is. No guest. No MAC list. endpoint_count stays 0.
+TACACS stays as-is. No guest. 11 groups × 10 fake lab MACs = 110.
 """
 
 from __future__ import annotations
 
 import csv
 import re
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +17,8 @@ from nac_validate import RuleBase, Violation
 
 _ROOT = Path(__file__).resolve().parents[1]
 _GROUPS_YAML = _ROOT / "endpoint_identity_groups.yaml"
+_ENDPOINTS_YAML = _ROOT / "endpoints.yaml"
+_ENDPOINTS_CSV = _ROOT / "endpoints.csv"
 _PROTOCOLS_YAML = _ROOT / "allowed_protocols.yaml"
 _PROFILES_YAML = _ROOT / "authorization_profiles.yaml"
 _POLICY_YAML = _ROOT / "network_access.yaml"
@@ -26,7 +29,35 @@ _NADS_TF = _ROOT / "nads.tf"
 _VARS_TF = _ROOT / "variables.tf"
 _MAIN_TF = _ROOT / "main.tf"
 
-_LOCKED_GROUPS = ("Workstation", "IP-Phone", "Printer")
+_LOCKED_GROUPS = (
+    "Phones",
+    "AP",
+    "Printers",
+    "TVs",
+    "Badge_Readers",
+    "Cameras",
+    "UPS",
+    "Powerstrips",
+    "Linux",
+    "Windows",
+    "RFID_Readers",
+)
+_REMOVED_GROUPS = ("Workstation", "IP-Phone", "Printer")
+_MACS_PER_GROUP = 10
+_ENDPOINT_TOTAL = len(_LOCKED_GROUPS) * _MACS_PER_GROUP
+_AUTHZ_ORDER = (
+    ("phones", "Phones", "Wired_Voice"),
+    ("printers", "Printers", "Wired_Printer"),
+    ("ap", "AP", "Wired_Data"),
+    ("tvs", "TVs", "Wired_Data"),
+    ("badge_readers", "Badge_Readers", "Wired_Data"),
+    ("cameras", "Cameras", "Wired_Data"),
+    ("ups", "UPS", "Wired_Data"),
+    ("powerstrips", "Powerstrips", "Wired_Data"),
+    ("linux", "Linux", "Wired_Data"),
+    ("windows", "Windows", "Wired_Data"),
+    ("rfid_readers", "RFID_Readers", "Wired_Data"),
+)
 _GUEST_RE = re.compile(r"guest", re.I)
 _ENDPOINT_RES = re.compile(r'resource\s+"ise_endpoint"\s+')
 _NA_POLICY_RES = re.compile(r'resource\s+"ise_network_access_policy_set"\s+"([^"]+)"')
@@ -37,7 +68,8 @@ _AUTHC_RANK = re.compile(r'resource\s+"ise_network_access_authentication_rule_up
 _AUTHZ_RANK = re.compile(r'resource\s+"ise_network_access_authorization_rule_update_ranks"')
 _NAD_PROTO = re.compile(r'authentication_network_protocol\s+=\s+"RADIUS"')
 _NAD_TACACS_SECRET = re.compile(r"tacacs_shared_secret\s+=")
-_ENDPOINT_DEFAULT = re.compile(r'variable\s+"endpoint_count"[\s\S]*?default\s+=\s+0', re.M)
+_ENDPOINT_DEFAULT = re.compile(r'variable\s+"endpoint_count"[\s\S]*?default\s+=\s+110', re.M)
+_MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
 
 
 def _load_yaml(path: Path, key: str) -> list[dict[str, Any]]:
@@ -64,29 +96,39 @@ def _names(items: list[dict[str, Any]]) -> list[str]:
     return out
 
 
+def _is_locally_administered_unicast(mac: str) -> bool:
+    first = int(mac.split(":")[0], 16)
+    return (first & 0x01) == 0 and (first & 0x02) == 0x02
+
+
 class Rule(RuleBase):
     id = "107"
     description = (
-        "Wired 802.1X + MAB: three empty endpoint groups, two Allowed "
+        "Wired 802.1X + MAB: eleven endpoint groups, 110 lab MACs, two Allowed "
         "Protocols, ACCESS_ACCEPT VLANs 10/20/30, one Network Access policy set"
     )
     severity = "HIGH"
     title = "WIRED 802.1X AND MAB NETWORK ACCESS POLICY LOCK"
     affected_items_label = "Network Access policy"
     explanation = """\
-CoS lock for wired 802.1X + MAB on CiscoDevNet/ise 0.3.4. Endpoint identity
-groups only (Workstation, IP-Phone, Printer). No MAC list. No guest. Two
-Allowed Protocols (ise_allowed_protocols): 802.1X EAP and MAB PAP/ASCII.
+CoS lock for wired 802.1X + MAB on CiscoDevNet/ise 0.3.4. Eleven endpoint
+identity groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS,
+Powerstrips, Linux, Windows, RFID_Readers). 10 unique locally-administered
+lab MACs per group (110 total). No guest. No 15k MAC dump. Two Allowed
+Protocols (ise_allowed_protocols): 802.1X EAP and MAB PAP/ASCII.
 Authorization profiles ACCESS_ACCEPT with lab VLAN 10 data, 20 voice, 30 MAB.
+Phones → Wired_Voice, Printers → Wired_Printer, all other groups → Wired_Data.
 One Network Access policy set (not Device Admin). Dot1X → Internal Users.
 MAB → Internal Endpoints continue-if-not-found. Authorization first-match
-with rank-update resources."""
+with rank-update resources. Default endpoint_count=110."""
     recommendation = """\
-Keep endpoint_count=0. Do not add guest or ise_endpoint MAC rows. Keep
-TACACS Device Admin (*_cs / *_shell) unchanged. NAD protocol is RADIUS;
-keep both NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
+Keep endpoint_count default 110 (all endpoints.csv lab MACs). Groups-only is
+TF_VAR_endpoint_count=0. Do not add guest or a 15k MAC dump. Keep TACACS
+Device Admin (*_cs / *_shell) unchanged. NAD protocol is RADIUS; keep both
+NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
     references = [
         "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint",
         "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/allowed_protocols",
         "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/authorization_profile",
         "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_policy_set",
@@ -114,10 +156,18 @@ keep both NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
         group_names = _names(groups)
         if tuple(group_names) != _LOCKED_GROUPS:
             add(
-                "endpoint_identity_groups.yaml must be exactly Workstation, "
-                f"IP-Phone, Printer (got {group_names}). No guest. No MAC list.",
+                "endpoint_identity_groups.yaml must be exactly Phones, AP, Printers, "
+                f"TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, "
+                f"RFID_Readers (got {group_names}). Drop Workstation / IP-Phone / Printer. No guest.",
                 "endpoint_identity_groups.yaml",
             )
+        for removed in _REMOVED_GROUPS:
+            if removed in group_names:
+                add(
+                    f"Endpoint identity group '{removed}' is gone. Use the CoS lock names.",
+                    "endpoint_identity_groups.yaml",
+                    removed,
+                )
         for g in groups:
             if g.get("system_defined") is True:
                 add(
@@ -128,6 +178,68 @@ keep both NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
 
         if "Guest" in group_names or any(_GUEST_RE.search(n) for n in group_names):
             add("Guest endpoint identity groups are not in this phase.", "endpoint_identity_groups.yaml")
+
+        csv_eps = _load_csv(_ENDPOINTS_CSV)
+        yaml_eps = _load_yaml(_ENDPOINTS_YAML, "endpoints")
+        if not _ENDPOINTS_CSV.is_file():
+            add("endpoints.csv is missing (110 lab MACs).", "endpoints.csv")
+        if not _ENDPOINTS_YAML.is_file():
+            add("endpoints.yaml is missing (110 lab MACs).", "endpoints.yaml")
+        if len(csv_eps) != _ENDPOINT_TOTAL:
+            add(
+                f"endpoints.csv must have {_ENDPOINT_TOTAL} lab MACs "
+                f"(11 groups × 10). Got {len(csv_eps)}. No 15k dump.",
+                "endpoints.csv",
+            )
+        if len(yaml_eps) != _ENDPOINT_TOTAL:
+            add(
+                f"endpoints.yaml must have {_ENDPOINT_TOTAL} lab MACs "
+                f"(11 groups × 10). Got {len(yaml_eps)}. No 15k dump.",
+                "endpoints.yaml",
+            )
+        if len(csv_eps) >= 15000 or len(yaml_eps) >= 15000:
+            add("Do not dump 15k MACs.", "endpoints.csv")
+
+        csv_macs = [r.get("mac") or "" for r in csv_eps]
+        yaml_macs = [r.get("mac") or "" for r in yaml_eps]
+        if csv_macs != yaml_macs:
+            add("endpoints.csv and endpoints.yaml MAC lists must match.", "endpoints.csv")
+        if len(csv_macs) != len(set(csv_macs)):
+            add("endpoints.csv MACs must be unique.", "endpoints.csv")
+
+        per_group = Counter(r.get("endpoint_identity_group") for r in csv_eps)
+        for name in _LOCKED_GROUPS:
+            if per_group.get(name) != _MACS_PER_GROUP:
+                add(
+                    f"Group '{name}' must have {_MACS_PER_GROUP} lab MACs "
+                    f"(got {per_group.get(name)}).",
+                    "endpoints.csv",
+                    name,
+                )
+        extra = set(per_group) - set(_LOCKED_GROUPS)
+        if extra:
+            add(f"endpoints.csv has unknown groups {sorted(extra)}.", "endpoints.csv")
+
+        for r in csv_eps:
+            mac = (r.get("mac") or "").strip()
+            if not _MAC_RE.fullmatch(mac):
+                add(
+                    f"MAC must be lowercase colon hex (got {mac!r}). Fake lab MAC, not hardware.",
+                    "endpoints.csv",
+                    mac,
+                )
+                break
+            if not _is_locally_administered_unicast(mac):
+                add(
+                    f"MAC {mac} must be locally administered unicast "
+                    "(first-octet second hex digit 2, 6, A, or E).",
+                    "endpoints.csv",
+                    mac,
+                )
+                break
+            if _GUEST_RE.search(mac) or _GUEST_RE.search(r.get("endpoint_identity_group") or ""):
+                add("Guest is not in this phase.", "endpoints.csv")
+                break
 
         protocols = _load_yaml(_PROTOCOLS_YAML, "allowed_protocols")
         proto_by_name = {p.get("name"): p for p in protocols}
@@ -240,15 +352,25 @@ keep both NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
                 add("MAB if_user_not_found must be CONTINUE.", "network_access_authc.csv", "MAB")
 
         authz = _load_csv(_AUTHZ_CSV)
-        authz_groups = [r.get("endpoint_identity_group") for r in authz]
-        if authz_groups != ["IP-Phone", "Workstation", "Printer"]:
+        got_authz = [
+            (r.get("name"), r.get("endpoint_identity_group"), r.get("profile")) for r in authz
+        ]
+        if got_authz != list(_AUTHZ_ORDER):
             add(
-                "network_access_authz.csv first-match order must be IP-Phone, "
-                f"Workstation, Printer (got {authz_groups}). No guest.",
+                "network_access_authz.csv first-match must be Phones→Wired_Voice, "
+                "Printers→Wired_Printer, then remaining groups→Wired_Data "
+                f"(got {got_authz}). Drop Workstation / IP-Phone / Printer. No guest.",
                 "network_access_authz.csv",
             )
         if any(_GUEST_RE.search(str(v)) for row in authz for v in row.values()):
             add("network_access_authz.csv must not mention guest.", "network_access_authz.csv")
+        for removed in _REMOVED_GROUPS:
+            if any(removed == r.get("endpoint_identity_group") for r in authz):
+                add(
+                    f"Authz must not target removed group '{removed}'.",
+                    "network_access_authz.csv",
+                    removed,
+                )
 
         na_tf = _NA_TF.read_text(encoding="utf-8") if _NA_TF.is_file() else ""
         nads_tf = _NADS_TF.read_text(encoding="utf-8") if _NADS_TF.is_file() else ""
@@ -264,10 +386,22 @@ keep both NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
                 f"(got {na_sets}).",
                 "network_access.tf",
             )
-        if _ENDPOINT_RES.search(na_tf) or _ENDPOINT_RES.search(main_tf) or _ENDPOINT_RES.search(nads_tf):
+        if not _ENDPOINT_RES.search(na_tf):
             add(
-                "ise_endpoint must not be declared. Groups only; endpoint_count=0. "
-                "0.3.4 has ise_endpoint; this phase does not use it.",
+                "network_access.tf must declare ise_endpoint (0.3.4: name, mac, group_id, "
+                "static_group_assignment, static_profile_assignment). 110 lab MACs.",
+                "network_access.tf",
+            )
+        if "group_id" not in na_tf:
+            add(
+                "ise_endpoint must set group_id from ise_endpoint_identity_group.id "
+                "(0.3.4 Identity Group ID).",
+                "network_access.tf",
+            )
+        if "static_group_assignment" not in na_tf or "static_profile_assignment" not in na_tf:
+            add(
+                "ise_endpoint 0.3.4 requires static_group_assignment and "
+                "static_profile_assignment.",
                 "network_access.tf",
             )
         if not _ALLOWED_RES.search(na_tf):
@@ -307,7 +441,7 @@ keep both NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
         if not _NAD_TACACS_SECRET.search(nads_tf):
             add("Keep tacacs_shared_secret on NADs.", "nads.tf")
         if not _ENDPOINT_DEFAULT.search(vars_tf):
-            add("variable endpoint_count default must stay 0.", "variables.tf")
+            add("variable endpoint_count default must be 110 (all lab MACs).", "variables.tf")
 
         blob = "\n".join(
             [
@@ -327,9 +461,18 @@ keep both NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
             data_names = _names([i for i in data_groups if isinstance(i, dict)])
             if data_names and tuple(data_names) != _LOCKED_GROUPS:
                 add(
-                    "nac.yaml endpoint_identity_groups must match Workstation, "
-                    f"IP-Phone, Printer (got {data_names}).",
+                    "nac.yaml endpoint_identity_groups must match Phones, AP, Printers, "
+                    f"TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, "
+                    f"RFID_Readers (got {data_names}).",
                     "endpoint_identity_groups",
+                )
+
+        data_eps = data.get("endpoints")
+        if isinstance(data_eps, list) and data_eps:
+            if len(data_eps) != _ENDPOINT_TOTAL:
+                add(
+                    f"nac.yaml endpoints must be {_ENDPOINT_TOTAL} lab MACs (got {len(data_eps)}).",
+                    "endpoints",
                 )
 
         return violations

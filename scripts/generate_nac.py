@@ -70,6 +70,7 @@ def main() -> int:
     na_authc = read_csv("network_access_authc.csv")
     na_authz = read_csv("network_access_authz.csv")
     sample = read_csv("sample_nads.csv")
+    endpoints = read_csv("endpoints.csv")
 
     if len(sites) != 400:
         raise SystemExit(f"sites.csv expected 400 rows, got {len(sites)}")
@@ -175,12 +176,53 @@ def main() -> int:
     if any(t in {"hq", "dc"} for t in sample_types):
         raise SystemExit("sample NADs must not invent hq/dc site membership")
 
+    locked_groups = (
+        "Phones",
+        "AP",
+        "Printers",
+        "TVs",
+        "Badge_Readers",
+        "Cameras",
+        "UPS",
+        "Powerstrips",
+        "Linux",
+        "Windows",
+        "RFID_Readers",
+    )
+    groups_path = ROOT / "endpoint_identity_groups.yaml"
+    groups_raw = yaml.safe_load(groups_path.read_text(encoding="utf-8")) or {}
+    group_names = [
+        str(g["name"])
+        for g in (groups_raw.get("endpoint_identity_groups") or [])
+        if isinstance(g, dict) and g.get("name")
+    ]
+    if tuple(group_names) != locked_groups:
+        raise SystemExit(f"endpoint_identity_groups.yaml must be {list(locked_groups)}, got {group_names}")
+    if any(n in {"Workstation", "IP-Phone", "Printer"} for n in group_names):
+        raise SystemExit("Workstation / IP-Phone / Printer groups are gone")
+    if len(endpoints) != 110:
+        raise SystemExit(f"endpoints.csv expected 110 lab MACs, got {len(endpoints)}")
+    macs = [e["mac"] for e in endpoints]
+    if len(macs) != len(set(macs)):
+        raise SystemExit("endpoints.csv has duplicate MACs")
+    per_group = Counter(e["endpoint_identity_group"] for e in endpoints)
+    if any(per_group.get(n) != 10 for n in locked_groups):
+        raise SystemExit(f"endpoints.csv must have 10 MACs per group, got {dict(per_group)}")
+    for e in endpoints:
+        first = int(e["mac"].split(":")[0], 16)
+        if (first & 0x01) != 0 or (first & 0x02) != 0x02:
+            raise SystemExit(f"MAC is not locally administered unicast: {e['mac']}")
+        if e["endpoint_identity_group"] not in locked_groups:
+            raise SystemExit(f"endpoint group not in lock: {e['endpoint_identity_group']}")
+    if any("guest" in (e.get("endpoint_identity_group") or "").lower() for e in endpoints):
+        raise SystemExit("Guest endpoints are not in this phase")
+
     lines: list[str] = [
         "# Generated ISE-as-code feed. Do not edit by hand.",
         "# Rebuild: python3 scripts/generate_nac.py",
-        "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv",
+        "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv endpoints.csv",
         "# TACACS objects: command_sets.yaml shell_profiles.yaml",
-        "# Network Access: endpoint_identity_groups.yaml allowed_protocols.yaml authorization_profiles.yaml",
+        "# Network Access: endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml",
         "#   network_access.yaml network_access_authc.csv network_access_authz.csv",
         "# Location NDGs: type-level in location_ndgs.yaml; state/city from sites.yaml",
         "",
@@ -342,6 +384,7 @@ def main() -> int:
         "command_sets.yaml",
         "shell_profiles.yaml",
         "endpoint_identity_groups.yaml",
+        "endpoints.yaml",
         "allowed_protocols.yaml",
         "authorization_profiles.yaml",
         "network_access.yaml",

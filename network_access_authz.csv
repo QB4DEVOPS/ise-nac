@@ -1,4 +1,12 @@
 order,name,endpoint_identity_group,profile
-1,ip-phone,IP-Phone,Wired_Voice
-2,workstation,Workstation,Wired_Data
-3,printer,Printer,Wired_Printer
+1,phones,Phones,Wired_Voice
+2,printers,Printers,Wired_Printer
+3,ap,AP,Wired_Data
+4,tvs,TVs,Wired_Data
+5,badge_readers,Badge_Readers,Wired_Data
+6,cameras,Cameras,Wired_Data
+7,ups,UPS,Wired_Data
+8,powerstrips,Powerstrips,Wired_Data
+9,linux,Linux,Wired_Data
+10,windows,Windows,Wired_Data
+11,rfid_readers,RFID_Readers,Wired_Data

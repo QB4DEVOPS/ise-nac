@@ -1,5 +1,5 @@
 output "what_apply_will_do" {
-  description = "Counts for this apply. Default nads_to_push is 15000 (all of devices.csv). TF_VAR_nad_count=0 is policy-only."
+  description = "Counts for this apply. Default nads_to_push is 15000 (all of devices.csv). Default endpoints_to_push is 110 (all of endpoints.csv). TF_VAR_nad_count=0 is no switches. TF_VAR_endpoint_count=0 is groups-only (no MAC rows)."
   value = {
     access_ndgs                = length(local.ndgs)
     default_access_ndg         = local.default_access_ndg
@@ -14,6 +14,7 @@ output "what_apply_will_do" {
     network_access_policy_sets = length(local.network_access_policy_sets)
     network_access_authc       = length(local.na_authc)
     network_access_authz       = length(local.na_authz)
+    endpoints_in_csv           = length(local.endpoints)
     endpoints_to_push          = var.endpoint_count
     nads_in_csv                = length(local.devices)
     sample_nads_optional       = length(local.sample_nad_rows)

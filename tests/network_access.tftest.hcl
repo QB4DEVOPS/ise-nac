@@ -1,6 +1,7 @@
 # Wired 802.1X + MAB Network Access policy. mock_provider: no PAN.
-# Policy-only (nad_count=0): groups, protocols, profiles, one policy set.
+# Policy-only (nad_count=0): groups, 110 lab MACs, protocols, profiles, one policy set.
 # Default nad_count stays 15000 — see nads_default.tftest.hcl.
+# Default endpoint_count is 110 (all endpoints.csv lab MACs).
 mock_provider "ise" {}
 
 run "wired_8021x_mab_policy" {
@@ -11,28 +12,148 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = var.endpoint_count == 0
-    error_message = "endpoint_count default must stay 0. Groups only. No MAC list."
+    condition     = var.endpoint_count == 110
+    error_message = "endpoint_count default must be 110 (11 groups × 10 lab MACs)."
   }
 
   assert {
-    condition     = length(ise_endpoint_identity_group.this) == 3
-    error_message = "Exactly three endpoint identity groups: Workstation, IP-Phone, Printer."
+    condition     = length(local.endpoints) == 110
+    error_message = "endpoints.csv must contain 110 unique lab MACs."
   }
 
   assert {
-    condition     = ise_endpoint_identity_group.this["Workstation"].name == "Workstation"
-    error_message = "Workstation endpoint identity group must exist."
+    condition     = length(ise_endpoint_identity_group.this) == 11
+    error_message = "Exactly eleven endpoint identity groups (CoS lock). Drop Workstation / IP-Phone / Printer."
   }
 
   assert {
-    condition     = ise_endpoint_identity_group.this["IP-Phone"].name == "IP-Phone"
-    error_message = "IP-Phone endpoint identity group must exist."
+    condition     = ise_endpoint_identity_group.this["Phones"].name == "Phones"
+    error_message = "Phones endpoint identity group must exist."
   }
 
   assert {
-    condition     = ise_endpoint_identity_group.this["Printer"].name == "Printer"
-    error_message = "Printer endpoint identity group must exist."
+    condition     = ise_endpoint_identity_group.this["AP"].name == "AP"
+    error_message = "AP endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["Printers"].name == "Printers"
+    error_message = "Printers endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["TVs"].name == "TVs"
+    error_message = "TVs endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["Badge_Readers"].name == "Badge_Readers"
+    error_message = "Badge_Readers endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["Cameras"].name == "Cameras"
+    error_message = "Cameras endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["UPS"].name == "UPS"
+    error_message = "UPS endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["Powerstrips"].name == "Powerstrips"
+    error_message = "Powerstrips endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["Linux"].name == "Linux"
+    error_message = "Linux endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["Windows"].name == "Windows"
+    error_message = "Windows endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = ise_endpoint_identity_group.this["RFID_Readers"].name == "RFID_Readers"
+    error_message = "RFID_Readers endpoint identity group must exist."
+  }
+
+  assert {
+    condition     = !contains(keys(ise_endpoint_identity_group.this), "Workstation")
+    error_message = "Workstation group is gone."
+  }
+
+  assert {
+    condition     = !contains(keys(ise_endpoint_identity_group.this), "IP-Phone")
+    error_message = "IP-Phone group is gone."
+  }
+
+  assert {
+    condition     = !contains(keys(ise_endpoint_identity_group.this), "Printer")
+    error_message = "Printer group is gone (replaced by Printers)."
+  }
+
+  assert {
+    condition     = length(ise_endpoint.this) == 110
+    error_message = "Default apply must plan 110 ise_endpoint lab MACs."
+  }
+
+  assert {
+    condition     = length(distinct([for e in ise_endpoint.this : e.mac])) == 110
+    error_message = "All 110 lab MACs must be unique."
+  }
+
+  assert {
+    condition     = ise_endpoint.this[0].mac == "02:00:01:00:00:01"
+    error_message = "First lab MAC is Phones 02:00:01:00:00:01 (locally administered unicast, not hardware)."
+  }
+
+  assert {
+    condition     = ise_endpoint.this[0].name == ise_endpoint.this[0].mac
+    error_message = "ise_endpoint.name must be the MAC (0.3.4)."
+  }
+
+  assert {
+    condition     = ise_endpoint.this[0].static_group_assignment == true
+    error_message = "ise_endpoint.static_group_assignment must be true (0.3.4 required)."
+  }
+
+  assert {
+    condition     = ise_endpoint.this[0].static_profile_assignment == false
+    error_message = "ise_endpoint.static_profile_assignment must be false (group assignment, not static profile)."
+  }
+
+  assert {
+    condition     = local.endpoints[0].endpoint_identity_group == "Phones"
+    error_message = "First 10 MACs belong to Phones (CSV order; group_id is the identity group id at apply)."
+  }
+
+  assert {
+    condition     = local.endpoints[10].endpoint_identity_group == "AP"
+    error_message = "MAC 11 belongs to AP."
+  }
+
+  assert {
+    condition     = local.endpoints[20].endpoint_identity_group == "Printers"
+    error_message = "MAC 21 belongs to Printers."
+  }
+
+  assert {
+    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Phones"]) == 10
+    error_message = "Phones must have 10 lab MACs."
+  }
+
+  assert {
+    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "RFID_Readers"]) == 10
+    error_message = "RFID_Readers must have 10 lab MACs."
+  }
+
+  assert {
+    condition     = ise_endpoint.this[109].mac == "02:00:0b:00:00:0a"
+    error_message = "Last lab MAC is RFID_Readers 02:00:0b:00:00:0a."
   }
 
   assert {
@@ -136,18 +257,43 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = ise_network_access_authorization_rule.authz["ip-phone"].profiles == toset(["Wired_Voice"])
-    error_message = "First-match authz ip-phone must use Wired_Voice."
+    condition     = length(ise_network_access_authorization_rule.authz) == 11
+    error_message = "Eleven authz rules, one per endpoint identity group. First-match."
   }
 
   assert {
-    condition     = ise_network_access_authorization_rule.authz["workstation"].profiles == toset(["Wired_Data"])
-    error_message = "Authz workstation must use Wired_Data."
+    condition     = ise_network_access_authorization_rule.authz["phones"].profiles == toset(["Wired_Voice"])
+    error_message = "First-match authz phones must use Wired_Voice (VLAN 20)."
   }
 
   assert {
-    condition     = ise_network_access_authorization_rule.authz["printer"].profiles == toset(["Wired_Printer"])
-    error_message = "Authz printer must use Wired_Printer."
+    condition     = ise_network_access_authorization_rule.authz["printers"].profiles == toset(["Wired_Printer"])
+    error_message = "Authz printers must use Wired_Printer (VLAN 30 MAB)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["windows"].profiles == toset(["Wired_Data"])
+    error_message = "Authz windows must use Wired_Data (VLAN 10)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["ap"].profiles == toset(["Wired_Data"])
+    error_message = "Authz ap must use Wired_Data (VLAN 10)."
+  }
+
+  assert {
+    condition     = !contains(keys(ise_network_access_authorization_rule.authz), "workstation")
+    error_message = "Authz workstation rule is gone."
+  }
+
+  assert {
+    condition     = !contains(keys(ise_network_access_authorization_rule.authz), "ip-phone")
+    error_message = "Authz ip-phone rule is gone."
+  }
+
+  assert {
+    condition     = !contains(keys(ise_network_access_authorization_rule.authz), "printer")
+    error_message = "Authz printer rule is gone (replaced by printers)."
   }
 
   assert {
@@ -156,8 +302,13 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = output.what_apply_will_do.endpoints_to_push == 0
-    error_message = "endpoints_to_push must be 0."
+    condition     = output.what_apply_will_do.endpoints_to_push == 110
+    error_message = "endpoints_to_push must be 110 at default."
+  }
+
+  assert {
+    condition     = output.what_apply_will_do.endpoints_in_csv == 110
+    error_message = "endpoints_in_csv must be 110."
   }
 
   assert {
@@ -171,12 +322,36 @@ run "wired_8021x_mab_policy" {
   }
 }
 
-run "endpoint_count_nonzero_fails" {
+run "groups_only_zero_endpoints" {
   command = plan
 
   variables {
     nad_count      = 0
-    endpoint_count = 1
+    endpoint_count = 0
+  }
+
+  assert {
+    condition     = length(ise_endpoint.this) == 0
+    error_message = "TF_VAR_endpoint_count=0 must skip MAC rows (groups still apply)."
+  }
+
+  assert {
+    condition     = length(ise_endpoint_identity_group.this) == 11
+    error_message = "Groups-only still creates the eleven identity groups."
+  }
+
+  assert {
+    condition     = ise_network_access_policy_set.wired.name == "Wired 802.1X MAB"
+    error_message = "Dot1X + MAB policy set stays when endpoint_count=0."
+  }
+}
+
+run "endpoint_count_over_max_fails" {
+  command = plan
+
+  variables {
+    nad_count      = 0
+    endpoint_count = 111
   }
 
   expect_failures = [
