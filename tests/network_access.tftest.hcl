@@ -153,7 +153,7 @@ run "wired_8021x_mab_policy" {
 
   assert {
     condition = length(distinct([
-      for e in local.endpoints : join(":", slice(split(e.mac, ":"), 3, 6))
+      for e in local.endpoints : trimprefix(e.mac, "${e.oui}:")
     ])) == 110
     error_message = "Last 3 octets must be unique across 110 lab MACs."
   }
@@ -161,9 +161,16 @@ run "wired_8021x_mab_policy" {
   assert {
     condition = alltrue([
       for e in local.endpoints :
-      join(":", slice(split(e.mac, ":"), 3, 5)) != "00:00"
+      !startswith(trimprefix(e.mac, "${e.oui}:"), "00:00:")
     ])
     error_message = "Do not use 00:00:xx NIC suffixes (including 00:00:01–00:00:0A)."
+  }
+
+  assert {
+    condition = alltrue([
+      for e in local.endpoints : length(split(":", e.mac)) == 6
+    ])
+    error_message = "Each lab MAC must be six colon-separated octets."
   }
 
   assert {
