@@ -43,8 +43,9 @@ run "default_pushes_all_devices" {
   }
 
   # First NAD: Huntsville, Alabama. Access + nested site Location only.
+  # network_device_groups is a set (CiscoDevNet/ise 0.3.4); compare as toset, not list.
   assert {
-    condition = ise_network_device.nad[0].network_device_groups == tolist([
+    condition = ise_network_device.nad[0].network_device_groups == toset([
       "Access#All Access#access-marketing",
       "Location#All Locations#Alabama#us-huntsville",
     ])
@@ -53,7 +54,7 @@ run "default_pushes_all_devices" {
 
   # Next regional site (index 20): still access-marketing, not round-robin hr/ceo.
   assert {
-    condition = ise_network_device.nad[20].network_device_groups == tolist([
+    condition = ise_network_device.nad[20].network_device_groups == toset([
       "Access#All Access#access-marketing",
       "Location#All Locations#Alaska#us-anchorage",
     ])
