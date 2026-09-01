@@ -32,6 +32,7 @@ location_ndg:
   ndg: str()
   description: str()
   placeholder: bool()
+  parent: str(required=False)
 
 site:
   id: str()

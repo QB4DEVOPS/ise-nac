@@ -39,12 +39,33 @@ resource "ise_network_device_group" "ndg" {
 }
 
 # ISE already has Location / All Locations. Do not recreate that root.
-# Type-level children only (regional, branch, hq, dc). No per-city NDGs.
+# Type-level siblings (regional, branch, hq, dc). NADs do not join these.
 resource "ise_network_device_group" "location" {
   for_each    = local.location_ndgs
   name        = "Location#All Locations#${each.value.ndg}"
   description = each.value.description
   root_group  = "Location"
+}
+
+# One region under All Locations. US = slugged admin1 (state).
+# Non-US = cc (no US state). Example: California, District_of_Columbia, gb.
+resource "ise_network_device_group" "region" {
+  for_each    = local.region_ndgs
+  name        = "Location#All Locations#${each.value.ndg}"
+  description = each.value.description
+  root_group  = "Location"
+}
+
+# One site Location NDG under its region. Not flattened under All Locations.
+# ISE: Location#All Locations#{region}#{site_id}
+# e.g. Location#All Locations#California#us-los-angeles
+# sites.yaml types stay regional/branch. Do not invent hq/dc city tags.
+resource "ise_network_device_group" "site_location" {
+  for_each    = local.site_location_ndgs
+  name        = each.value.ise_name
+  description = each.value.description
+  root_group  = "Location"
+  depends_on  = [ise_network_device_group.region]
 }
 
 # Empty identity groups. No users and no passwords.

@@ -46,6 +46,14 @@ No HQ, DC (data-center), or IAP rows. No coordinates. `type` is only
 
 `ndgs.csv` is the four device-admin access groups from PLAN.md (not a site tree):
 access-marketing (T1+), access-hr (T2+), access-ceo (T3+), access-sourcecode (T4).
+Until Robert tags Access, every NAD is assigned `access-marketing` only.
+
+Location NDGs: type-level groups live in `location_ndgs.yaml` (`regional`,
+`branch`, placeholders `hq`/`dc`). Region and site groups are derived from
+`sites.yaml`. US region = slugged `admin1` (state); non-US region = `cc`.
+Site ISE path is `Location#All Locations#{region}#{site_id}`. Site ids need
+no rename. Multi-word US states become underscores (`New York` →
+`New_York`, `District of Columbia` → `District_of_Columbia`).
 
 `tacacs_authc.csv` is one TACACS authentication rule in ISE push order. No identity
 store was given, so the lab default is ISE Internal Users (protocol TACACS). Do not

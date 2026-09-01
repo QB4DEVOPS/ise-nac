@@ -1,7 +1,9 @@
 # Type-level Location NDGs under ISE All Locations.
 # ISE name: Location#All Locations#{ndg}  root_group: Location
-# Do NOT add per-city Location NDGs (400 ISE objects). Types only.
+# Keep these as siblings of region NDGs. NADs do not join type groups.
+# Region + site Location NDGs are derived from sites.yaml (not this file).
 # regional and branch exist in sites.yaml. hq and dc have no tagged sites.
+# Do not invent HQ/DC city tags.
 location_ndgs:
   - ndg: regional
     description: Sites typed regional in sites.yaml

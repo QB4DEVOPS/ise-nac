@@ -5,9 +5,32 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
+
+# ISE NDG leaf: alphanumeric, underscore, minus, dot. '#' is the path
+# separator. Spaces/punctuation become underscore. Empty names are illegal.
+_ISE_NDG_ILLEGAL = re.compile(r"[^A-Za-z0-9_.-]+")
+_ISE_NDG_MULTI_US = re.compile(r"_+")
+_ISE_NDG_LEAF = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
+
+
+def ise_ndg_leaf(name: str) -> str:
+    slug = _ISE_NDG_MULTI_US.sub("_", _ISE_NDG_ILLEGAL.sub("_", name.strip())).strip("_")
+    if not slug or not _ISE_NDG_LEAF.fullmatch(slug):
+        raise SystemExit(f"ISE NDG leaf name is illegal or empty: {name!r} -> {slug!r}")
+    return slug
+
+
+def site_region(row: dict[str, str]) -> str:
+    """US region = slugged admin1 (state). Non-US region = cc."""
+    if row["cc"] == "us":
+        if not (row.get("admin1") or "").strip():
+            raise SystemExit(f"US site {row['id']} has no admin1 (state)")
+        return ise_ndg_leaf(row["admin1"])
+    return ise_ndg_leaf(row["cc"])
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "nac.yaml"
@@ -74,7 +97,7 @@ def main() -> int:
     if not isinstance(location_ndgs, list) or not location_ndgs:
         raise SystemExit("location_ndgs.yaml must list type-level Location NDGs")
     if len(location_ndgs) > 8:
-        raise SystemExit("location_ndgs.yaml has too many rows; type-level only (no per-city)")
+        raise SystemExit("location_ndgs.yaml has too many rows; type-level only")
     site_types = {s["type"].lower() for s in sites}
     loc_names = set()
     for row in location_ndgs:
@@ -95,6 +118,43 @@ def main() -> int:
     for required in ("hq", "dc"):
         if required not in loc_names and required not in site_types:
             raise SystemExit(f"location_ndgs.yaml must include placeholder {required}")
+    if any(t in {"hq", "dc"} for t in site_types):
+        raise SystemExit("sites.yaml must not invent hq/dc city tags; types stay regional/branch")
+
+    if any(k.lower() == "access" or k.lower().startswith("access_") for k in (devices[0].keys() if devices else [])):
+        raise SystemExit("devices.csv must not have an Access column; Access is locked to access-marketing")
+
+    # Region + nested site Location NDGs from sites.yaml (not location_ndgs.yaml).
+    # US: one region per distinct admin1 (state). Non-US: one region per cc.
+    # Site ISE path: Location#All Locations#{region}#{site_id}
+    region_of: dict[str, str] = {}
+    region_meta: dict[str, dict[str, str]] = {}
+    site_leaf_of: dict[str, str] = {}
+    for row in sites:
+        region = site_region(row)
+        leaf = ise_ndg_leaf(row["id"])
+        if region.lower() in loc_names:
+            raise SystemExit(f"region NDG {region} collides with a type-level Location NDG")
+        if leaf.lower() in loc_names:
+            raise SystemExit(f"site NDG {leaf} collides with a type-level Location NDG")
+        if len(f"Location#All Locations#{region}#{leaf}") > 100:
+            raise SystemExit(f"ISE NDG path exceeds 100 chars: {row['id']}")
+        region_of[row["id"]] = region
+        site_leaf_of[row["id"]] = leaf
+        if region not in region_meta:
+            region_meta[region] = {
+                "cc": row["cc"],
+                "admin1": row["admin1"],
+                "description": f"US state {row['admin1']}" if row["cc"] == "us" else f"Country {row['cc']}",
+            }
+        elif row["cc"] == "us" and region_meta[region]["admin1"] != row["admin1"]:
+            raise SystemExit(f"region slug {region} maps to more than one US admin1")
+        elif row["cc"] != "us" and region_meta[region]["cc"] != row["cc"]:
+            raise SystemExit(f"region slug {region} maps to more than one country")
+    us_regions = {k for k, v in region_meta.items() if v["cc"] == "us"}
+    nonus_regions = {k for k, v in region_meta.items() if v["cc"] != "us"}
+    if us_regions & nonus_regions:
+        raise SystemExit(f"US region slugs collide with country codes: {sorted(us_regions & nonus_regions)}")
 
     if len(sample) != 8:
         raise SystemExit(f"sample_nads.csv expected 8 rows, got {len(sample)}")
@@ -125,7 +185,7 @@ def main() -> int:
         "# Rebuild: python3 scripts/generate_nac.py",
         "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv",
         "# TACACS objects: command_sets.yaml shell_profiles.yaml",
-        "# Location NDGs (type-level only): location_ndgs.yaml",
+        "# Location NDGs: type-level in location_ndgs.yaml; region+site from sites.yaml",
         "",
         "lab:",
         "  pan:",
@@ -161,6 +221,31 @@ def main() -> int:
                     ("ndg", yq(str(row["ndg"]))),
                     ("description", yq(str(row["description"]))),
                     ("placeholder", "true" if row.get("placeholder") else "false"),
+                ],
+            )
+        )
+    for region in sorted(region_meta, key=lambda n: (region_meta[n]["cc"] != "us", n)):
+        meta = region_meta[region]
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("ndg", yq(region)),
+                    ("description", yq(meta["description"])),
+                    ("placeholder", "false"),
+                ],
+            )
+        )
+    for row in sites:
+        desc = f"{row['city']}, {row['admin1']}" if row.get("admin1") else row["city"]
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("ndg", yq(site_leaf_of[row["id"]])),
+                    ("description", yq(desc)),
+                    ("placeholder", "false"),
+                    ("parent", yq(region_of[row["id"]])),
                 ],
             )
         )
