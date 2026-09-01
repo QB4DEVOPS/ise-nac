@@ -13,28 +13,28 @@ run "default_pushes_all_devices" {
   }
 
   assert {
-    condition     = var.nad_count == 6250
-    error_message = "nad_count default must be 6250 so a normal apply pushes devices.csv."
+    condition     = var.nad_count == 15000
+    error_message = "nad_count default must be 15000 so a normal apply pushes devices.csv."
   }
 
   assert {
-    condition     = length(local.devices) == 6250
-    error_message = "devices.csv must contain 6250 NAD rows."
+    condition     = length(local.devices) == 15000
+    error_message = "devices.csv must contain 15000 NAD rows."
   }
 
   assert {
-    condition     = output.what_apply_will_do.nads_to_push == 6250
-    error_message = "Default nads_to_push must be 6250 (all of devices.csv)."
+    condition     = output.what_apply_will_do.nads_to_push == 15000
+    error_message = "Default nads_to_push must be 15000 (all of devices.csv)."
   }
 
   assert {
-    condition     = output.what_apply_will_do.nads_in_csv == 6250
-    error_message = "Output nads_in_csv must match devices.csv (6250)."
+    condition     = output.what_apply_will_do.nads_in_csv == 15000
+    error_message = "Output nads_in_csv must match devices.csv (15000)."
   }
 
   assert {
-    condition     = length(ise_network_device.nad) == 6250
-    error_message = "Plan must create 6250 ise_network_device.nad instances at default."
+    condition     = length(ise_network_device.nad) == 15000
+    error_message = "Plan must create 15000 ise_network_device.nad instances at default."
   }
 
   assert {
@@ -52,13 +52,14 @@ run "default_pushes_all_devices" {
     error_message = "NAD[0] must join access-marketing plus Location#All Locations#Alabama#us-huntsville."
   }
 
-  # Next regional site (index 20): still access-marketing, not round-robin hr/ceo.
+  # Next regional site (index 48): still access-marketing, not round-robin hr/ceo.
+  # 50 regional × 48 switches; NAD[0..47] is Huntsville, NAD[48] is Anchorage.
   assert {
-    condition = ise_network_device.nad[20].network_device_groups == toset([
+    condition = ise_network_device.nad[48].network_device_groups == toset([
       "Access#All Access#access-marketing",
       "Location#All Locations#Alaska#us-anchorage",
     ])
-    error_message = "NAD[20] must join access-marketing plus Location#All Locations#Alaska#us-anchorage. Do not round-robin Access. Do not invent HQ/DC tags."
+    error_message = "NAD[48] must join access-marketing plus Location#All Locations#Alaska#us-anchorage. Do not round-robin Access. Do not invent HQ/DC tags."
   }
 
   assert {

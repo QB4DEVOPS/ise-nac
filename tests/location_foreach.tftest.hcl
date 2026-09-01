@@ -7,7 +7,7 @@ run "state_and_site_location_are_objects" {
   command = plan
 
   # Policy-only so this run stays a Location for_each check (616 objects),
-  # not 6,250 NAD creates. Default nad_count is 6250 — see nads_default.tftest.hcl.
+  # not 15,000 NAD creates. Default nad_count is 15000 — see nads_default.tftest.hcl.
   variables {
     nad_count = 0
   }

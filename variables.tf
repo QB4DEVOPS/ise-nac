@@ -12,12 +12,12 @@ variable "ise_username" {
 
 variable "nad_count" {
   type        = number
-  description = "How many devices.csv NADs to push (first N, inventory order). Default 6250 = all access switches. Set TF_VAR_nad_count=0 for policy-only (Location tree + TACACS, no switches)."
-  default     = 6250
+  description = "How many devices.csv NADs to push (first N, inventory order). Default 15000 = all access switches. Set TF_VAR_nad_count=0 for policy-only (Location tree + TACACS, no switches)."
+  default     = 15000
 
   validation {
-    condition     = var.nad_count >= 0 && var.nad_count <= 6250
-    error_message = "nad_count must be 0 (policy-only, no NADs) through 6250 (all devices.csv rows, the default). Policy-only is TF_VAR_nad_count=0."
+    condition     = var.nad_count >= 0 && var.nad_count <= 15000
+    error_message = "nad_count must be 0 (policy-only, no NADs) through 15000 (all devices.csv rows, the default). Policy-only is TF_VAR_nad_count=0."
   }
 }
 

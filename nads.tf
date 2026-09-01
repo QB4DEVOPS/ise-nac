@@ -1,4 +1,4 @@
-# Inventory is devices.csv (6,250 access switches). Default count is 6250 so a
+# Inventory is devices.csv (15,000 access switches). Default count is 15000 so a
 # normal apply pushes every row. Policy-only (no switches): TF_VAR_nad_count=0.
 # TACACS secret from TF_VAR_nad_tacacs_secret / NAD_TACACS_SECRET (env only).
 # RADIUS secret from TF_VAR_nad_radius_secret / NAD_RADIUS_SECRET (env only).

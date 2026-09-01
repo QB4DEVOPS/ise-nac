@@ -52,7 +52,7 @@ Validate YAML first (`nac-validate` above). Then Terraform.
 
 `terraform init` only downloads the Cisco ISE plugin. The PAN does **not** need to be reachable.
 
-`terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up. A normal apply (default `nad_count=6250`) creates the Location tree **and** all 6,250 switches. `.env` must have both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET`.
+`terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up. A normal apply (default `nad_count=15000`) creates the Location tree **and** all 15,000 switches. `.env` must have both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET`.
 
 After destroy, paste this in PowerShell (pull, load `.env`, init, apply):
 
@@ -84,7 +84,7 @@ That address is `ise_tacacs_command_set.test`. ISE name is `test_cs`: one comman
 
 ## After destroy (rebuild the system)
 
-After `terraform destroy` on pan1, pull this folder and apply. A normal apply builds the **Location tree and all 6,250 NADs** from `devices.csv`. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (never in git). `load-env.ps1` maps them to `TF_VAR_nad_tacacs_secret` and `TF_VAR_nad_radius_secret`. There is no secret default in git. Empty TACACS or RADIUS secret with `nad_count>0` fails with a clear error. ISE requires a RADIUS shared secret even for TACACS-only devices. Protocol stays `TACACS_PLUS`.
+After `terraform destroy` on pan1, pull this folder and apply. A normal apply builds the **Location tree and all 15,000 NADs** from `devices.csv`. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (never in git). `load-env.ps1` maps them to `TF_VAR_nad_tacacs_secret` and `TF_VAR_nad_radius_secret`. There is no secret default in git. Empty TACACS or RADIUS secret with `nad_count>0` fails with a clear error. ISE requires a RADIUS shared secret even for TACACS-only devices. Protocol stays `TACACS_PLUS`.
 
 ```
 git pull
@@ -93,16 +93,16 @@ terraform init
 terraform apply
 ```
 
-Default `nad_count` is **6250**. You do **not** set `TF_VAR_nad_count` for the full system.
+Default `nad_count` is **15000**. You do **not** set `TF_VAR_nad_count` for the full system.
 
-**Warning:** this will take a long time on one PAN. Location NDGs were ~50 seconds each (400 sites + 151 state/country folders + 4 type-level). Then 6,250 NAD creates. Do not apply from an agent. Do not cancel mid-apply if you can avoid it.
+**Warning:** this will take a long time on one PAN. Location NDGs were ~50 seconds each (400 sites + 151 state/country folders + 4 type-level). Then 15,000 NAD creates. Do not apply from an agent. Do not cancel mid-apply if you can avoid it.
 
 A normal apply creates:
 
 - Four Access NDGs from `ndgs.csv`: `access-marketing`, `access-hr`, `access-ceo`, `access-sourcecode`
 - Four type-level Location NDGs under ISE All Locations: `regional` (largest-city **type** only), `branch`, plus placeholders `hq` and `dc`. **`regional` is never a state folder name.** NADs do **not** join these type groups.
 - One Location folder per US state (`admin1`) and per non-US country (`cc`). One site NDG under that folder: `Location#All Locations#{State}#{site_id}` (example `California#us-los-angeles`). Types stay `regional` / `branch`. No HQ/DC city tags.
-- All **6,250** access switches from `devices.csv`
+- All **15,000** access switches from `devices.csv`
 - TACACS authentication sequence from `tacacs_authc.csv`
 - TACACS authorization rules from `tacacs_authz.csv` in ISE push order (first match wins)
 
@@ -118,7 +118,7 @@ terraform apply
 
 ## NAD inventory (devices.csv)
 
-Default `nad_count` is **6250** — every row in `devices.csv`. `sample_nads.csv` can stay as a tiny optional reference slice; `nad_count` does not read it.
+Default `nad_count` is **15000** — every row in `devices.csv`. `sample_nads.csv` can stay as a tiny optional reference slice; `nad_count` does not read it.
 
 Each NAD joins **both**:
 
@@ -163,6 +163,6 @@ These still produce a valid `terraform init`. Some objects are incomplete becaus
 | `time_bound=yes` | Flag only (vendor, auditor-external identity) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
 | Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |
-| NAD → NDG | Access locked to `access-marketing`. Location is `Location#All Locations#{State}#{site_id}` | Default `nad_count=6250` joins Access **and** the state/city Location. `TF_VAR_nad_count=0` is policy-only. |
+| NAD → NDG | Access locked to `access-marketing`. Location is `Location#All Locations#{State}#{site_id}` | Default `nad_count=15000` joins Access **and** the state/city Location. `TF_VAR_nad_count=0` is policy-only. |
 
 See [PLAN.md](PLAN.md) for the device-admin design.

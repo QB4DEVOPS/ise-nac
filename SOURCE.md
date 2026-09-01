@@ -87,10 +87,10 @@ No passwords, admin accounts, or lab management addresses.
 `scripts/generate_devices.py` from `sites.csv` (not hand-typed). Rebuild:
 `python3 scripts/generate_devices.py`.
 
-Locked math: 150,000 users, phone and PC per user, 48-port access switch
-serves 24 users, 150000/24 = 6,250 switches. Role is `sw`, OS is IOS-XE.
-Regional sites get 20 switches; branch sites get 15 (50×20 + 350×15 = 6250).
-No HQ/DC types in the sites file, so none were added.
+Locked math: 50 regional sites × 48 switches = 2,400; 350 branch sites ×
+36 switches = 12,600; total 15,000. Role is `sw`, OS is IOS-XE. Last octet
+`{nn}` is 1–254; 48 and 36 both fit. No HQ/DC types in the sites file, so
+none were added.
 
 Hostname is `{cc}{site}-sw-{nn}` with a 3–4 character site token derived from
 the city name. `site_code` is the `sites.csv` id (real city row). Management

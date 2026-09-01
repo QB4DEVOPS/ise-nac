@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Build devices.csv: 6,250 access switches from sites.csv.
+"""Build devices.csv: 15,000 access switches from sites.csv.
 
-Locked math: 150,000 users, phone+PC per user, 48-port switch => 24 users
-per switch => 150000/24 = 6250 switches.
+Locked math (do not invent another split):
+  50 regional sites × 48 switches = 2,400
+  350 branch sites × 36 switches = 12,600
+  Total 15,000
 
-Regional sites get 20 switches; branch sites get 15.
-50*20 + 350*15 = 6250.
+Last octet {nn} is 1–254. 48 regional and 36 branch both fit.
 
 Hostname: {cc}{site}-{role}-{nn} with role=sw and a 3-4 char site token
 derived from the city (unique per country_code). site_code is the sites.csv
@@ -13,7 +14,8 @@ id so every row joins to a real site.
 
 Loopback: 10.{country_id}.{site_id}.{nn}/32
 US has 300 sites, so it uses two /16s (country_id 1 and 2); other countries
-get one /16. site_id is 1-254 inside each /16.
+get one /16. site_id is 1-254 inside each /16. country_id/site_id stay unique
+so IPs do not collide.
 """
 
 from __future__ import annotations
@@ -33,9 +35,9 @@ ROLE = "sw"
 OS = "IOS-XE"
 PORT_COUNT = 48
 USERS_PER_SWITCH = 24
-REGIONAL_SWITCHES = 20
-BRANCH_SWITCHES = 15
-TARGET_SWITCHES = 6250
+REGIONAL_SWITCHES = 48
+BRANCH_SWITCHES = 36
+TARGET_SWITCHES = 15000
 MAX_SITE_ID = 254
 MAX_NN = 254
 COLUMNS = [

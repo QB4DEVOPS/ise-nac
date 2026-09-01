@@ -85,9 +85,9 @@ NADs join the **state/city** Location NDG, not the type-level parent. Do not rec
 
 ## Apply (after destroy)
 
-Default `nad_count` is **6250**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree **and** every `devices.csv` switch. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (env only; no secret in git). ISE requires a RADIUS shared secret even for TACACS-only devices. Protocol stays `TACACS_PLUS`. Empty TACACS or RADIUS secret with NADs to push fails. Policy-only (folders + TACACS, no switches): `TF_VAR_nad_count=0`.
+Default `nad_count` is **15000**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree **and** every `devices.csv` switch. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (env only; no secret in git). ISE requires a RADIUS shared secret even for TACACS-only devices. Protocol stays `TACACS_PLUS`. Empty TACACS or RADIUS secret with NADs to push fails. Policy-only (folders + TACACS, no switches): `TF_VAR_nad_count=0`.
 
-One PAN: Location NDGs were ~50 seconds each. Full apply (400 sites + 151 folders + 6,250 NADs) will take a long time. Do not apply from an agent.
+One PAN: Location NDGs were ~50 seconds each. Full apply (400 sites + 151 folders + 15,000 NADs) will take a long time. Do not apply from an agent.
 
 ## Next
 

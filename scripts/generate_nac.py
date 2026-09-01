@@ -73,8 +73,8 @@ def main() -> int:
         raise SystemExit(f"sites.csv expected 400 rows, got {len(sites)}")
     if len(ndgs) != 4:
         raise SystemExit(f"ndgs.csv expected 4 rows, got {len(ndgs)}")
-    if len(devices) != 6250:
-        raise SystemExit(f"devices.csv expected 6250 rows, got {len(devices)}")
+    if len(devices) != 15000:
+        raise SystemExit(f"devices.csv expected 15000 rows, got {len(devices)}")
     if {d["role"] for d in devices} != {"sw"}:
         raise SystemExit("devices.csv has roles other than sw")
 
