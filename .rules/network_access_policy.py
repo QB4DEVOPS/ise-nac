@@ -1,7 +1,8 @@
 """FAIL unless wired 802.1X + MAB Network Access policy matches the CoS lock.
 
 Checks YAML/CSV sources and the Terraform that POSTs to ISE. Device Admin
-TACACS stays as-is. No guest. 11 groups × 10 fake lab MACs = 110.
+TACACS stays as-is. No guest. 11 groups × 10 lab MACs = 110.
+OUIs are locked IEEE MA-L assignments; last 3 octets are generated.
 """
 
 from __future__ import annotations
@@ -70,6 +71,32 @@ _NAD_PROTO = re.compile(r'authentication_network_protocol\s+=\s+"RADIUS"')
 _NAD_TACACS_SECRET = re.compile(r"tacacs_shared_secret\s+=")
 _ENDPOINT_DEFAULT = re.compile(r'variable\s+"endpoint_count"[\s\S]*?default\s+=\s+110', re.M)
 _MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
+_LOCKED_OUI = {
+    "Phones": "00:04:f2",
+    "AP": "9c:e3:30",
+    "Printers": "9c:7b:ef",
+    "TVs": "64:1b:2f",
+    "Badge_Readers": "00:30:8e",
+    "Cameras": "00:40:8c",
+    "UPS": "00:c0:b7",
+    "Powerstrips": "00:0d:5d",
+    "Linux": "00:c0:4f",
+    "Windows": "10:e7:c6",
+    "RFID_Readers": "00:16:25",
+}
+_ORG_NEEDLES = {
+    "Phones": "polycom",
+    "AP": "cisco meraki",
+    "Printers": "hewlett packard",
+    "TVs": "samsung electronics",
+    "Badge_Readers": "hid global",
+    "Cameras": "axis communications",
+    "UPS": "american power conversion",
+    "Powerstrips": "raritan",
+    "Linux": "dell",
+    "Windows": "hewlett packard",
+    "RFID_Readers": "impinj",
+}
 
 
 def _load_yaml(path: Path, key: str) -> list[dict[str, Any]]:
@@ -96,9 +123,20 @@ def _names(items: list[dict[str, Any]]) -> list[str]:
     return out
 
 
-def _is_locally_administered_unicast(mac: str) -> bool:
-    first = int(mac.split(":")[0], 16)
-    return (first & 0x01) == 0 and (first & 0x02) == 0x02
+def _nic_suffix(mac: str) -> str:
+    return ":".join(mac.split(":")[3:])
+
+
+def _is_trivial_nic_suffix(suffix: str) -> bool:
+    parts = suffix.split(":")
+    if len(parts) != 3:
+        return True
+    a, b, c = (int(p, 16) for p in parts)
+    if a == 0 and b == 0:
+        return True
+    if b == 0 and 1 <= c <= 10:
+        return True
+    return suffix in {"00:00:00", "ff:ff:ff"}
 
 
 class Rule(RuleBase):
@@ -113,8 +151,9 @@ class Rule(RuleBase):
     explanation = """\
 CoS lock for wired 802.1X + MAB on CiscoDevNet/ise 0.3.4. Eleven endpoint
 identity groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS,
-Powerstrips, Linux, Windows, RFID_Readers). 10 unique locally-administered
-lab MACs per group (110 total). No guest. No 15k MAC dump. Two Allowed
+Powerstrips, Linux, Windows, RFID_Readers). 10 unique lab MACs per group
+(110 total) using locked IEEE MA-L OUIs plus generated last 3 octets.
+No 02:00:GG. No 00:00:01–00:00:0A. No guest. No 15k MAC dump. Two Allowed
 Protocols (ise_allowed_protocols): 802.1X EAP and MAB PAP/ASCII.
 Authorization profiles ACCESS_ACCEPT with lab VLAN 10 data, 20 voice, 30 MAB.
 Phones → Wired_Voice, Printers → Wired_Printer, all other groups → Wired_Data.
@@ -220,24 +259,69 @@ NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
         if extra:
             add(f"endpoints.csv has unknown groups {sorted(extra)}.", "endpoints.csv")
 
+        csv_suffixes = [_nic_suffix(m) for m in csv_macs if m]
+        if csv_suffixes and len(csv_suffixes) != len(set(csv_suffixes)):
+            add("endpoints.csv last-3-octet suffixes must be unique across 110.", "endpoints.csv")
+
         for r in csv_eps:
             mac = (r.get("mac") or "").strip()
+            group = r.get("endpoint_identity_group") or ""
             if not _MAC_RE.fullmatch(mac):
                 add(
-                    f"MAC must be lowercase colon hex (got {mac!r}). Fake lab MAC, not hardware.",
+                    f"MAC must be lowercase colon hex (got {mac!r}). Lab MAC, not hardware.",
                     "endpoints.csv",
                     mac,
                 )
                 break
-            if not _is_locally_administered_unicast(mac):
+            if mac.startswith("02:00:"):
                 add(
-                    f"MAC {mac} must be locally administered unicast "
-                    "(first-octet second hex digit 2, 6, A, or E).",
+                    f"MAC {mac} still uses the dropped 02:00:GG pattern.",
                     "endpoints.csv",
                     mac,
                 )
                 break
-            if _GUEST_RE.search(mac) or _GUEST_RE.search(r.get("endpoint_identity_group") or ""):
+            locked_oui = _LOCKED_OUI.get(group)
+            if locked_oui and not mac.startswith(f"{locked_oui}:"):
+                add(
+                    f"MAC {mac} for {group} must start with locked IEEE MA-L OUI {locked_oui}.",
+                    "endpoints.csv",
+                    mac,
+                )
+                break
+            if locked_oui and (r.get("oui") or "") != locked_oui:
+                add(
+                    f"endpoints.csv oui for {group} must be {locked_oui} (got {r.get('oui')!r}).",
+                    "endpoints.csv",
+                    group,
+                )
+                break
+            org = (r.get("organization") or "").casefold()
+            needle = _ORG_NEEDLES.get(group, "")
+            if needle and needle not in org:
+                add(
+                    f"endpoints.csv organization for {group} must cite IEEE org matching "
+                    f"{needle!r} (got {r.get('organization')!r}).",
+                    "endpoints.csv",
+                    group,
+                )
+                break
+            suffix = _nic_suffix(mac)
+            if _is_trivial_nic_suffix(suffix):
+                add(
+                    f"MAC {mac} NIC suffix is trivial (no 00:00:01–00:00:0A, no zero-middle counter).",
+                    "endpoints.csv",
+                    mac,
+                )
+                break
+            desc = (r.get("description") or "").casefold()
+            if "lab" not in desc or "not hardware" not in desc:
+                add(
+                    f"endpoints.csv description must say lab / not hardware ({mac}).",
+                    "endpoints.csv",
+                    mac,
+                )
+                break
+            if _GUEST_RE.search(mac) or _GUEST_RE.search(group):
                 add("Guest is not in this phase.", "endpoints.csv")
                 break
 

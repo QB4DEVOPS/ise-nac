@@ -9,7 +9,8 @@
 #   ise_network_access_authentication_rule_update_ranks
 #   ise_network_access_authorization_rule  (profiles = set of names)
 #   ise_network_access_authorization_rule_update_ranks
-# 11 groups. 110 fake lab MACs (endpoints.csv). Default endpoint_count=110. No guest.
+# 11 groups. 110 lab MACs (endpoints.csv, IEEE MA-L OUI + generated NIC suffix).
+# Default endpoint_count=110. No guest.
 # Schema cites:
 #   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
 #   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint
@@ -30,7 +31,7 @@ resource "ise_endpoint_identity_group" "this" {
 # Groups-only (no MAC rows): TF_VAR_endpoint_count=0. Do not dump 15k MACs.
 # 0.3.4 required: name, mac, static_group_assignment, static_profile_assignment.
 # group_id is the Identity Group ID (ise_endpoint_identity_group.id).
-# MACs are generated locally-administered unicast (first octet 02). Not hardware.
+# MACs use locked IEEE MA-L OUIs; last 3 octets are generated. Not hardware.
 resource "ise_endpoint" "this" {
   count = var.endpoint_count
 

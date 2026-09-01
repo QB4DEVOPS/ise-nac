@@ -1,4 +1,5 @@
 .env
+oui.txt
 __pycache__/
 *.pyc
 *.tfstate

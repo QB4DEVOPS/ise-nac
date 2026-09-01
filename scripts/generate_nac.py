@@ -208,12 +208,45 @@ def main() -> int:
     per_group = Counter(e["endpoint_identity_group"] for e in endpoints)
     if any(per_group.get(n) != 10 for n in locked_groups):
         raise SystemExit(f"endpoints.csv must have 10 MACs per group, got {dict(per_group)}")
+    locked_oui = {
+        "Phones": "00:04:f2",
+        "AP": "9c:e3:30",
+        "Printers": "9c:7b:ef",
+        "TVs": "64:1b:2f",
+        "Badge_Readers": "00:30:8e",
+        "Cameras": "00:40:8c",
+        "UPS": "00:c0:b7",
+        "Powerstrips": "00:0d:5d",
+        "Linux": "00:c0:4f",
+        "Windows": "10:e7:c6",
+        "RFID_Readers": "00:16:25",
+    }
+    suffixes = [":".join(m.split(":")[3:]) for m in macs]
+    if len(suffixes) != len(set(suffixes)):
+        raise SystemExit("endpoints.csv last-3-octet suffixes must be unique across 110")
     for e in endpoints:
-        first = int(e["mac"].split(":")[0], 16)
-        if (first & 0x01) != 0 or (first & 0x02) != 0x02:
-            raise SystemExit(f"MAC is not locally administered unicast: {e['mac']}")
-        if e["endpoint_identity_group"] not in locked_groups:
-            raise SystemExit(f"endpoint group not in lock: {e['endpoint_identity_group']}")
+        mac = e["mac"]
+        group = e["endpoint_identity_group"]
+        if group not in locked_groups:
+            raise SystemExit(f"endpoint group not in lock: {group}")
+        if mac.startswith("02:00:"):
+            raise SystemExit(f"dropped 02:00:GG pattern still present: {mac}")
+        oui = locked_oui[group]
+        if not mac.startswith(f"{oui}:"):
+            raise SystemExit(f"{group} MAC {mac} does not start with locked IEEE OUI {oui}")
+        if (e.get("oui") or "") != oui:
+            raise SystemExit(f"{group} endpoints.csv oui must be {oui}")
+        if not (e.get("organization") or "").strip():
+            raise SystemExit(f"{group} endpoints.csv must cite IEEE organization")
+        suffix = ":".join(mac.split(":")[3:])
+        last = int(suffix.split(":")[-1], 16)
+        mid = int(suffix.split(":")[1], 16)
+        first_nic = int(suffix.split(":")[0], 16)
+        if first_nic == 0 and mid == 0 and 1 <= last <= 10:
+            raise SystemExit(f"do not use 00:00:01–00:00:0A NIC suffixes: {mac}")
+        desc = (e.get("description") or "").casefold()
+        if "lab" not in desc or "not hardware" not in desc:
+            raise SystemExit(f"description must say lab / not hardware: {mac}")
     if any("guest" in (e.get("endpoint_identity_group") or "").lower() for e in endpoints):
         raise SystemExit("Guest endpoints are not in this phase")
 
