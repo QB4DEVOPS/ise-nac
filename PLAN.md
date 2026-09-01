@@ -89,7 +89,7 @@ NADs join the **state/city** Location NDG, not the type-level parent. Do not rec
 Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. Do not apply from an agent.
 
 - Endpoint identity groups: Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers. Drops Workstation / IP-Phone / Printer. No guest.
-- 10 unique locally-administered lab MACs per group (110 total). Generator, not hardware. `endpoint_count` default **110**. Groups-only: `TF_VAR_endpoint_count=0`.
+- 10 unique lab MACs per group (110 total). IEEE MA-L OUI + generated last 3 octets. Generator, not hardware. `endpoint_count` default **110**. Groups-only: `TF_VAR_endpoint_count=0`.
 - Two Allowed Protocols (`ise_allowed_protocols` 0.3.4): 802.1X EAP and MAB PAP/ASCII.
 - ACCESS_ACCEPT profiles: lab VLAN 10 data, 20 voice, 30 MAB. Authz: Phones → VLAN 20 (voice), Printers → VLAN 30 (MAB), all other groups → VLAN 10 (data). First-match.
 - One Network Access policy set. Dot1X → Internal Users. MAB → Internal Endpoints continue-if-not-found.

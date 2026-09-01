@@ -1,338 +1,560 @@
 # Generated lab endpoints. Do not edit by hand.
 # Rebuild: python3 scripts/generate_endpoints.py
-# Fake MACs. Locally administered unicast (first octet 02). Not hardware.
-# 11 groups × 10 MACs = 110. No guest. No 15k dump.
+# Lab MACs. Not hardware. Not copied from a device. No guest. No 15k dump.
+# Pattern: {IEEE MA-L OUI}:{generated last 3 octets}. Drop 02:00:GG.
+# IEEE MA-L source: https://standards-oui.ieee.org/oui/oui.txt
+# 11 groups × 10 MACs = 110. Last 3 octets hashed, unique, not 00:00:01–0A.
 # CiscoDevNet/ise 0.3.4 ise_endpoint: name, mac, group_id,
 # static_group_assignment, static_profile_assignment.
 # https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint
 endpoints:
-  - mac: 02:00:01:00:00:01
+  - mac: 00:04:f2:b0:6c:56
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:02
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:82:7e:4c
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:03
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:a4:d4:7d
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:04
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:2c:36:f9
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:05
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:14:ad:25
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:06
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:ca:14:87
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:07
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:19:5d:6c
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:08
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:ab:07:b0
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:09
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:72:ca:e1
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:01:00:00:0a
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 00:04:f2:04:8d:51
     endpoint_identity_group: Phones
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:01
+    oui: 00:04:f2
+    organization: Polycom
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:08:a2:1a
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:02
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:cc:b8:76
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:03
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:89:64:dd
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:04
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:6e:0a:0a
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:05
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:bb:d3:fd
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:06
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:e4:74:c3
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:07
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:7b:fa:ea
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:08
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:3d:84:22
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:09
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:c2:a1:20
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:02:00:00:0a
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:e3:30:aa:0d:73
     endpoint_identity_group: AP
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:01
+    oui: 9c:e3:30
+    organization: Cisco Meraki
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:35:a2:79
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:02
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:d5:ab:7c
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:03
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:2c:0c:d7
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:04
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:f8:5b:77
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:05
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:b7:5a:c6
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:06
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:fd:5b:22
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:07
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:50:5e:8d
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:08
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:e4:3d:19
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:09
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:fe:ed:52
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:03:00:00:0a
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 9c:7b:ef:14:1e:83
     endpoint_identity_group: Printers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:01
+    oui: 9c:7b:ef
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:a8:24:9f
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:02
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:15:00:72
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:03
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:60:f1:98
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:04
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:70:f9:81
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:05
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:08:81:cb
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:06
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:99:ce:46
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:07
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:f2:b9:fd
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:08
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:9f:35:cb
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:09
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:7c:cf:ee
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:04:00:00:0a
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 64:1b:2f:ca:49:d9
     endpoint_identity_group: TVs
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:01
+    oui: 64:1b:2f
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:5a:c3:71
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:02
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:07:f0:7b
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:03
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:ed:3a:44
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:04
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:70:c8:a3
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:05
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:1e:a1:14
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:06
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:fe:a6:75
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:07
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:47:e3:fd
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:08
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:e2:17:c5
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:09
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:7d:41:86
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:05:00:00:0a
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:30:8e:57:84:f2
     endpoint_identity_group: Badge_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:01
+    oui: 00:30:8e
+    organization: Crossmatch Technologies/HID Global
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:1c:4e:b9
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:02
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:3f:0c:eb
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:03
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:f6:b6:8c
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:04
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:cc:0f:95
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:05
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:69:3f:de
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:06
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:9d:68:8c
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:07
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:5c:cd:b9
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:08
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:12:15:0b
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:09
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:ad:ee:f1
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:06:00:00:0a
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:40:8c:9a:a7:be
     endpoint_identity_group: Cameras
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:01
+    oui: 00:40:8c
+    organization: Axis Communications AB
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:c1:62:c7
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:02
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:b1:e2:7c
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:03
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:54:0c:f5
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:04
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:c8:73:2c
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:05
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:86:06:22
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:06
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:28:3c:78
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:07
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:9b:0c:55
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:08
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:d3:ed:2f
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:09
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:b9:5f:9c
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:07:00:00:0a
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:b7:14:ca:84
     endpoint_identity_group: UPS
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:01
+    oui: 00:c0:b7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:77:47:82
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:02
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:6d:d8:80
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:03
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:9c:b4:12
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:04
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:0a:63:ae
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:05
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:92:76:43
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:06
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:fa:01:a8
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:07
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:25:b1:66
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:08
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:ed:06:71
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:09
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:a3:59:df
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:08:00:00:0a
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:0d:5d:af:5e:0f
     endpoint_identity_group: Powerstrips
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:01
+    oui: 00:0d:5d
+    organization: "Raritan Computer, Inc"
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:45:3c:c8
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:02
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:bb:a3:75
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:03
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:6c:a4:01
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:04
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:38:1a:f6
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:05
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:12:4e:55
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:06
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:e2:ce:bc
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:07
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:e7:91:6f
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:08
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:1f:9d:98
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:09
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:25:96:a3
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:09:00:00:0a
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:c0:4f:f2:e5:67
     endpoint_identity_group: Linux
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:01
+    oui: 00:c0:4f
+    organization: Dell Inc.
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:73:ae:77
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:02
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:52:09:b1
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:03
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:30:26:df
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:04
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:b3:3c:b8
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:05
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:2f:de:aa
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:06
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:c3:3a:95
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:07
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:6d:65:e4
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:08
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:71:01:e2
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:09
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:96:6e:68
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0a:00:00:0a
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 10:e7:c6:00:52:54
     endpoint_identity_group: Windows
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:01
+    oui: 10:e7:c6
+    organization: Hewlett Packard
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:9c:35:45
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:02
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:5c:b2:6e
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:03
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:97:93:b6
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:04
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:4c:62:ba
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:05
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:ff:32:86
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:06
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:ed:a1:9a
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:07
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:64:ed:4d
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:08
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:d5:bf:87
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:09
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:cf:ba:cc
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
-  - mac: 02:00:0b:00:00:0a
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+  - mac: 00:16:25:3a:06:3d
     endpoint_identity_group: RFID_Readers
-    description: Lab MAC. Locally administered unicast (02). Not hardware.
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."

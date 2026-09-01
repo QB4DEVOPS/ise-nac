@@ -38,7 +38,7 @@ That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-
 4. Shell profiles POST `session_attributes` (`type=MANDATORY`, `name=priv-lvl`, `value=1` or `15`). Empty profiles 400 on ISE 3.5.
 5. **Rule 105 FAILS** if any string is duplicated in the **combined** set of all command-set ISE names and all profile ISE names (one ERS namespace). Every TACACS object is suffixed (underscore only). Command sets: `T1_cs` `T2_cs` `T3_cs` `T4_cs` `vendor_cs` `contractor_cs` `auditor_internal_cs` `auditor_external_cs` `test_cs`. Profiles: `T1_shell` `T2_shell` `T3_shell` `T4_shell` `vendor_shell` `contractor_shell` `auditor_internal_shell` `auditor_external_shell`. No profile named `test_cs`. CSV keys stay `T1`. Identity groups, NDGs, and authz rule names are unchanged.
 6. **Rule 106 FAILS** if a user identity group name equals any string in that TACACS bag. Live groups (`T1`, `auditor-internal`) stay; `T1` does not collide with `T1_cs` / `T1_shell`. Suffix an identity group only when it would reuse a command-set or profile ISE name.
-7. **Rule 107 FAILS** unless wired 802.1X + MAB stays the CoS lock: eleven endpoint identity groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers). 10 unique locally-administered lab MACs per group (`endpoint_count` default **110**). No guest. No 15k MAC dump. Two `ise_allowed_protocols` (802.1X EAP and MAB PAP/ASCII). ACCESS_ACCEPT VLANs 10/20/30. Phones → VLAN 20 voice, Printers → VLAN 30 MAB, all other groups → VLAN 10 data. One Network Access policy set (not Device Admin). Dot1X → Internal Users; MAB → Internal Endpoints continue-if-not-found.
+7. **Rule 107 FAILS** unless wired 802.1X + MAB stays the CoS lock: eleven endpoint identity groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers). 10 unique lab MACs per group (`endpoint_count` default **110**) using locked IEEE MA-L OUIs plus generated last 3 octets. No `02:00:GG`. No `00:00:01`–`00:00:0A`. No guest. No 15k MAC dump. Two `ise_allowed_protocols` (802.1X EAP and MAB PAP/ASCII). ACCESS_ACCEPT VLANs 10/20/30. Phones → VLAN 20 voice, Printers → VLAN 30 MAB, all other groups → VLAN 10 data. One Network Access policy set (not Device Admin). Dot1X → Internal Users; MAB → Internal Endpoints continue-if-not-found.
 
 If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed. It still does not talk to ISE.
 
@@ -159,7 +159,7 @@ Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. 
 | Object | Source | 0.3.4 resource |
 | --- | --- | --- |
 | Endpoint identity groups | `endpoint_identity_groups.yaml` — Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers. Drops Workstation / IP-Phone / Printer. | `ise_endpoint_identity_group` |
-| Lab endpoints | `endpoints.csv` / `endpoints.yaml` — 10 unique locally-administered unicast MACs per group (110 total). Generator: `scripts/generate_endpoints.py`. Fake. Not hardware. No guest. No 15k dump. | `ise_endpoint` (`name`, `mac`, `group_id`, `static_group_assignment`, `static_profile_assignment`) |
+| Lab endpoints | `endpoints.csv` / `endpoints.yaml` — 10 unique lab MACs per group (110 total). Pattern `{IEEE MA-L OUI}:{generated last 3 octets}`. Generator: `scripts/generate_endpoints.py`. Not hardware. No guest. No 15k dump. | `ise_endpoint` (`name`, `mac`, `group_id`, `static_group_assignment`, `static_profile_assignment`) |
 | Allowed Protocols | `allowed_protocols.yaml` — `Wired_8021X` (EAP) and `Wired_MAB` (PAP/ASCII + Host Lookup) | `ise_allowed_protocols` (not `ise_allowed_protocols_tacacs`) |
 | Authorization profiles | `authorization_profiles.yaml` — ACCESS_ACCEPT VLAN 10 data, 20 voice, 30 MAB | `ise_authorization_profile` (`access_type`, `vlan_name_id`, `vlan_tag_id`, `voice_domain_permission`). `dacl_name` exists in 0.3.4; omitted (no DACLs in Git). |
 | Policy set | `network_access.yaml` — one Network Access set, not Device Admin | `ise_network_access_policy_set` |
@@ -168,7 +168,7 @@ Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. 
 
 `endpoint_count` default is **110**. Groups-only (no MAC rows): `TF_VAR_endpoint_count=0`. Do not generate 15k or 300k MACs. No guest.
 
-Lab MACs are locally administered unicast (IEEE: first-octet second hex digit 2, 6, A, or E). This repo uses first octet `02`. Pattern `02:00:GG:00:00:NN` (GG = group 01–0B, NN = 01–0A). Documented as fake. Not real hardware MACs.
+Lab MACs use locked IEEE MA-L OUIs from https://standards-oui.ieee.org/oui/oui.txt plus generated last 3 octets (SHA-256 lab suffixes, unique across 110). Not `02:00:GG`. Not `00:00:01`–`00:00:0A`. CSV cites `oui` and IEEE `organization`. Documented as lab. Not copied from hardware.
 
 `ise_network_access_policy_set.service_name` binds **one** Allowed Protocols name. This repo binds `Wired_8021X`. Host Lookup is also enabled on that list so the MAB authentication rule in the same set can fire. `Wired_MAB` stays the PAP/ASCII specialist.
 

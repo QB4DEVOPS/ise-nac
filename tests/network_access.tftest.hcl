@@ -107,8 +107,75 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = ise_endpoint.this[0].mac == "02:00:01:00:00:01"
-    error_message = "First lab MAC is Phones 02:00:01:00:00:01 (locally administered unicast, not hardware)."
+    condition     = startswith(ise_endpoint.this[0].mac, "00:04:f2:")
+    error_message = "First lab MAC is Phones with IEEE MA-L OUI 00:04:F2 (Polycom)."
+  }
+
+  assert {
+    condition     = local.endpoints[0].oui == "00:04:f2"
+    error_message = "endpoints.csv must cite OUI 00:04:f2 for Phones."
+  }
+
+  assert {
+    condition     = strcontains(lower(local.endpoints[0].organization), "polycom")
+    error_message = "endpoints.csv must cite IEEE organization Polycom for Phones."
+  }
+
+  assert {
+    condition     = length([for e in ise_endpoint.this : e.mac if startswith(e.mac, "02:00:")]) == 0
+    error_message = "Drop the 02:00:GG locally-administered pattern."
+  }
+
+  assert {
+    condition     = alltrue([for e in local.endpoints : startswith(e.mac, "${e.oui}:")])
+    error_message = "Each MAC must start with its cited IEEE MA-L OUI."
+  }
+
+  assert {
+    condition = alltrue([
+      for e in local.endpoints :
+      startswith(e.mac, {
+        Phones        = "00:04:f2:"
+        AP            = "9c:e3:30:"
+        Printers      = "9c:7b:ef:"
+        TVs           = "64:1b:2f:"
+        Badge_Readers = "00:30:8e:"
+        Cameras       = "00:40:8c:"
+        UPS           = "00:c0:b7:"
+        Powerstrips   = "00:0d:5d:"
+        Linux         = "00:c0:4f:"
+        Windows       = "10:e7:c6:"
+        RFID_Readers  = "00:16:25:"
+      }[e.endpoint_identity_group])
+    ])
+    error_message = "Each group must use its locked IEEE MA-L OUI. Do not invent OUIs."
+  }
+
+  assert {
+    condition = length(distinct([
+      for e in local.endpoints : trimprefix(e.mac, "${e.oui}:")
+    ])) == 110
+    error_message = "Last 3 octets must be unique across 110 lab MACs."
+  }
+
+  assert {
+    condition = alltrue([
+      for e in local.endpoints :
+      !startswith(trimprefix(e.mac, "${e.oui}:"), "00:00:")
+    ])
+    error_message = "Do not use 00:00:xx NIC suffixes (including 00:00:01–00:00:0A)."
+  }
+
+  assert {
+    condition = alltrue([
+      for e in local.endpoints : length(split(":", e.mac)) == 6
+    ])
+    error_message = "Each lab MAC must be six colon-separated octets."
+  }
+
+  assert {
+    condition     = strcontains(lower(ise_endpoint.this[0].description), "not hardware")
+    error_message = "ise_endpoint description must say the MAC is not hardware."
   }
 
   assert {
@@ -152,8 +219,13 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = ise_endpoint.this[109].mac == "02:00:0b:00:00:0a"
-    error_message = "Last lab MAC is RFID_Readers 02:00:0b:00:00:0a."
+    condition     = startswith(ise_endpoint.this[109].mac, "00:16:25:")
+    error_message = "Last lab MAC is RFID_Readers with IEEE MA-L OUI 00:16:25 (Impinj)."
+  }
+
+  assert {
+    condition     = strcontains(lower(local.endpoints[109].organization), "impinj")
+    error_message = "Last CSV row must cite IEEE organization Impinj."
   }
 
   assert {

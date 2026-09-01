@@ -1,111 +1,111 @@
-﻿mac,endpoint_identity_group,description
-02:00:01:00:00:01,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:02,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:03,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:04,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:05,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:06,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:07,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:08,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:09,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:01:00:00:0a,Phones,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:01,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:02,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:03,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:04,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:05,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:06,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:07,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:08,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:09,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:02:00:00:0a,AP,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:01,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:02,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:03,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:04,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:05,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:06,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:07,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:08,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:09,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:03:00:00:0a,Printers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:01,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:02,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:03,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:04,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:05,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:06,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:07,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:08,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:09,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:04:00:00:0a,TVs,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:01,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:02,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:03,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:04,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:05,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:06,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:07,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:08,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:09,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:05:00:00:0a,Badge_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:01,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:02,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:03,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:04,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:05,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:06,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:07,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:08,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:09,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:06:00:00:0a,Cameras,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:01,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:02,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:03,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:04,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:05,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:06,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:07,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:08,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:09,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:07:00:00:0a,UPS,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:01,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:02,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:03,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:04,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:05,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:06,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:07,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:08,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:09,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:08:00:00:0a,Powerstrips,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:01,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:02,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:03,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:04,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:05,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:06,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:07,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:08,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:09,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:09:00:00:0a,Linux,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:01,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:02,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:03,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:04,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:05,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:06,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:07,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:08,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:09,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0a:00:00:0a,Windows,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:01,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:02,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:03,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:04,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:05,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:06,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:07,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:08,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:09,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
-02:00:0b:00:00:0a,RFID_Readers,Lab MAC. Locally administered unicast (02). Not hardware.
+﻿mac,endpoint_identity_group,oui,organization,description
+00:04:f2:b0:6c:56,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:82:7e:4c,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:a4:d4:7d,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:2c:36:f9,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:14:ad:25,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:ca:14:87,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:19:5d:6c,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:ab:07:b0,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:72:ca:e1,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+00:04:f2:04:8d:51,Phones,00:04:f2,Polycom,Lab MAC. Not hardware. IEEE MA-L OUI 00:04:F2 (Polycom). Last 3 octets generated; not copied from a device.
+9c:e3:30:08:a2:1a,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:cc:b8:76,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:89:64:dd,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:6e:0a:0a,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:bb:d3:fd,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:e4:74:c3,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:7b:fa:ea,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:3d:84:22,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:c2:a1:20,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:e3:30:aa:0d:73,AP,9c:e3:30,Cisco Meraki,Lab MAC. Not hardware. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki). Last 3 octets generated; not copied from a device.
+9c:7b:ef:35:a2:79,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:d5:ab:7c,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:2c:0c:d7,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:f8:5b:77,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:b7:5a:c6,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:fd:5b:22,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:50:5e:8d,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:e4:3d:19,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:fe:ed:52,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+9c:7b:ef:14:1e:83,Printers,9c:7b:ef,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard). Last 3 octets generated; not copied from a device.
+64:1b:2f:a8:24:9f,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:15:00:72,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:60:f1:98,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:70:f9:81,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:08:81:cb,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:99:ce:46,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:f2:b9:fd,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:9f:35:cb,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:7c:cf:ee,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+64:1b:2f:ca:49:d9,TVs,64:1b:2f,"Samsung Electronics Co.,Ltd","Lab MAC. Not hardware. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd). Last 3 octets generated; not copied from a device."
+00:30:8e:5a:c3:71,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:07:f0:7b,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:ed:3a:44,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:70:c8:a3,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:1e:a1:14,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:fe:a6:75,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:47:e3:fd,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:e2:17:c5,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:7d:41:86,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:30:8e:57:84:f2,Badge_Readers,00:30:8e,Crossmatch Technologies/HID Global,Lab MAC. Not hardware. IEEE MA-L OUI 00:30:8E (Crossmatch Technologies/HID Global). Last 3 octets generated; not copied from a device.
+00:40:8c:1c:4e:b9,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:3f:0c:eb,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:f6:b6:8c,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:cc:0f:95,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:69:3f:de,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:9d:68:8c,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:5c:cd:b9,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:12:15:0b,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:ad:ee:f1,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:40:8c:9a:a7:be,Cameras,00:40:8c,Axis Communications AB,Lab MAC. Not hardware. IEEE MA-L OUI 00:40:8C (Axis Communications AB). Last 3 octets generated; not copied from a device.
+00:c0:b7:c1:62:c7,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:b1:e2:7c,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:54:0c:f5,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:c8:73:2c,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:86:06:22,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:28:3c:78,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:9b:0c:55,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:d3:ed:2f,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:b9:5f:9c,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:c0:b7:14:ca:84,UPS,00:c0:b7,AMERICAN POWER CONVERSION CORP,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:B7 (AMERICAN POWER CONVERSION CORP). Last 3 octets generated; not copied from a device.
+00:0d:5d:77:47:82,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:6d:d8:80,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:9c:b4:12,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:0a:63:ae,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:92:76:43,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:fa:01:a8,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:25:b1:66,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:ed:06:71,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:a3:59:df,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:0d:5d:af:5e:0f,Powerstrips,00:0d:5d,"Raritan Computer, Inc","Lab MAC. Not hardware. IEEE MA-L OUI 00:0D:5D (Raritan Computer, Inc). Last 3 octets generated; not copied from a device."
+00:c0:4f:45:3c:c8,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:bb:a3:75,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:6c:a4:01,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:38:1a:f6,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:12:4e:55,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:e2:ce:bc,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:e7:91:6f,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:1f:9d:98,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:25:96:a3,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+00:c0:4f:f2:e5:67,Linux,00:c0:4f,Dell Inc.,Lab MAC. Not hardware. IEEE MA-L OUI 00:C0:4F (Dell Inc.). Last 3 octets generated; not copied from a device.
+10:e7:c6:73:ae:77,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:52:09:b1,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:30:26:df,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:b3:3c:b8,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:2f:de:aa,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:c3:3a:95,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:6d:65:e4,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:71:01:e2,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:96:6e:68,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+10:e7:c6:00:52:54,Windows,10:e7:c6,Hewlett Packard,Lab MAC. Not hardware. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard). Last 3 octets generated; not copied from a device.
+00:16:25:9c:35:45,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:5c:b2:6e,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:97:93:b6,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:4c:62:ba,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:ff:32:86,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:ed:a1:9a,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:64:ed:4d,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:d5:bf:87,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:cf:ba:cc,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
+00:16:25:3a:06:3d,RFID_Readers,00:16:25,"Impinj, Inc.","Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."

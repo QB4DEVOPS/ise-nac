@@ -100,10 +100,12 @@ endpoint_identity_group:
   description: str(required=False)
   system_defined: bool(required=False)
 
-# Lab MACs. Fake, locally administered unicast. Not hardware.
+# Lab MACs. IEEE MA-L OUI + generated last 3 octets. Not hardware.
 endpoint:
   mac: str()
   endpoint_identity_group: str()
+  oui: str(required=False)
+  organization: str(required=False)
   description: str(required=False)
 
 # CiscoDevNet/ise 0.3.4 ise_allowed_protocols required booleans.

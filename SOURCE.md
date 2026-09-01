@@ -65,9 +65,31 @@ policy rules in ISE push order (first match wins), same style as the TACACS CSVs
 YAML originals: `endpoint_identity_groups.yaml`, `endpoints.yaml`,
 `allowed_protocols.yaml`, `authorization_profiles.yaml`, `network_access.yaml`.
 Eleven groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS,
-Powerstrips, Linux, Windows, RFID_Readers). `endpoints.csv` is 110 fake
-locally-administered lab MACs (10 per group) from
-`scripts/generate_endpoints.py`. Not hardware. No guest. No 15k dump.
+Powerstrips, Linux, Windows, RFID_Readers). `endpoints.csv` is 110 lab
+MACs (10 per group) from `scripts/generate_endpoints.py`: locked IEEE
+MA-L OUI + generated last 3 octets. Source:
+https://standards-oui.ieee.org/oui/oui.txt. CSV cites `oui` and IEEE
+`organization`. Not hardware. No guest. No 15k dump.
+
+Locked IEEE MA-L OUIs (https://standards-oui.ieee.org/oui/oui.txt), verified
+against the (hex) assignment — do not invent others:
+
+| Group | OUI | IEEE organization |
+| --- | --- | --- |
+| Phones | 00:04:F2 | Polycom |
+| AP | 9C:E3:30 | Cisco Meraki |
+| Printers | 9C:7B:EF | Hewlett Packard |
+| TVs | 64:1B:2F | Samsung Electronics Co.,Ltd |
+| Badge_Readers | 00:30:8E | Crossmatch Technologies/HID Global |
+| Cameras | 00:40:8C | Axis Communications AB |
+| UPS | 00:C0:B7 | AMERICAN POWER CONVERSION CORP |
+| Powerstrips | 00:0D:5D | Raritan Computer, Inc |
+| Linux | 00:C0:4F | Dell Inc. |
+| Windows | 10:E7:C6 | Hewlett Packard |
+| RFID_Readers | 00:16:25 | Impinj, Inc. |
+
+Last 3 octets are hashed lab suffixes, unique across 110, not `00:00:01`–
+`00:00:0A`, not copied from a NIC. Drop the `02:00:GG` pattern.
 
 `tacacs_authz.csv` is TACACS authorization rules in ISE push order (first match
 wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-bound,
