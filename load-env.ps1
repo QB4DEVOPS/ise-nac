@@ -37,4 +37,8 @@ if ($env:NAD_TACACS_SECRET) {
 }
 
 Write-Host "Loaded .env. PAN host: $($env:ISE_HOST)"
+if (-not $env:NAD_TACACS_SECRET) {
+    Write-Host "NAD_TACACS_SECRET is empty. A normal apply (default 6250 NADs) will fail until you set it in .env."
+    Write-Host "Policy-only (no switches): `$env:TF_VAR_nad_count = `"0`""
+}
 Write-Host "Next: terraform init   then   terraform plan   then   terraform apply"

@@ -6,6 +6,12 @@ mock_provider "ise" {}
 run "state_and_site_location_are_objects" {
   command = plan
 
+  # Policy-only so this run stays a Location for_each check (616 objects),
+  # not 6,250 NAD creates. Default nad_count is 6250 — see nads_default.tftest.hcl.
+  variables {
+    nad_count = 0
+  }
+
   assert {
     condition     = local.state_location_ndgs["California"].ndg == "California"
     error_message = "state_location_ndgs[California] must be an object with ndg, not a grouped tuple of site rows."
@@ -39,10 +45,5 @@ run "state_and_site_location_are_objects" {
   assert {
     condition     = local.default_access_ndg == "access-marketing"
     error_message = "Access stays access-marketing."
-  }
-
-  assert {
-    condition     = var.nad_count == 0
-    error_message = "nad_count default must stay 0."
   }
 }

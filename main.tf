@@ -6,7 +6,8 @@ provider "ise" {
 }
 
 # GUI canary. TARS owns the NAC; Terraform creates this. Do not click ISE to make it.
-# Apply only this object: terraform apply -target=ise_tacacs_command_set.test
+# Apply only this object (quote -target in PowerShell):
+#   terraform apply "-target=ise_tacacs_command_set.test"
 # Resource address stays .test. ISE name is test_cs (every TACACS object is suffixed).
 # ISE-legal: show / version / PERMIT. No regex. No profile named test_cs.
 # May 400 until Device Admin / TACACS is licensed; still ship the resource.

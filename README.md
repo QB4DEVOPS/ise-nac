@@ -52,18 +52,18 @@ Validate YAML first (`nac-validate` above). Then Terraform.
 
 `terraform init` only downloads the Cisco ISE plugin. The PAN does **not** need to be reachable.
 
-`terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up.
+`terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up. A normal apply (default `nad_count=6250`) creates the Location tree **and** all 6,250 switches. `.env` must have `NAD_TACACS_SECRET`.
 
-Paste this in PowerShell (loads `.env`, then the three terraform commands):
+After destroy, paste this in PowerShell (pull, load `.env`, init, apply):
 
 ```
+git pull
 . .\load-env.ps1
 terraform init
-terraform plan
 terraform apply
 ```
 
-If PowerShell says scripts are disabled, paste this first:
+Optional: `terraform plan` before apply. If PowerShell says scripts are disabled, paste this first:
 
 ```
 Set-ExecutionPolicy -Scope Process Bypass
@@ -77,51 +77,55 @@ TARS owns the NAC. Terraform creates the GUI test. Robert does not click ISE to 
 
 ```
 . .\load-env.ps1
-terraform apply -target=ise_tacacs_command_set.test
+terraform apply "-target=ise_tacacs_command_set.test"
 ```
 
 That address is `ise_tacacs_command_set.test`. ISE name is `test_cs`: one command, `show` / `version` / `PERMIT`, `permit_unmatched=false`. No regex. If this 400s, Device Admin / TACACS may not be licensed yet.
 
-If you already ran apply once, pull this folder first, then apply again:
+## After destroy (rebuild the system)
+
+After `terraform destroy` on pan1, pull this folder and apply. A normal apply builds the **Location tree and all 6,250 NADs** from `devices.csv`. Put `NAD_TACACS_SECRET` in `.env` first (never in git). `load-env.ps1` maps it to `TF_VAR_nad_tacacs_secret`. There is no secret default in git. Empty secret with `nad_count>0` fails with a clear error.
 
 ```
 git pull
 . .\load-env.ps1
+terraform init
 terraform apply
 ```
 
-## First apply (no 6,250 NADs)
+Default `nad_count` is **6250**. You do **not** set `TF_VAR_nad_count` for the full system.
 
-Default NAD count is **0**. A normal apply still creates policy objects **and** the Location NDG tree (state/country folders + 400 sites + 4 type-level). It does **not** create NADs.
+**Warning:** this will take a long time on one PAN. Location NDGs were ~50 seconds each (400 sites + 151 state/country folders + 4 type-level). Then 6,250 NAD creates. Do not apply from an agent. Do not cancel mid-apply if you can avoid it.
+
+A normal apply creates:
 
 - Four Access NDGs from `ndgs.csv`: `access-marketing`, `access-hr`, `access-ceo`, `access-sourcecode`
 - Four type-level Location NDGs under ISE All Locations: `regional` (largest-city **type** only), `branch`, plus placeholders `hq` and `dc`. **`regional` is never a state folder name.** NADs do **not** join these type groups.
 - One Location folder per US state (`admin1`) and per non-US country (`cc`). One site NDG under that folder: `Location#All Locations#{State}#{site_id}` (example `California#us-los-angeles`). Types stay `regional` / `branch`. No HQ/DC city tags.
+- All **6,250** access switches from `devices.csv`
 - TACACS authentication sequence from `tacacs_authc.csv`
 - TACACS authorization rules from `tacacs_authz.csv` in ISE push order (first match wins)
 
 This does **not** deploy ESXi, an OVA, or C:\Marco paths.
 
-**Warning:** applying **6,250 NADs + 400 site Location NDGs + 151 state/country folders + 4 type-level** on one PAN will take a long time. Default `nad_count=0` still pushes the Location tree. Do not apply from an agent.
+Policy-only (Location tree + TACACS, **no** switches):
+
+```
+. .\load-env.ps1
+$env:TF_VAR_nad_count = "0"
+terraform apply
+```
 
 ## NAD inventory (devices.csv)
 
-Default `nad_count` stays **0**. The intended inventory is every row in `devices.csv` (**6,250** access switches), not the old sample of 8. `sample_nads.csv` can stay as a tiny optional reference slice; `nad_count` does not read it.
+Default `nad_count` is **6250** — every row in `devices.csv`. `sample_nads.csv` can stay as a tiny optional reference slice; `nad_count` does not read it.
 
 Each NAD joins **both**:
 
 1. Access: **`access-marketing` only** (CoS lock). `devices.csv` has no Access column. Not a different default. Not round-robin. Not `hr` / `ceo` / `sourcecode` until Robert tags Access.
 2. Location: that device's state/city NDG (`Location#All Locations#{State}#{site_id}`). Not the type-level `regional` / `branch` / `hq` / `dc` groups.
 
-Put the TACACS shared secret in `.env` as `NAD_TACACS_SECRET` (never in git). Full push:
-
-```
-. .\load-env.ps1
-$env:TF_VAR_nad_count = "6250"
-terraform apply
-```
-
-Same thing without PowerShell env assignment: `TF_VAR_nad_count=6250` in the environment. Required: `TF_VAR_nad_tacacs_secret` (loaded from `NAD_TACACS_SECRET`). There is no secret default in git. `TF_VAR_nad_count=N` pushes the first N rows of `devices.csv`.
+TACACS shared secret: `.env` `NAD_TACACS_SECRET` only (never in git). Required whenever `nad_count>0`. `TF_VAR_nad_count=N` pushes the first N rows of `devices.csv`.
 
 ## Location NDG names
 
@@ -159,6 +163,6 @@ These still produce a valid `terraform init`. Some objects are incomplete becaus
 | `time_bound=yes` | Flag only (vendor, auditor-external identity) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
 | Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |
-| NAD → NDG | Access locked to `access-marketing`. Location is `Location#All Locations#{State}#{site_id}` | `TF_VAR_nad_count=6250` joins Access **and** the state/city Location. Default count is 0. |
+| NAD → NDG | Access locked to `access-marketing`. Location is `Location#All Locations#{State}#{site_id}` | Default `nad_count=6250` joins Access **and** the state/city Location. `TF_VAR_nad_count=0` is policy-only. |
 
 See [PLAN.md](PLAN.md) for the device-admin design.
