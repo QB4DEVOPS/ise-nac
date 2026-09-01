@@ -41,7 +41,7 @@ if ($env:NAD_RADIUS_SECRET) {
 
 Write-Host "Loaded .env. PAN host: $($env:ISE_HOST)"
 if (-not $env:NAD_TACACS_SECRET -or -not $env:NAD_RADIUS_SECRET) {
-    Write-Host "NAD_TACACS_SECRET and NAD_RADIUS_SECRET are both required for a normal apply (default 6250 NADs)."
+    Write-Host "NAD_TACACS_SECRET and NAD_RADIUS_SECRET are both required for a normal apply (default 15000 NADs)."
     if (-not $env:NAD_TACACS_SECRET) {
         Write-Host "NAD_TACACS_SECRET is empty. Set it in .env."
     }

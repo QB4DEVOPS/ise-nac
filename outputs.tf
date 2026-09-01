@@ -1,5 +1,5 @@
 output "what_apply_will_do" {
-  description = "Counts for this apply. Default nads_to_push is 6250 (all of devices.csv). TF_VAR_nad_count=0 is policy-only."
+  description = "Counts for this apply. Default nads_to_push is 15000 (all of devices.csv). TF_VAR_nad_count=0 is policy-only."
   value = {
     access_ndgs          = length(local.ndgs)
     default_access_ndg   = local.default_access_ndg
