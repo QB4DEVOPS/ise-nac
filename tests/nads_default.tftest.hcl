@@ -63,13 +63,28 @@ run "default_pushes_all_devices" {
   }
 
   assert {
-    condition     = ise_network_device.nad[0].authentication_network_protocol == "TACACS_PLUS"
-    error_message = "NAD protocol stays TACACS_PLUS. Do not switch NADs to RADIUS."
+    condition     = ise_network_device.nad[0].authentication_network_protocol == "RADIUS"
+    error_message = "NAD protocol is RADIUS so 802.1X/MAB can use the NAD. Keep tacacs_shared_secret."
+  }
+
+  assert {
+    condition     = length(ise_network_device.nad[0].tacacs_shared_secret) > 0
+    error_message = "Keep tacacs_shared_secret on NADs (both NAD secrets stay)."
   }
 
   assert {
     condition     = length(ise_network_device.nad[0].authentication_radius_shared_secret) > 0
-    error_message = "NAD must set authentication_radius_shared_secret (ISE requires RADIUS secret even for TACACS_PLUS)."
+    error_message = "NAD must set authentication_radius_shared_secret (NAD_RADIUS_SECRET). Protocol is RADIUS."
+  }
+
+  assert {
+    condition     = ise_network_access_policy_set.wired.name == "Wired 802.1X MAB"
+    error_message = "Wired Network Access policy set must exist alongside 15000 NADs."
+  }
+
+  assert {
+    condition     = var.endpoint_count == 0
+    error_message = "endpoint_count default stays 0 at full NAD inventory."
   }
 
   assert {

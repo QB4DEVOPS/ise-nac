@@ -1,0 +1,4 @@
+order,name,endpoint_identity_group,profile
+1,ip-phone,IP-Phone,Wired_Voice
+2,workstation,Workstation,Wired_Data
+3,printer,Printer,Wired_Printer

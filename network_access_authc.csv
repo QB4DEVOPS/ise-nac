@@ -1,0 +1,3 @@
+order,name,protocol,identity_source,if_auth_fail,if_user_not_found,if_process_fail,condition_dictionary_name,condition_attribute_name,condition_operator,condition_attribute_value
+1,Dot1X,802.1X,ISE Internal Users,REJECT,REJECT,DROP,Radius,Service-Type,equals,Framed
+2,MAB,MAB,ISE Internal Endpoints,REJECT,CONTINUE,DROP,Network Access,UseCase,equals,Host Lookup

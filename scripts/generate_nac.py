@@ -67,6 +67,8 @@ def main() -> int:
     devices = read_csv("devices.csv")
     authc = read_csv("tacacs_authc.csv")
     authz = read_csv("tacacs_authz.csv")
+    na_authc = read_csv("network_access_authc.csv")
+    na_authz = read_csv("network_access_authz.csv")
     sample = read_csv("sample_nads.csv")
 
     if len(sites) != 400:
@@ -178,6 +180,8 @@ def main() -> int:
         "# Rebuild: python3 scripts/generate_nac.py",
         "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv",
         "# TACACS objects: command_sets.yaml shell_profiles.yaml",
+        "# Network Access: endpoint_identity_groups.yaml allowed_protocols.yaml authorization_profiles.yaml",
+        "#   network_access.yaml network_access_authc.csv network_access_authz.csv",
         "# Location NDGs: type-level in location_ndgs.yaml; state/city from sites.yaml",
         "",
         "lab:",
@@ -295,8 +299,53 @@ def main() -> int:
             )
         )
 
+    lines.append("")
+    lines.append("network_access_authc:")
+    for row in na_authc:
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("order", row["order"]),
+                    ("name", yq(row["name"])),
+                    ("protocol", yq(row["protocol"])),
+                    ("identity_source", yq(row["identity_source"])),
+                    ("if_auth_fail", yq(row["if_auth_fail"])),
+                    ("if_user_not_found", yq(row["if_user_not_found"])),
+                    ("if_process_fail", yq(row["if_process_fail"])),
+                    ("condition_dictionary_name", yq(row["condition_dictionary_name"])),
+                    ("condition_attribute_name", yq(row["condition_attribute_name"])),
+                    ("condition_operator", yq(row["condition_operator"])),
+                    ("condition_attribute_value", yq(row["condition_attribute_value"])),
+                ],
+            )
+        )
+
+    lines.append("")
+    lines.append("network_access_authz:")
+    for row in na_authz:
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("order", row["order"]),
+                    ("name", yq(row["name"])),
+                    ("endpoint_identity_group", yq(row["endpoint_identity_group"])),
+                    ("profile", yq(row["profile"])),
+                ],
+            )
+        )
+
     # TACACS objects. YAML originals: command_sets.yaml, shell_profiles.yaml.
-    for extra in ("command_sets.yaml", "shell_profiles.yaml"):
+    # Network Access objects: groups, allowed protocols, authz profiles, policy set.
+    for extra in (
+        "command_sets.yaml",
+        "shell_profiles.yaml",
+        "endpoint_identity_groups.yaml",
+        "allowed_protocols.yaml",
+        "authorization_profiles.yaml",
+        "network_access.yaml",
+    ):
         body = (ROOT / extra).read_text(encoding="utf-8").rstrip()
         if body:
             lines.append("")

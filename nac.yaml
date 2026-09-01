@@ -2,6 +2,8 @@
 # Rebuild: python3 scripts/generate_nac.py
 # Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv
 # TACACS objects: command_sets.yaml shell_profiles.yaml
+# Network Access: endpoint_identity_groups.yaml allowed_protocols.yaml authorization_profiles.yaml
+#   network_access.yaml network_access_authc.csv network_access_authz.csv
 # Location NDGs: type-level in location_ndgs.yaml; state/city from sites.yaml
 
 lab:
@@ -4290,6 +4292,44 @@ tacacs_authz:
     shell_profile: T1
     time_bound: "no"
 
+network_access_authc:
+  - order: 1
+    name: Dot1X
+    protocol: 802.1X
+    identity_source: ISE Internal Users
+    if_auth_fail: REJECT
+    if_user_not_found: REJECT
+    if_process_fail: DROP
+    condition_dictionary_name: Radius
+    condition_attribute_name: Service-Type
+    condition_operator: equals
+    condition_attribute_value: Framed
+  - order: 2
+    name: MAB
+    protocol: MAB
+    identity_source: ISE Internal Endpoints
+    if_auth_fail: REJECT
+    if_user_not_found: CONTINUE
+    if_process_fail: DROP
+    condition_dictionary_name: Network Access
+    condition_attribute_name: UseCase
+    condition_operator: equals
+    condition_attribute_value: Host Lookup
+
+network_access_authz:
+  - order: 1
+    name: ip-phone
+    endpoint_identity_group: IP-Phone
+    profile: Wired_Voice
+  - order: 2
+    name: workstation
+    endpoint_identity_group: Workstation
+    profile: Wired_Data
+  - order: 3
+    name: printer
+    endpoint_identity_group: Printer
+    profile: Wired_Printer
+
 # IOS-XE access-switch TACACS command sets. Source for Terraform and nac.yaml.
 # CiscoDevNet/ise 0.3.4 ise_tacacs_command_set: grant, command, arguments.
 # ISE ERS does NOT accept PCRE in arguments (parentheses, ?, .*). Use a
@@ -4604,6 +4644,124 @@ shell_profiles:
       - type: MANDATORY
         name: priv-lvl
         value: "1"
+
+# Empty endpoint identity groups. No MAC list. No guest.
+# CiscoDevNet/ise 0.3.4: ise_endpoint_identity_group (name, description, system_defined).
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
+# Default endpoint_count=0. Do not generate 300k MACs. ise_endpoint is not used.
+endpoint_identity_groups:
+  - name: Workstation
+    description: Wired 802.1X workstations. Empty group. No endpoints.
+    system_defined: false
+  - name: IP-Phone
+    description: Wired IP phones. Empty group. No endpoints.
+    system_defined: false
+  - name: Printer
+    description: Wired MAB printers. Empty group. No endpoints.
+    system_defined: false
+
+# Network Access Allowed Protocols. Not TACACS (that is ise_allowed_protocols_tacacs).
+# CiscoDevNet/ise 0.3.4: ise_allowed_protocols.
+# Schema (required): name, process_host_lookup, allow_pap_ascii, allow_chap,
+# allow_ms_chap_v1, allow_ms_chap_v2, allow_eap_md5, allow_leap, allow_eap_tls,
+# allow_eap_ttls, allow_eap_fast, allow_peap, allow_teap,
+# allow_preferred_eap_protocol, allow_weak_ciphers_for_eap, eap_tls_l_bit,
+# require_message_auth.
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/allowed_protocols
+#
+# Two lists, one policy set: 0.3.4 ise_network_access_policy_set.service_name
+# binds a single Allowed Protocols name. Wired_8021X is that service.
+# process_host_lookup is also true on Wired_8021X so the MAB authentication
+# rule in the same set can fire. Wired_MAB stays PAP/ASCII + Host Lookup only.
+allowed_protocols:
+  - name: Wired_8021X
+    description: Wired 802.1X EAP. Bound to the Network Access policy set.
+    process_host_lookup: true
+    allow_pap_ascii: false
+    allow_chap: false
+    allow_ms_chap_v1: false
+    allow_ms_chap_v2: false
+    allow_eap_md5: false
+    allow_leap: false
+    allow_eap_tls: true
+    allow_eap_ttls: true
+    allow_eap_fast: false
+    allow_peap: true
+    allow_teap: true
+    allow_preferred_eap_protocol: false
+    allow_weak_ciphers_for_eap: false
+    eap_tls_l_bit: false
+    require_message_auth: false
+    peap_allow_peap_eap_ms_chap_v2: true
+    peap_allow_peap_eap_tls: true
+    eap_ttls_pap_ascii: true
+    eap_ttls_ms_chap_v2: true
+    teap_eap_ms_chap_v2: true
+    teap_eap_tls: true
+  - name: Wired_MAB
+    description: Wired MAB. Process Host Lookup and PAP/ASCII only.
+    process_host_lookup: true
+    allow_pap_ascii: true
+    allow_chap: false
+    allow_ms_chap_v1: false
+    allow_ms_chap_v2: false
+    allow_eap_md5: false
+    allow_leap: false
+    allow_eap_tls: false
+    allow_eap_ttls: false
+    allow_eap_fast: false
+    allow_peap: false
+    allow_teap: false
+    allow_preferred_eap_protocol: false
+    allow_weak_ciphers_for_eap: false
+    eap_tls_l_bit: false
+    require_message_auth: false
+
+# Network Access authorization profiles. ACCESS_ACCEPT. Lab VLANs 10/20/30.
+# CiscoDevNet/ise 0.3.4: ise_authorization_profile.
+# Schema used: name, description, access_type (ACCESS_ACCEPT|ACCESS_REJECT),
+# vlan_name_id (VLAN name or ID), vlan_tag_id (0-31), voice_domain_permission.
+# dacl_name exists on 0.3.4 but is omitted — no DACL objects in Git.
+# Do not invent fields.
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/authorization_profile
+authorization_profiles:
+  - name: Wired_Data
+    description: ACCESS_ACCEPT data. Lab VLAN 10.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "10"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Voice
+    description: ACCESS_ACCEPT voice. Lab VLAN 20.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "20"
+    vlan_tag_id: 0
+    voice_domain_permission: true
+  - name: Wired_Printer
+    description: ACCESS_ACCEPT MAB. Lab VLAN 30.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "30"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+
+# One Network Access policy set. Not Device Admin (that stays ise_device_admin_policy_set).
+# CiscoDevNet/ise 0.3.4: ise_network_access_policy_set.
+# service_name is one Allowed Protocols name (Wired_8021X).
+# Condition: Radius NAS-Port-Type equals Ethernet (wired).
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_policy_set
+network_access_policy_sets:
+  - name: Wired 802.1X MAB
+    description: Wired 802.1X then MAB from Git. Not Device Admin.
+    is_proxy: false
+    rank: 0
+    service_name: Wired_8021X
+    state: enabled
+    condition_type: ConditionAttributes
+    condition_is_negate: false
+    condition_dictionary_name: Radius
+    condition_attribute_name: NAS-Port-Type
+    condition_operator: equals
+    condition_attribute_value: Ethernet
 
 devices:
   - hostname: ushun-sw-01

@@ -60,6 +60,12 @@ ISE-legal (`[a-z0-9-]+`); no rename.
 store was given, so the lab default is ISE Internal Users (protocol TACACS). Do not
 assume Active Directory.
 
+`network_access_authc.csv` / `network_access_authz.csv` are wired 802.1X + MAB
+policy rules in ISE push order (first match wins), same style as the TACACS CSVs.
+YAML originals: `endpoint_identity_groups.yaml`, `allowed_protocols.yaml`,
+`authorization_profiles.yaml`, `network_access.yaml`. Groups only (Workstation,
+IP-Phone, Printer). No MAC list. No guest.
+
 `tacacs_authz.csv` is TACACS authorization rules in ISE push order (first match
 wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-bound,
 NDG-scoped), contractor, auditor-internal (all four NDGs, read-only),

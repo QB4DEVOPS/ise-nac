@@ -10,6 +10,12 @@ tacacs_authz: list(include('tacacs_authz_rule'), required=False)
 devices: list(include('device'), required=False)
 command_sets: list(include('command_set'), required=False)
 shell_profiles: list(include('shell_profile'), required=False)
+endpoint_identity_groups: list(include('endpoint_identity_group'), required=False)
+allowed_protocols: list(include('allowed_protocol'), required=False)
+authorization_profiles: list(include('authorization_profile'), required=False)
+network_access_policy_sets: list(include('network_access_policy_set'), required=False)
+network_access_authc: list(include('network_access_authc_rule'), required=False)
+network_access_authz: list(include('network_access_authz_rule'), required=False)
 ---
 lab:
   pan: include('pan')
@@ -87,3 +93,78 @@ session_attribute:
   type: enum('MANDATORY', 'OPTIONAL')
   name: str()
   value: any(str(), int())
+
+endpoint_identity_group:
+  name: str()
+  description: str(required=False)
+  system_defined: bool(required=False)
+
+# CiscoDevNet/ise 0.3.4 ise_allowed_protocols required booleans.
+allowed_protocol:
+  name: str()
+  description: str(required=False)
+  process_host_lookup: bool()
+  allow_pap_ascii: bool()
+  allow_chap: bool()
+  allow_ms_chap_v1: bool()
+  allow_ms_chap_v2: bool()
+  allow_eap_md5: bool()
+  allow_leap: bool()
+  allow_eap_tls: bool()
+  allow_eap_ttls: bool()
+  allow_eap_fast: bool()
+  allow_peap: bool()
+  allow_teap: bool()
+  allow_preferred_eap_protocol: bool()
+  allow_weak_ciphers_for_eap: bool()
+  eap_tls_l_bit: bool()
+  require_message_auth: bool()
+  peap_allow_peap_eap_ms_chap_v2: bool(required=False)
+  peap_allow_peap_eap_tls: bool(required=False)
+  eap_ttls_pap_ascii: bool(required=False)
+  eap_ttls_ms_chap_v2: bool(required=False)
+  teap_eap_ms_chap_v2: bool(required=False)
+  teap_eap_tls: bool(required=False)
+
+# CiscoDevNet/ise 0.3.4 ise_authorization_profile: access_type, vlan_name_id,
+# vlan_tag_id, voice_domain_permission. dacl_name exists but is not used.
+authorization_profile:
+  name: str()
+  description: str(required=False)
+  access_type: enum('ACCESS_ACCEPT', 'ACCESS_REJECT')
+  vlan_name_id: any(str(), int())
+  vlan_tag_id: int()
+  voice_domain_permission: bool()
+
+network_access_policy_set:
+  name: str()
+  description: str(required=False)
+  is_proxy: bool()
+  rank: int()
+  service_name: str()
+  state: enum('enabled', 'disabled', 'monitor')
+  condition_type: str()
+  condition_is_negate: bool()
+  condition_dictionary_name: str()
+  condition_attribute_name: str()
+  condition_operator: str()
+  condition_attribute_value: str()
+
+network_access_authc_rule:
+  order: int()
+  name: str()
+  protocol: str()
+  identity_source: str()
+  if_auth_fail: enum('REJECT', 'DROP', 'CONTINUE')
+  if_user_not_found: enum('REJECT', 'DROP', 'CONTINUE')
+  if_process_fail: enum('REJECT', 'DROP', 'CONTINUE')
+  condition_dictionary_name: str()
+  condition_attribute_name: str()
+  condition_operator: str()
+  condition_attribute_value: str()
+
+network_access_authz_rule:
+  order: int()
+  name: str()
+  endpoint_identity_group: str()
+  profile: str()

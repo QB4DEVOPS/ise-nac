@@ -1,0 +1,14 @@
+# Empty endpoint identity groups. No MAC list. No guest.
+# CiscoDevNet/ise 0.3.4: ise_endpoint_identity_group (name, description, system_defined).
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
+# Default endpoint_count=0. Do not generate 300k MACs. ise_endpoint is not used.
+endpoint_identity_groups:
+  - name: Workstation
+    description: Wired 802.1X workstations. Empty group. No endpoints.
+    system_defined: false
+  - name: IP-Phone
+    description: Wired IP phones. Empty group. No endpoints.
+    system_defined: false
+  - name: Printer
+    description: Wired MAB printers. Empty group. No endpoints.
+    system_defined: false

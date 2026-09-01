@@ -46,7 +46,7 @@ if (-not $env:NAD_TACACS_SECRET -or -not $env:NAD_RADIUS_SECRET) {
         Write-Host "NAD_TACACS_SECRET is empty. Set it in .env."
     }
     if (-not $env:NAD_RADIUS_SECRET) {
-        Write-Host "NAD_RADIUS_SECRET is empty. ISE requires a RADIUS shared secret even for TACACS-only devices. Set it in .env."
+        Write-Host "NAD_RADIUS_SECRET is empty. NAD protocol is RADIUS (802.1X/MAB). Set it in .env."
     }
     Write-Host "Policy-only (no switches): `$env:TF_VAR_nad_count = `"0`""
 }
