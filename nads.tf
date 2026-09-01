@@ -4,9 +4,8 @@
 # reference slice only; it is not selected by nad_count.
 #
 # Each NAD joins exactly two groups:
-#   Access:   access-marketing (locked; do not invent hr/ceo/sourcecode tags)
-#   Location: the device's nested site NDG
-#             Location#All Locations#{region}#{site_id}
+#   Access:   access-marketing (CoS lock until Robert tags Access)
+#   Location: the device's site NDG — Location#All Locations#{site_id}
 # NADs do not join type-level regional/branch/hq/dc as their Location parent.
 resource "ise_network_device" "nad" {
   count = var.nad_count

@@ -18,7 +18,7 @@ Customer-ready **device administration** on Cisco ISE, expressed as Network as C
 
 | Artifact | What it is |
 | --- | --- |
-| NDG tree | Access groups (who can log into which NADs) plus Location: type-level (`regional`, `branch`, placeholders `hq`/`dc`), one region per US state / non-US country, and one site NDG nested under its region |
+| NDG tree | Access groups (who can log into which NADs) plus Location: type-level (`regional`, `branch`, placeholders `hq`/`dc`) and one site NDG per `sites.yaml` id (`Location#All Locations#{site_id}`) |
 | Command sets | T1–T4 ladder. Vendor (time-bound, NDG-scoped). Contractor. Auditor internal (all NADs, read-only). Auditor external (time-bound, read-only) |
 | Generator | Stamps 15k NAD records off the site list (CSV) |
 | ISE deploy | PAN / MnT / PSN split. Four regional PSNs in the story, two in the lab |
@@ -34,7 +34,7 @@ Pattern: `{cc}{site}` lowercase, no spaces.
 - `{site}` 3–4 char location (`nyc`, `fra`, `blr`, `spo`)
 - Hostname: `{cc}{site}-{role}-{nn}` e.g. `usnyc-sw-01`, `defra-wlc-01`
 
-400+ sites live in `sites.yaml`. Location NDG encodes site under its region. Excel copies: `sites.csv`, `ndgs.csv`, `tacacs_authc.csv`, `tacacs_authz.csv`, `devices.csv`.
+400+ sites live in `sites.yaml`. Location NDG is `Location#All Locations#{site_id}`. Excel copies: `sites.csv`, `ndgs.csv`, `tacacs_authc.csv`, `tacacs_authz.csv`, `devices.csv`.
 
 ## Management loopbacks
 
@@ -60,19 +60,17 @@ Four Access groups. That is the access list.
 | `access-ceo` | T3+ |
 | `access-sourcecode` | T4 |
 
-Until Robert tags Access, every NAD joins **`access-marketing` only**. Do not invent hr/ceo/sourcecode membership.
+CoS lock: until Robert tags Access, every NAD joins **`access-marketing` only**. Not a different default. Not round-robin. Do not invent hr/ceo/sourcecode membership.
 
 Vendor is time-bound and scoped to one of these. Auditors are read-only across all four.
 
-Location NDGs sit under ISE **All Locations**. Type-level groups stay as siblings. Each US state is a region (`admin1`). Non-US region is `cc`. Each site is nested under its region — not flattened under All Locations.
+Location NDGs sit under ISE **All Locations**. Type-level groups stay as siblings. Each site is a Location NDG named from its `sites.yaml` `id`.
 
 | Location NDG | ISE path | Source |
 | --- | --- | --- |
 | `regional` / `branch` | `Location#All Locations#{type}` | Exists in `sites.yaml` |
 | `hq` / `dc` | `Location#All Locations#{type}` | Placeholder. No sites tagged yet |
-| US state | `Location#All Locations#California` | Distinct `admin1` on US rows (spaces → `_`) |
-| Non-US country | `Location#All Locations#gb` | Distinct `cc` |
-| Site | `Location#All Locations#California#us-los-angeles` | One `sites.yaml` `id` under its region |
+| Site | `Location#All Locations#us-los-angeles` | One `sites.yaml` `id` |
 
 NADs join the **site** Location NDG, not the type-level parent. Do not reclassify cities into HQ/DC without evidence.
 

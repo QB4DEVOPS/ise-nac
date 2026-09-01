@@ -4,7 +4,6 @@ output "what_apply_will_do" {
     access_ndgs          = length(local.ndgs)
     default_access_ndg   = local.default_access_ndg
     location_ndgs_type   = length(local.location_ndgs)
-    location_ndgs_region = length(local.region_ndgs)
     location_ndgs_site   = length(local.site_location_ndgs)
     tacacs_authc         = length(local.authc)
     tacacs_authz         = length(local.authz)

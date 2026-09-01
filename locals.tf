@@ -11,41 +11,20 @@ locals {
   location_ndg_rows = yamldecode(file("${path.module}/location_ndgs.yaml")).location_ndgs
   location_ndgs     = { for row in local.location_ndg_rows : row.ndg => row }
 
-  # ISE NDG leaf: alphanumeric, underscore, minus, dot. '#' is the path
-  # separator and must not appear in a leaf. Spaces/punctuation → '_'.
-  # US region = slugged admin1 (state). Non-US region = cc (gb, de, …).
+  # One Location NDG per site, sibling of type-level groups.
+  # ISE: Location#All Locations#{site_id}
   # site_id is already legal ([a-z0-9-]+); no transform.
-  # Current admin1 values only need space → underscore (New York → New_York).
-  site_region = {
-    for s in local.sites : s.id => (
-      s.cc == "us" ? replace(s.admin1, " ", "_") : s.cc
-    )
-  }
-
-  # Distinct regions: 51 US states (incl. District_of_Columbia) + 100 countries.
-  region_ndgs = {
-    for s in local.sites : local.site_region[s.id] => {
-      ndg         = local.site_region[s.id]
-      cc          = s.cc
-      description = s.cc == "us" ? "US state ${s.admin1}" : "Country ${s.cc}"
-    }...
-  }
-
-  # Nested site Location NDG. ISE:
-  # Location#All Locations#{region}#{site_id}
-  # Do not flatten under All Locations. Do not invent hq/dc city tags.
+  # Do not invent hq/dc city tags. sites.yaml types stay regional/branch.
   site_location_ndgs = {
     for s in local.sites : s.id => {
       site_id     = s.id
-      site_leaf   = s.id
-      region      = local.site_region[s.id]
-      ise_name    = "Location#All Locations#${local.site_region[s.id]}#${s.id}"
+      ise_name    = "Location#All Locations#${s.id}"
       description = s.admin1 != "" ? "${s.city}, ${s.admin1}" : s.city
     }
   }
 
-  # Locked Access NDG until Robert tags devices. Not hr/ceo/sourcecode.
-  # devices.csv has no Access column. Do not round-robin.
+  # CoS lock: every NAD in access-marketing until Robert tags Access.
+  # Not a different default. Not round-robin. Not hr/ceo/sourcecode.
   default_access_ndg = "access-marketing"
 
   # Optional 8-row reference slice. Not the apply inventory.

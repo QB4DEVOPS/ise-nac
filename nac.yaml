@@ -2,7 +2,7 @@
 # Rebuild: python3 scripts/generate_nac.py
 # Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv
 # TACACS objects: command_sets.yaml shell_profiles.yaml
-# Location NDGs: type-level in location_ndgs.yaml; region+site from sites.yaml
+# Location NDGs: type-level in location_ndgs.yaml; one site NDG per sites.yaml id
 
 lab:
   pan:
@@ -41,2059 +41,1206 @@ location_ndgs:
   - ndg: dc
     description: no sites tagged yet
     placeholder: true
-  - ndg: Alabama
-    description: US state Alabama
-    placeholder: false
-  - ndg: Alaska
-    description: US state Alaska
-    placeholder: false
-  - ndg: Arizona
-    description: US state Arizona
-    placeholder: false
-  - ndg: Arkansas
-    description: US state Arkansas
-    placeholder: false
-  - ndg: California
-    description: US state California
-    placeholder: false
-  - ndg: Colorado
-    description: US state Colorado
-    placeholder: false
-  - ndg: Connecticut
-    description: US state Connecticut
-    placeholder: false
-  - ndg: Delaware
-    description: US state Delaware
-    placeholder: false
-  - ndg: District_of_Columbia
-    description: US state District of Columbia
-    placeholder: false
-  - ndg: Florida
-    description: US state Florida
-    placeholder: false
-  - ndg: Georgia
-    description: US state Georgia
-    placeholder: false
-  - ndg: Hawaii
-    description: US state Hawaii
-    placeholder: false
-  - ndg: Idaho
-    description: US state Idaho
-    placeholder: false
-  - ndg: Illinois
-    description: US state Illinois
-    placeholder: false
-  - ndg: Indiana
-    description: US state Indiana
-    placeholder: false
-  - ndg: Iowa
-    description: US state Iowa
-    placeholder: false
-  - ndg: Kansas
-    description: US state Kansas
-    placeholder: false
-  - ndg: Kentucky
-    description: US state Kentucky
-    placeholder: false
-  - ndg: Louisiana
-    description: US state Louisiana
-    placeholder: false
-  - ndg: Maine
-    description: US state Maine
-    placeholder: false
-  - ndg: Maryland
-    description: US state Maryland
-    placeholder: false
-  - ndg: Massachusetts
-    description: US state Massachusetts
-    placeholder: false
-  - ndg: Michigan
-    description: US state Michigan
-    placeholder: false
-  - ndg: Minnesota
-    description: US state Minnesota
-    placeholder: false
-  - ndg: Mississippi
-    description: US state Mississippi
-    placeholder: false
-  - ndg: Missouri
-    description: US state Missouri
-    placeholder: false
-  - ndg: Montana
-    description: US state Montana
-    placeholder: false
-  - ndg: Nebraska
-    description: US state Nebraska
-    placeholder: false
-  - ndg: Nevada
-    description: US state Nevada
-    placeholder: false
-  - ndg: New_Hampshire
-    description: US state New Hampshire
-    placeholder: false
-  - ndg: New_Jersey
-    description: US state New Jersey
-    placeholder: false
-  - ndg: New_Mexico
-    description: US state New Mexico
-    placeholder: false
-  - ndg: New_York
-    description: US state New York
-    placeholder: false
-  - ndg: North_Carolina
-    description: US state North Carolina
-    placeholder: false
-  - ndg: North_Dakota
-    description: US state North Dakota
-    placeholder: false
-  - ndg: Ohio
-    description: US state Ohio
-    placeholder: false
-  - ndg: Oklahoma
-    description: US state Oklahoma
-    placeholder: false
-  - ndg: Oregon
-    description: US state Oregon
-    placeholder: false
-  - ndg: Pennsylvania
-    description: US state Pennsylvania
-    placeholder: false
-  - ndg: Rhode_Island
-    description: US state Rhode Island
-    placeholder: false
-  - ndg: South_Carolina
-    description: US state South Carolina
-    placeholder: false
-  - ndg: South_Dakota
-    description: US state South Dakota
-    placeholder: false
-  - ndg: Tennessee
-    description: US state Tennessee
-    placeholder: false
-  - ndg: Texas
-    description: US state Texas
-    placeholder: false
-  - ndg: Utah
-    description: US state Utah
-    placeholder: false
-  - ndg: Vermont
-    description: US state Vermont
-    placeholder: false
-  - ndg: Virginia
-    description: US state Virginia
-    placeholder: false
-  - ndg: Washington
-    description: US state Washington
-    placeholder: false
-  - ndg: West_Virginia
-    description: US state West Virginia
-    placeholder: false
-  - ndg: Wisconsin
-    description: US state Wisconsin
-    placeholder: false
-  - ndg: Wyoming
-    description: US state Wyoming
-    placeholder: false
-  - ndg: ae
-    description: Country ae
-    placeholder: false
-  - ndg: af
-    description: Country af
-    placeholder: false
-  - ndg: am
-    description: Country am
-    placeholder: false
-  - ndg: ao
-    description: Country ao
-    placeholder: false
-  - ndg: ar
-    description: Country ar
-    placeholder: false
-  - ndg: at
-    description: Country at
-    placeholder: false
-  - ndg: au
-    description: Country au
-    placeholder: false
-  - ndg: az
-    description: Country az
-    placeholder: false
-  - ndg: bd
-    description: Country bd
-    placeholder: false
-  - ndg: bf
-    description: Country bf
-    placeholder: false
-  - ndg: bg
-    description: Country bg
-    placeholder: false
-  - ndg: bo
-    description: Country bo
-    placeholder: false
-  - ndg: br
-    description: Country br
-    placeholder: false
-  - ndg: by
-    description: Country by
-    placeholder: false
-  - ndg: ca
-    description: Country ca
-    placeholder: false
-  - ndg: cd
-    description: Country cd
-    placeholder: false
-  - ndg: cg
-    description: Country cg
-    placeholder: false
-  - ndg: ci
-    description: Country ci
-    placeholder: false
-  - ndg: cl
-    description: Country cl
-    placeholder: false
-  - ndg: cm
-    description: Country cm
-    placeholder: false
-  - ndg: cn
-    description: Country cn
-    placeholder: false
-  - ndg: co
-    description: Country co
-    placeholder: false
-  - ndg: cu
-    description: Country cu
-    placeholder: false
-  - ndg: cz
-    description: Country cz
-    placeholder: false
-  - ndg: de
-    description: Country de
-    placeholder: false
-  - ndg: dk
-    description: Country dk
-    placeholder: false
-  - ndg: do
-    description: Country do
-    placeholder: false
-  - ndg: dz
-    description: Country dz
-    placeholder: false
-  - ndg: ec
-    description: Country ec
-    placeholder: false
-  - ndg: eg
-    description: Country eg
-    placeholder: false
-  - ndg: es
-    description: Country es
-    placeholder: false
-  - ndg: et
-    description: Country et
-    placeholder: false
-  - ndg: fr
-    description: Country fr
-    placeholder: false
-  - ndg: gb
-    description: Country gb
-    placeholder: false
-  - ndg: gh
-    description: Country gh
-    placeholder: false
-  - ndg: gn
-    description: Country gn
-    placeholder: false
-  - ndg: hk
-    description: Country hk
-    placeholder: false
-  - ndg: ht
-    description: Country ht
-    placeholder: false
-  - ndg: hu
-    description: Country hu
-    placeholder: false
-  - ndg: id
-    description: Country id
-    placeholder: false
-  - ndg: in
-    description: Country in
-    placeholder: false
-  - ndg: iq
-    description: Country iq
-    placeholder: false
-  - ndg: ir
-    description: Country ir
-    placeholder: false
-  - ndg: it
-    description: Country it
-    placeholder: false
-  - ndg: jo
-    description: Country jo
-    placeholder: false
-  - ndg: jp
-    description: Country jp
-    placeholder: false
-  - ndg: ke
-    description: Country ke
-    placeholder: false
-  - ndg: kh
-    description: Country kh
-    placeholder: false
-  - ndg: kp
-    description: Country kp
-    placeholder: false
-  - ndg: kr
-    description: Country kr
-    placeholder: false
-  - ndg: kz
-    description: Country kz
-    placeholder: false
-  - ndg: lb
-    description: Country lb
-    placeholder: false
-  - ndg: lr
-    description: Country lr
-    placeholder: false
-  - ndg: ly
-    description: Country ly
-    placeholder: false
-  - ndg: ma
-    description: Country ma
-    placeholder: false
-  - ndg: mg
-    description: Country mg
-    placeholder: false
-  - ndg: ml
-    description: Country ml
-    placeholder: false
-  - ndg: mm
-    description: Country mm
-    placeholder: false
-  - ndg: mr
-    description: Country mr
-    placeholder: false
-  - ndg: mw
-    description: Country mw
-    placeholder: false
-  - ndg: mx
-    description: Country mx
-    placeholder: false
-  - ndg: my
-    description: Country my
-    placeholder: false
-  - ndg: mz
-    description: Country mz
-    placeholder: false
-  - ndg: ne
-    description: Country ne
-    placeholder: false
-  - ndg: ng
-    description: Country ng
-    placeholder: false
-  - ndg: "no"
-    description: Country no
-    placeholder: false
-  - ndg: np
-    description: Country np
-    placeholder: false
-  - ndg: nz
-    description: Country nz
-    placeholder: false
-  - ndg: pe
-    description: Country pe
-    placeholder: false
-  - ndg: ph
-    description: Country ph
-    placeholder: false
-  - ndg: pk
-    description: Country pk
-    placeholder: false
-  - ndg: pl
-    description: Country pl
-    placeholder: false
-  - ndg: py
-    description: Country py
-    placeholder: false
-  - ndg: ro
-    description: Country ro
-    placeholder: false
-  - ndg: rs
-    description: Country rs
-    placeholder: false
-  - ndg: ru
-    description: Country ru
-    placeholder: false
-  - ndg: rw
-    description: Country rw
-    placeholder: false
-  - ndg: sa
-    description: Country sa
-    placeholder: false
-  - ndg: sd
-    description: Country sd
-    placeholder: false
-  - ndg: se
-    description: Country se
-    placeholder: false
-  - ndg: sg
-    description: Country sg
-    placeholder: false
-  - ndg: sn
-    description: Country sn
-    placeholder: false
-  - ndg: so
-    description: Country so
-    placeholder: false
-  - ndg: sy
-    description: Country sy
-    placeholder: false
-  - ndg: td
-    description: Country td
-    placeholder: false
-  - ndg: tg
-    description: Country tg
-    placeholder: false
-  - ndg: th
-    description: Country th
-    placeholder: false
-  - ndg: tr
-    description: Country tr
-    placeholder: false
-  - ndg: tw
-    description: Country tw
-    placeholder: false
-  - ndg: tz
-    description: Country tz
-    placeholder: false
-  - ndg: ua
-    description: Country ua
-    placeholder: false
-  - ndg: ug
-    description: Country ug
-    placeholder: false
-  - ndg: uy
-    description: Country uy
-    placeholder: false
-  - ndg: uz
-    description: Country uz
-    placeholder: false
-  - ndg: ve
-    description: Country ve
-    placeholder: false
-  - ndg: vn
-    description: Country vn
-    placeholder: false
-  - ndg: ye
-    description: Country ye
-    placeholder: false
-  - ndg: za
-    description: Country za
-    placeholder: false
-  - ndg: zm
-    description: Country zm
-    placeholder: false
-  - ndg: zw
-    description: Country zw
-    placeholder: false
   - ndg: us-huntsville
     description: "Huntsville, Alabama"
     placeholder: false
-    parent: Alabama
   - ndg: us-anchorage
     description: "Anchorage, Alaska"
     placeholder: false
-    parent: Alaska
   - ndg: us-phoenix
     description: "Phoenix, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-little-rock
     description: "Little Rock, Arkansas"
     placeholder: false
-    parent: Arkansas
   - ndg: us-los-angeles
     description: "Los Angeles, California"
     placeholder: false
-    parent: California
   - ndg: us-denver
     description: "Denver, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-bridgeport
     description: "Bridgeport, Connecticut"
     placeholder: false
-    parent: Connecticut
   - ndg: us-wilmington-de
     description: "Wilmington, Delaware"
     placeholder: false
-    parent: Delaware
   - ndg: us-jacksonville
     description: "Jacksonville, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-atlanta
     description: "Atlanta, Georgia"
     placeholder: false
-    parent: Georgia
   - ndg: us-honolulu
     description: "Honolulu, Hawaii"
     placeholder: false
-    parent: Hawaii
   - ndg: us-boise
     description: "Boise, Idaho"
     placeholder: false
-    parent: Idaho
   - ndg: us-chicago
     description: "Chicago, Illinois"
     placeholder: false
-    parent: Illinois
   - ndg: us-indianapolis
     description: "Indianapolis, Indiana"
     placeholder: false
-    parent: Indiana
   - ndg: us-des-moines
     description: "Des Moines, Iowa"
     placeholder: false
-    parent: Iowa
   - ndg: us-wichita
     description: "Wichita, Kansas"
     placeholder: false
-    parent: Kansas
   - ndg: us-louisville
     description: "Louisville, Kentucky"
     placeholder: false
-    parent: Kentucky
   - ndg: us-new-orleans
     description: "New Orleans, Louisiana"
     placeholder: false
-    parent: Louisiana
   - ndg: us-portland-me
     description: "Portland, Maine"
     placeholder: false
-    parent: Maine
   - ndg: us-baltimore
     description: "Baltimore, Maryland"
     placeholder: false
-    parent: Maryland
   - ndg: us-boston
     description: "Boston, Massachusetts"
     placeholder: false
-    parent: Massachusetts
   - ndg: us-detroit
     description: "Detroit, Michigan"
     placeholder: false
-    parent: Michigan
   - ndg: us-minneapolis
     description: "Minneapolis, Minnesota"
     placeholder: false
-    parent: Minnesota
   - ndg: us-jackson
     description: "Jackson, Mississippi"
     placeholder: false
-    parent: Mississippi
   - ndg: us-kansas-city-mo
     description: "Kansas City, Missouri"
     placeholder: false
-    parent: Missouri
   - ndg: us-billings
     description: "Billings, Montana"
     placeholder: false
-    parent: Montana
   - ndg: us-omaha
     description: "Omaha, Nebraska"
     placeholder: false
-    parent: Nebraska
   - ndg: us-las-vegas
     description: "Las Vegas, Nevada"
     placeholder: false
-    parent: Nevada
   - ndg: us-manchester
     description: "Manchester, New Hampshire"
     placeholder: false
-    parent: New_Hampshire
   - ndg: us-newark
     description: "Newark, New Jersey"
     placeholder: false
-    parent: New_Jersey
   - ndg: us-albuquerque
     description: "Albuquerque, New Mexico"
     placeholder: false
-    parent: New_Mexico
   - ndg: us-new-york
     description: "New York, New York"
     placeholder: false
-    parent: New_York
   - ndg: us-charlotte
     description: "Charlotte, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-fargo
     description: "Fargo, North Dakota"
     placeholder: false
-    parent: North_Dakota
   - ndg: us-columbus-oh
     description: "Columbus, Ohio"
     placeholder: false
-    parent: Ohio
   - ndg: us-oklahoma-city
     description: "Oklahoma City, Oklahoma"
     placeholder: false
-    parent: Oklahoma
   - ndg: us-portland-or
     description: "Portland, Oregon"
     placeholder: false
-    parent: Oregon
   - ndg: us-philadelphia
     description: "Philadelphia, Pennsylvania"
     placeholder: false
-    parent: Pennsylvania
   - ndg: us-providence
     description: "Providence, Rhode Island"
     placeholder: false
-    parent: Rhode_Island
   - ndg: us-charleston-sc
     description: "Charleston, South Carolina"
     placeholder: false
-    parent: South_Carolina
   - ndg: us-sioux-falls
     description: "Sioux Falls, South Dakota"
     placeholder: false
-    parent: South_Dakota
   - ndg: us-nashville
     description: "Nashville, Tennessee"
     placeholder: false
-    parent: Tennessee
   - ndg: us-houston
     description: "Houston, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-salt-lake-city
     description: "Salt Lake City, Utah"
     placeholder: false
-    parent: Utah
   - ndg: us-burlington
     description: "Burlington, Vermont"
     placeholder: false
-    parent: Vermont
   - ndg: us-virginia-beach
     description: "Virginia Beach, Virginia"
     placeholder: false
-    parent: Virginia
   - ndg: us-seattle
     description: "Seattle, Washington"
     placeholder: false
-    parent: Washington
   - ndg: us-charleston-wv
     description: "Charleston, West Virginia"
     placeholder: false
-    parent: West_Virginia
   - ndg: us-milwaukee
     description: "Milwaukee, Wisconsin"
     placeholder: false
-    parent: Wisconsin
   - ndg: us-cheyenne
     description: "Cheyenne, Wyoming"
     placeholder: false
-    parent: Wyoming
   - ndg: us-abilene
     description: "Abilene, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-akron
     description: "Akron, Ohio"
     placeholder: false
-    parent: Ohio
   - ndg: us-alexandria
     description: "Alexandria, Virginia"
     placeholder: false
-    parent: Virginia
   - ndg: us-allen
     description: "Allen, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-allentown
     description: "Allentown, Pennsylvania"
     placeholder: false
-    parent: Pennsylvania
   - ndg: us-amarillo
     description: "Amarillo, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-anaheim
     description: "Anaheim, California"
     placeholder: false
-    parent: California
   - ndg: us-ann-arbor
     description: "Ann Arbor, Michigan"
     placeholder: false
-    parent: Michigan
   - ndg: us-antioch
     description: "Antioch, California"
     placeholder: false
-    parent: California
   - ndg: us-arlington
     description: "Arlington, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-arvada
     description: "Arvada, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-athens
     description: "Athens, Georgia"
     placeholder: false
-    parent: Georgia
   - ndg: us-augusta
     description: "Augusta, Georgia"
     placeholder: false
-    parent: Georgia
   - ndg: us-aurora-co
     description: "Aurora, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-aurora-il
     description: "Aurora, Illinois"
     placeholder: false
-    parent: Illinois
   - ndg: us-austin
     description: "Austin, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-bakersfield
     description: "Bakersfield, California"
     placeholder: false
-    parent: California
   - ndg: us-baton-rouge
     description: "Baton Rouge, Louisiana"
     placeholder: false
-    parent: Louisiana
   - ndg: us-beaumont
     description: "Beaumont, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-bellevue
     description: "Bellevue, Washington"
     placeholder: false
-    parent: Washington
   - ndg: us-berkeley
     description: "Berkeley, California"
     placeholder: false
-    parent: California
   - ndg: us-birmingham
     description: "Birmingham, Alabama"
     placeholder: false
-    parent: Alabama
   - ndg: us-broken-arrow
     description: "Broken Arrow, Oklahoma"
     placeholder: false
-    parent: Oklahoma
   - ndg: us-brownsville
     description: "Brownsville, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-buckeye
     description: "Buckeye, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-buffalo
     description: "Buffalo, New York"
     placeholder: false
-    parent: New_York
   - ndg: us-cambridge
     description: "Cambridge, Massachusetts"
     placeholder: false
-    parent: Massachusetts
   - ndg: us-cape-coral
     description: "Cape Coral, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-carlsbad
     description: "Carlsbad, California"
     placeholder: false
-    parent: California
   - ndg: us-carrollton
     description: "Carrollton, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-cary
     description: "Cary, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-cedar-rapids
     description: "Cedar Rapids, Iowa"
     placeholder: false
-    parent: Iowa
   - ndg: us-chandler
     description: "Chandler, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-chattanooga
     description: "Chattanooga, Tennessee"
     placeholder: false
-    parent: Tennessee
   - ndg: us-chesapeake
     description: "Chesapeake, Virginia"
     placeholder: false
-    parent: Virginia
   - ndg: us-chula-vista
     description: "Chula Vista, California"
     placeholder: false
-    parent: California
   - ndg: us-cincinnati
     description: "Cincinnati, Ohio"
     placeholder: false
-    parent: Ohio
   - ndg: us-clarksville
     description: "Clarksville, Tennessee"
     placeholder: false
-    parent: Tennessee
   - ndg: us-clearwater
     description: "Clearwater, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-cleveland
     description: "Cleveland, Ohio"
     placeholder: false
-    parent: Ohio
   - ndg: us-clovis
     description: "Clovis, California"
     placeholder: false
-    parent: California
   - ndg: us-college-station
     description: "College Station, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-colorado-springs
     description: "Colorado Springs, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-columbia-mo
     description: "Columbia, Missouri"
     placeholder: false
-    parent: Missouri
   - ndg: us-columbia-sc
     description: "Columbia, South Carolina"
     placeholder: false
-    parent: South_Carolina
   - ndg: us-columbus-ga
     description: "Columbus, Georgia"
     placeholder: false
-    parent: Georgia
   - ndg: us-concord-ca
     description: "Concord, California"
     placeholder: false
-    parent: California
   - ndg: us-concord-nc
     description: "Concord, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-conroe
     description: "Conroe, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-coral-springs
     description: "Coral Springs, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-corona
     description: "Corona, California"
     placeholder: false
-    parent: California
   - ndg: us-corpus-christi
     description: "Corpus Christi, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-dallas
     description: "Dallas, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-davie
     description: "Davie, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-dayton
     description: "Dayton, Ohio"
     placeholder: false
-    parent: Ohio
   - ndg: us-denton
     description: "Denton, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-durham
     description: "Durham, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-edinburg
     description: "Edinburg, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-el-paso
     description: "El Paso, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-elgin
     description: "Elgin, Illinois"
     placeholder: false
-    parent: Illinois
   - ndg: us-elizabeth
     description: "Elizabeth, New Jersey"
     placeholder: false
-    parent: New_Jersey
   - ndg: us-elk-grove
     description: "Elk Grove, California"
     placeholder: false
-    parent: California
   - ndg: us-escondido
     description: "Escondido, California"
     placeholder: false
-    parent: California
   - ndg: us-eugene
     description: "Eugene, Oregon"
     placeholder: false
-    parent: Oregon
   - ndg: us-evansville
     description: "Evansville, Indiana"
     placeholder: false
-    parent: Indiana
   - ndg: us-everett
     description: "Everett, Washington"
     placeholder: false
-    parent: Washington
   - ndg: us-fairfield
     description: "Fairfield, California"
     placeholder: false
-    parent: California
   - ndg: us-fayetteville
     description: "Fayetteville, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-fontana
     description: "Fontana, California"
     placeholder: false
-    parent: California
   - ndg: us-fort-collins
     description: "Fort Collins, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-fort-lauderdale
     description: "Fort Lauderdale, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-fort-wayne
     description: "Fort Wayne, Indiana"
     placeholder: false
-    parent: Indiana
   - ndg: us-fort-worth
     description: "Fort Worth, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-fremont
     description: "Fremont, California"
     placeholder: false
-    parent: California
   - ndg: us-fresno
     description: "Fresno, California"
     placeholder: false
-    parent: California
   - ndg: us-frisco
     description: "Frisco, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-fullerton
     description: "Fullerton, California"
     placeholder: false
-    parent: California
   - ndg: us-gainesville
     description: "Gainesville, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-garden-grove
     description: "Garden Grove, California"
     placeholder: false
-    parent: California
   - ndg: us-garland
     description: "Garland, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-gilbert
     description: "Gilbert, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-glendale-az
     description: "Glendale, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-glendale-ca
     description: "Glendale, California"
     placeholder: false
-    parent: California
   - ndg: us-goodyear
     description: "Goodyear, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-grand-prairie
     description: "Grand Prairie, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-grand-rapids
     description: "Grand Rapids, Michigan"
     placeholder: false
-    parent: Michigan
   - ndg: us-greeley
     description: "Greeley, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-greensboro
     description: "Greensboro, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-gresham
     description: "Gresham, Oregon"
     placeholder: false
-    parent: Oregon
   - ndg: us-hampton
     description: "Hampton, Virginia"
     placeholder: false
-    parent: Virginia
   - ndg: us-hartford
     description: "Hartford, Connecticut"
     placeholder: false
-    parent: Connecticut
   - ndg: us-hayward
     description: "Hayward, California"
     placeholder: false
-    parent: California
   - ndg: us-henderson
     description: "Henderson, Nevada"
     placeholder: false
-    parent: Nevada
   - ndg: us-hialeah
     description: "Hialeah, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-high-point
     description: "High Point, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-hillsboro
     description: "Hillsboro, Oregon"
     placeholder: false
-    parent: Oregon
   - ndg: us-hollywood
     description: "Hollywood, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-huntington-beach
     description: "Huntington Beach, California"
     placeholder: false
-    parent: California
   - ndg: us-independence
     description: "Independence, Missouri"
     placeholder: false
-    parent: Missouri
   - ndg: us-irvine
     description: "Irvine, California"
     placeholder: false
-    parent: California
   - ndg: us-irving
     description: "Irving, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-jersey-city
     description: "Jersey City, New Jersey"
     placeholder: false
-    parent: New_Jersey
   - ndg: us-joliet
     description: "Joliet, Illinois"
     placeholder: false
-    parent: Illinois
   - ndg: us-kansas-city-ks
     description: "Kansas City, Kansas"
     placeholder: false
-    parent: Kansas
   - ndg: us-kent
     description: "Kent, Washington"
     placeholder: false
-    parent: Washington
   - ndg: us-killeen
     description: "Killeen, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-knoxville
     description: "Knoxville, Tennessee"
     placeholder: false
-    parent: Tennessee
   - ndg: us-lafayette
     description: "Lafayette, Louisiana"
     placeholder: false
-    parent: Louisiana
   - ndg: us-lakeland
     description: "Lakeland, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-lakewood
     description: "Lakewood, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-lancaster
     description: "Lancaster, California"
     placeholder: false
-    parent: California
   - ndg: us-lansing
     description: "Lansing, Michigan"
     placeholder: false
-    parent: Michigan
   - ndg: us-laredo
     description: "Laredo, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-las-cruces
     description: "Las Cruces, New Mexico"
     placeholder: false
-    parent: New_Mexico
   - ndg: us-league-city
     description: "League City, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-lewisville
     description: "Lewisville, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-lexington
     description: "Lexington, Kentucky"
     placeholder: false
-    parent: Kentucky
   - ndg: us-lincoln
     description: "Lincoln, Nebraska"
     placeholder: false
-    parent: Nebraska
   - ndg: us-long-beach
     description: "Long Beach, California"
     placeholder: false
-    parent: California
   - ndg: us-lowell
     description: "Lowell, Massachusetts"
     placeholder: false
-    parent: Massachusetts
   - ndg: us-lubbock
     description: "Lubbock, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-macon
     description: "Macon, Georgia"
     placeholder: false
-    parent: Georgia
   - ndg: us-madison
     description: "Madison, Wisconsin"
     placeholder: false
-    parent: Wisconsin
   - ndg: us-mcallen
     description: "McAllen, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-mckinney
     description: "McKinney, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-memphis
     description: "Memphis, Tennessee"
     placeholder: false
-    parent: Tennessee
   - ndg: us-menifee
     description: "Menifee, California"
     placeholder: false
-    parent: California
   - ndg: us-meridian
     description: "Meridian, Idaho"
     placeholder: false
-    parent: Idaho
   - ndg: us-mesa
     description: "Mesa, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-mesquite
     description: "Mesquite, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-miami
     description: "Miami, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-miami-gardens
     description: "Miami Gardens, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-midland
     description: "Midland, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-miramar
     description: "Miramar, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-mobile
     description: "Mobile, Alabama"
     placeholder: false
-    parent: Alabama
   - ndg: us-modesto
     description: "Modesto, California"
     placeholder: false
-    parent: California
   - ndg: us-montgomery
     description: "Montgomery, Alabama"
     placeholder: false
-    parent: Alabama
   - ndg: us-moreno-valley
     description: "Moreno Valley, California"
     placeholder: false
-    parent: California
   - ndg: us-murfreesboro
     description: "Murfreesboro, Tennessee"
     placeholder: false
-    parent: Tennessee
   - ndg: us-murrieta
     description: "Murrieta, California"
     placeholder: false
-    parent: California
   - ndg: us-nampa
     description: "Nampa, Idaho"
     placeholder: false
-    parent: Idaho
   - ndg: us-naperville
     description: "Naperville, Illinois"
     placeholder: false
-    parent: Illinois
   - ndg: us-new-braunfels
     description: "New Braunfels, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-new-haven
     description: "New Haven, Connecticut"
     placeholder: false
-    parent: Connecticut
   - ndg: us-newport-news
     description: "Newport News, Virginia"
     placeholder: false
-    parent: Virginia
   - ndg: us-norfolk
     description: "Norfolk, Virginia"
     placeholder: false
-    parent: Virginia
   - ndg: us-norman
     description: "Norman, Oklahoma"
     placeholder: false
-    parent: Oklahoma
   - ndg: us-north-charleston
     description: "North Charleston, South Carolina"
     placeholder: false
-    parent: South_Carolina
   - ndg: us-north-las-vegas
     description: "North Las Vegas, Nevada"
     placeholder: false
-    parent: Nevada
   - ndg: us-oakland
     description: "Oakland, California"
     placeholder: false
-    parent: California
   - ndg: us-oceanside
     description: "Oceanside, California"
     placeholder: false
-    parent: California
   - ndg: us-odessa
     description: "Odessa, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-olathe
     description: "Olathe, Kansas"
     placeholder: false
-    parent: Kansas
   - ndg: us-ontario
     description: "Ontario, California"
     placeholder: false
-    parent: California
   - ndg: us-orange
     description: "Orange, California"
     placeholder: false
-    parent: California
   - ndg: us-orlando
     description: "Orlando, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-overland-park
     description: "Overland Park, Kansas"
     placeholder: false
-    parent: Kansas
   - ndg: us-oxnard
     description: "Oxnard, California"
     placeholder: false
-    parent: California
   - ndg: us-palm-bay
     description: "Palm Bay, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-palmdale
     description: "Palmdale, California"
     placeholder: false
-    parent: California
   - ndg: us-pasadena-ca
     description: "Pasadena, California"
     placeholder: false
-    parent: California
   - ndg: us-pasadena-tx
     description: "Pasadena, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-paterson
     description: "Paterson, New Jersey"
     placeholder: false
-    parent: New_Jersey
   - ndg: us-pearland
     description: "Pearland, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-pembroke-pines
     description: "Pembroke Pines, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-peoria-az
     description: "Peoria, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-peoria-il
     description: "Peoria, Illinois"
     placeholder: false
-    parent: Illinois
   - ndg: us-pittsburgh
     description: "Pittsburgh, Pennsylvania"
     placeholder: false
-    parent: Pennsylvania
   - ndg: us-plano
     description: "Plano, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-pomona
     description: "Pomona, California"
     placeholder: false
-    parent: California
   - ndg: us-pompano-beach
     description: "Pompano Beach, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-port-st-lucie
     description: "Port St. Lucie, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-provo
     description: "Provo, Utah"
     placeholder: false
-    parent: Utah
   - ndg: us-pueblo
     description: "Pueblo, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-raleigh
     description: "Raleigh, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-rancho-cucamonga
     description: "Rancho Cucamonga, California"
     placeholder: false
-    parent: California
   - ndg: us-reno
     description: "Reno, Nevada"
     placeholder: false
-    parent: Nevada
   - ndg: us-richardson
     description: "Richardson, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-richmond-ca
     description: "Richmond, California"
     placeholder: false
-    parent: California
   - ndg: us-richmond-va
     description: "Richmond, Virginia"
     placeholder: false
-    parent: Virginia
   - ndg: us-rio-rancho
     description: "Rio Rancho, New Mexico"
     placeholder: false
-    parent: New_Mexico
   - ndg: us-riverside
     description: "Riverside, California"
     placeholder: false
-    parent: California
   - ndg: us-rochester-mn
     description: "Rochester, Minnesota"
     placeholder: false
-    parent: Minnesota
   - ndg: us-rochester-ny
     description: "Rochester, New York"
     placeholder: false
-    parent: New_York
   - ndg: us-rockford
     description: "Rockford, Illinois"
     placeholder: false
-    parent: Illinois
   - ndg: us-roseville
     description: "Roseville, California"
     placeholder: false
-    parent: California
   - ndg: us-round-rock
     description: "Round Rock, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-sacramento
     description: "Sacramento, California"
     placeholder: false
-    parent: California
   - ndg: us-salem
     description: "Salem, Oregon"
     placeholder: false
-    parent: Oregon
   - ndg: us-salinas
     description: "Salinas, California"
     placeholder: false
-    parent: California
   - ndg: us-san-antonio
     description: "San Antonio, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-san-bernardino
     description: "San Bernardino, California"
     placeholder: false
-    parent: California
   - ndg: us-san-buenaventura-ventura
     description: "San Buenaventura (Ventura), California"
     placeholder: false
-    parent: California
   - ndg: us-san-diego
     description: "San Diego, California"
     placeholder: false
-    parent: California
   - ndg: us-san-francisco
     description: "San Francisco, California"
     placeholder: false
-    parent: California
   - ndg: us-san-jose
     description: "San Jose, California"
     placeholder: false
-    parent: California
   - ndg: us-santa-ana
     description: "Santa Ana, California"
     placeholder: false
-    parent: California
   - ndg: us-santa-clara
     description: "Santa Clara, California"
     placeholder: false
-    parent: California
   - ndg: us-santa-clarita
     description: "Santa Clarita, California"
     placeholder: false
-    parent: California
   - ndg: us-santa-maria
     description: "Santa Maria, California"
     placeholder: false
-    parent: California
   - ndg: us-santa-rosa
     description: "Santa Rosa, California"
     placeholder: false
-    parent: California
   - ndg: us-savannah
     description: "Savannah, Georgia"
     placeholder: false
-    parent: Georgia
   - ndg: us-scottsdale
     description: "Scottsdale, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-shreveport
     description: "Shreveport, Louisiana"
     placeholder: false
-    parent: Louisiana
   - ndg: us-simi-valley
     description: "Simi Valley, California"
     placeholder: false
-    parent: California
   - ndg: us-south-fulton
     description: "South Fulton, Georgia"
     placeholder: false
-    parent: Georgia
   - ndg: us-sparks
     description: "Sparks, Nevada"
     placeholder: false
-    parent: Nevada
   - ndg: us-spokane
     description: "Spokane, Washington"
     placeholder: false
-    parent: Washington
   - ndg: us-springfield-il
     description: "Springfield, Illinois"
     placeholder: false
-    parent: Illinois
   - ndg: us-springfield-ma
     description: "Springfield, Massachusetts"
     placeholder: false
-    parent: Massachusetts
   - ndg: us-springfield-mo
     description: "Springfield, Missouri"
     placeholder: false
-    parent: Missouri
   - ndg: us-st-louis
     description: "St. Louis, Missouri"
     placeholder: false
-    parent: Missouri
   - ndg: us-st-paul
     description: "St. Paul, Minnesota"
     placeholder: false
-    parent: Minnesota
   - ndg: us-st-petersburg
     description: "St. Petersburg, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-stamford
     description: "Stamford, Connecticut"
     placeholder: false
-    parent: Connecticut
   - ndg: us-sterling-heights
     description: "Sterling Heights, Michigan"
     placeholder: false
-    parent: Michigan
   - ndg: us-stockton
     description: "Stockton, California"
     placeholder: false
-    parent: California
   - ndg: us-sunnyvale
     description: "Sunnyvale, California"
     placeholder: false
-    parent: California
   - ndg: us-surprise
     description: "Surprise, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-syracuse
     description: "Syracuse, New York"
     placeholder: false
-    parent: New_York
   - ndg: us-tacoma
     description: "Tacoma, Washington"
     placeholder: false
-    parent: Washington
   - ndg: us-tallahassee
     description: "Tallahassee, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-tampa
     description: "Tampa, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-temecula
     description: "Temecula, California"
     placeholder: false
-    parent: California
   - ndg: us-tempe
     description: "Tempe, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-thornton
     description: "Thornton, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-thousand-oaks
     description: "Thousand Oaks, California"
     placeholder: false
-    parent: California
   - ndg: us-toledo
     description: "Toledo, Ohio"
     placeholder: false
-    parent: Ohio
   - ndg: us-topeka
     description: "Topeka, Kansas"
     placeholder: false
-    parent: Kansas
   - ndg: us-torrance
     description: "Torrance, California"
     placeholder: false
-    parent: California
   - ndg: us-tucson
     description: "Tucson, Arizona"
     placeholder: false
-    parent: Arizona
   - ndg: us-tulsa
     description: "Tulsa, Oklahoma"
     placeholder: false
-    parent: Oklahoma
   - ndg: us-tuscaloosa
     description: "Tuscaloosa, Alabama"
     placeholder: false
-    parent: Alabama
   - ndg: us-tyler
     description: "Tyler, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-vallejo
     description: "Vallejo, California"
     placeholder: false
-    parent: California
   - ndg: us-vancouver
     description: "Vancouver, Washington"
     placeholder: false
-    parent: Washington
   - ndg: us-victorville
     description: "Victorville, California"
     placeholder: false
-    parent: California
   - ndg: us-visalia
     description: "Visalia, California"
     placeholder: false
-    parent: California
   - ndg: us-waco
     description: "Waco, Texas"
     placeholder: false
-    parent: Texas
   - ndg: us-warren
     description: "Warren, Michigan"
     placeholder: false
-    parent: Michigan
   - ndg: us-washington
     description: "Washington, District of Columbia"
     placeholder: false
-    parent: District_of_Columbia
   - ndg: us-waterbury
     description: "Waterbury, Connecticut"
     placeholder: false
-    parent: Connecticut
   - ndg: us-west-jordan
     description: "West Jordan, Utah"
     placeholder: false
-    parent: Utah
   - ndg: us-west-palm-beach
     description: "West Palm Beach, Florida"
     placeholder: false
-    parent: Florida
   - ndg: us-west-valley-city
     description: "West Valley City, Utah"
     placeholder: false
-    parent: Utah
   - ndg: us-westminster
     description: "Westminster, Colorado"
     placeholder: false
-    parent: Colorado
   - ndg: us-wilmington-nc
     description: "Wilmington, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-winston-salem
     description: "Winston-Salem, North Carolina"
     placeholder: false
-    parent: North_Carolina
   - ndg: us-worcester
     description: "Worcester, Massachusetts"
     placeholder: false
-    parent: Massachusetts
   - ndg: us-yonkers
     description: "Yonkers, New York"
     placeholder: false
-    parent: New_York
   - ndg: ae-dubai
     description: "Dubai, Dubai"
     placeholder: false
-    parent: ae
   - ndg: af-kabul
     description: "Kabul, Kabul"
     placeholder: false
-    parent: af
   - ndg: am-yerevan
     description: "Yerevan, Yerevan"
     placeholder: false
-    parent: am
   - ndg: ao-luanda
     description: "Luanda, Luanda"
     placeholder: false
-    parent: ao
   - ndg: ar-buenos-aires
     description: "Buenos Aires, Buenos Aires F.D."
     placeholder: false
-    parent: ar
   - ndg: at-vienna
     description: "Vienna, Vienna"
     placeholder: false
-    parent: at
   - ndg: au-sydney
     description: "Sydney, New South Wales"
     placeholder: false
-    parent: au
   - ndg: az-baku
     description: "Baku, Baki"
     placeholder: false
-    parent: az
   - ndg: bd-dhaka
     description: "Dhaka, Dhaka Division"
     placeholder: false
-    parent: bd
   - ndg: bf-ouagadougou
     description: "Ouagadougou, Centre"
     placeholder: false
-    parent: bf
   - ndg: bg-sofia
     description: "Sofia, Sofia-Capital"
     placeholder: false
-    parent: bg
   - ndg: bo-la-paz
     description: "La Paz, La Paz Department"
     placeholder: false
-    parent: bo
   - ndg: br-sao-paulo
     description: "São Paulo, São Paulo"
     placeholder: false
-    parent: br
   - ndg: by-minsk
     description: "Minsk, Minsk City"
     placeholder: false
-    parent: by
   - ndg: ca-toronto
     description: "Toronto, Ontario"
     placeholder: false
-    parent: ca
   - ndg: cd-kinshasa
     description: "Kinshasa, Kinshasa"
     placeholder: false
-    parent: cd
   - ndg: cg-brazzaville
     description: "Brazzaville, Brazzaville"
     placeholder: false
-    parent: cg
   - ndg: ci-abidjan
     description: "Abidjan, Abidjan Autonomous District"
     placeholder: false
-    parent: ci
   - ndg: cl-santiago
     description: "Santiago, Santiago Metropolitan"
     placeholder: false
-    parent: cl
   - ndg: cm-douala
     description: "Douala, Littoral"
     placeholder: false
-    parent: cm
   - ndg: cn-chongqing
     description: "Chongqing, Chongqing"
     placeholder: false
-    parent: cn
   - ndg: co-bogota
     description: "Bogotá, Bogota D.C."
     placeholder: false
-    parent: co
   - ndg: cu-havana
     description: "Havana, Havana"
     placeholder: false
-    parent: cu
   - ndg: cz-prague
     description: "Prague, Prague"
     placeholder: false
-    parent: cz
   - ndg: de-berlin
     description: "Berlin, State of Berlin"
     placeholder: false
-    parent: de
   - ndg: dk-copenhagen
     description: "Copenhagen, Capital Region"
     placeholder: false
-    parent: dk
   - ndg: do-santo-domingo
     description: "Santo Domingo, Nacional"
     placeholder: false
-    parent: do
   - ndg: dz-algiers
     description: "Algiers, Algiers"
     placeholder: false
-    parent: dz
   - ndg: ec-quito
     description: "Quito, Pichincha"
     placeholder: false
-    parent: ec
   - ndg: eg-cairo
     description: "Cairo, Cairo"
     placeholder: false
-    parent: eg
   - ndg: es-madrid
     description: "Madrid, Madrid"
     placeholder: false
-    parent: es
   - ndg: et-addis-ababa
     description: "Addis Ababa, Addis Ababa"
     placeholder: false
-    parent: et
   - ndg: fr-paris
     description: "Paris, Île-de-France"
     placeholder: false
-    parent: fr
   - ndg: gb-london
     description: "London, England"
     placeholder: false
-    parent: gb
   - ndg: gh-kumasi
     description: "Kumasi, Ashanti"
     placeholder: false
-    parent: gh
   - ndg: gn-conakry
     description: "Conakry, Conakry"
     placeholder: false
-    parent: gn
   - ndg: hk-hong-kong
     description: Hong Kong
     placeholder: false
-    parent: hk
   - ndg: ht-port-au-prince
     description: "Port-au-Prince, Ouest"
     placeholder: false
-    parent: ht
   - ndg: hu-budapest
     description: "Budapest, Budapest"
     placeholder: false
-    parent: hu
   - ndg: id-jakarta
     description: "Jakarta, Jakarta"
     placeholder: false
-    parent: id
   - ndg: in-mumbai
     description: "Mumbai, Maharashtra"
     placeholder: false
-    parent: in
   - ndg: iq-baghdad
     description: "Baghdad, Baghdad"
     placeholder: false
-    parent: iq
   - ndg: ir-tehran
     description: "Tehran, Tehran"
     placeholder: false
-    parent: ir
   - ndg: it-rome
     description: "Rome, Lazio"
     placeholder: false
-    parent: it
   - ndg: jo-amman
     description: "Amman, Amman"
     placeholder: false
-    parent: jo
   - ndg: jp-tokyo
     description: "Tokyo, Tokyo"
     placeholder: false
-    parent: jp
   - ndg: ke-nairobi
     description: "Nairobi, Nairobi County"
     placeholder: false
-    parent: ke
   - ndg: kh-phnom-penh
     description: "Phnom Penh, Phnom Penh"
     placeholder: false
-    parent: kh
   - ndg: kp-pyongyang
     description: "Pyongyang, Pyongyang"
     placeholder: false
-    parent: kp
   - ndg: kr-seoul
     description: "Seoul, Seoul"
     placeholder: false
-    parent: kr
   - ndg: kz-almaty
     description: "Almaty, Almaty"
     placeholder: false
-    parent: kz
   - ndg: lb-beirut
     description: "Beirut, Beirut"
     placeholder: false
-    parent: lb
   - ndg: lr-monrovia
     description: "Monrovia, Montserrado County"
     placeholder: false
-    parent: lr
   - ndg: ly-tripoli
     description: "Tripoli, Tripoli"
     placeholder: false
-    parent: ly
   - ndg: ma-casablanca
     description: "Casablanca, Casablanca-Settat"
     placeholder: false
-    parent: ma
   - ndg: mg-antananarivo
     description: "Antananarivo, Analamanga"
     placeholder: false
-    parent: mg
   - ndg: ml-bamako
     description: "Bamako, Bamako"
     placeholder: false
-    parent: ml
   - ndg: mm-yangon
     description: "Yangon, Yangon"
     placeholder: false
-    parent: mm
   - ndg: mr-nouakchott
     description: Nouakchott
     placeholder: false
-    parent: mr
   - ndg: mw-lilongwe
     description: "Lilongwe, Central Region"
     placeholder: false
-    parent: mw
   - ndg: mx-mexico-city
     description: "Mexico City, Mexico City"
     placeholder: false
-    parent: mx
   - ndg: my-kuala-lumpur
     description: "Kuala Lumpur, Kuala Lumpur"
     placeholder: false
-    parent: my
   - ndg: mz-maputo
     description: "Maputo, Maputo City"
     placeholder: false
-    parent: mz
   - ndg: ne-niamey
     description: "Niamey, Niamey"
     placeholder: false
-    parent: ne
   - ndg: ng-lagos
     description: "Lagos, Lagos"
     placeholder: false
-    parent: ng
   - ndg: no-oslo
     description: "Oslo, Oslo"
     placeholder: false
-    parent: "no"
   - ndg: np-kathmandu
     description: "Kathmandu, Bagmati Province"
     placeholder: false
-    parent: np
   - ndg: nz-auckland
     description: "Auckland, Auckland"
     placeholder: false
-    parent: nz
   - ndg: pe-lima
     description: "Lima, Lima Province"
     placeholder: false
-    parent: pe
   - ndg: ph-quezon-city
     description: "Quezon City, National Capital Region"
     placeholder: false
-    parent: ph
   - ndg: pk-lahore
     description: "Lahore, Punjab"
     placeholder: false
-    parent: pk
   - ndg: pl-warsaw
     description: "Warsaw, Mazovia"
     placeholder: false
-    parent: pl
   - ndg: py-asuncion
     description: "Asunción, Asuncion"
     placeholder: false
-    parent: py
   - ndg: ro-bucharest
     description: "Bucharest, Bucharest"
     placeholder: false
-    parent: ro
   - ndg: rs-belgrade
     description: "Belgrade, Central Serbia"
     placeholder: false
-    parent: rs
   - ndg: ru-moscow
     description: "Moscow, Moscow"
     placeholder: false
-    parent: ru
   - ndg: rw-kigali
     description: "Kigali, Kigali"
     placeholder: false
-    parent: rw
   - ndg: sa-jeddah
     description: "Jeddah, Mecca Region"
     placeholder: false
-    parent: sa
   - ndg: sd-khartoum
     description: "Khartoum, Khartoum"
     placeholder: false
-    parent: sd
   - ndg: se-stockholm
     description: "Stockholm, Stockholm"
     placeholder: false
-    parent: se
   - ndg: sg-singapore
     description: Singapore
     placeholder: false
-    parent: sg
   - ndg: sn-dakar
     description: "Dakar, Dakar"
     placeholder: false
-    parent: sn
   - ndg: so-mogadishu
     description: "Mogadishu, Banaadir"
     placeholder: false
-    parent: so
   - ndg: sy-aleppo
     description: "Aleppo, Aleppo"
     placeholder: false
-    parent: sy
   - ndg: td-n-djamena
     description: "N'Djamena, N’Djaména"
     placeholder: false
-    parent: td
   - ndg: tg-lome
     description: "Lomé, Maritime"
     placeholder: false
-    parent: tg
   - ndg: th-bangkok
     description: "Bangkok, Bangkok"
     placeholder: false
-    parent: th
   - ndg: tr-istanbul
     description: "Istanbul, Istanbul"
     placeholder: false
-    parent: tr
   - ndg: tw-taipei
     description: "Taipei, Taiwan"
     placeholder: false
-    parent: tw
   - ndg: tz-dar-es-salaam
     description: "Dar es Salaam, Dar es Salaam Region"
     placeholder: false
-    parent: tz
   - ndg: ua-kyiv
     description: "Kyiv, Kyiv City"
     placeholder: false
-    parent: ua
   - ndg: ug-kampala
     description: "Kampala, Central Region"
     placeholder: false
-    parent: ug
   - ndg: uy-montevideo
     description: "Montevideo, Montevideo Department"
     placeholder: false
-    parent: uy
   - ndg: uz-tashkent
     description: "Tashkent, Tashkent"
     placeholder: false
-    parent: uz
   - ndg: ve-caracas
     description: "Caracas, Distrito Federal"
     placeholder: false
-    parent: ve
   - ndg: vn-ho-chi-minh-city
     description: "Ho Chi Minh City, Ho Chi Minh City (HCMC)"
     placeholder: false
-    parent: vn
   - ndg: ye-sanaa
     description: "Sanaa, Amanat Alasimah"
     placeholder: false
-    parent: ye
   - ndg: za-johannesburg
     description: "Johannesburg, Gauteng"
     placeholder: false
-    parent: za
   - ndg: zm-lusaka
     description: "Lusaka, Lusaka Province"
     placeholder: false
-    parent: zm
   - ndg: zw-harare
     description: "Harare, Harare"
     placeholder: false
-    parent: zw
 
 sites:
   - id: us-huntsville
