@@ -11,14 +11,33 @@ locals {
   location_ndg_rows = yamldecode(file("${path.module}/location_ndgs.yaml")).location_ndgs
   location_ndgs     = { for row in local.location_ndg_rows : row.ndg => row }
 
-  # One Location NDG per site, sibling of type-level groups.
-  # ISE: Location#All Locations#{site_id}
-  # site_id is already legal ([a-z0-9-]+); no transform.
-  # Do not invent hq/dc city tags. sites.yaml types stay regional/branch.
+  # Naming lock: "regional" is ONLY the type-level NDG (largest-city type),
+  # sibling of branch/hq/dc. A US state folder is admin1 (California), never
+  # "regional". Non-US folder is cc (no US state). site_id is already legal.
+  type_location_names = toset([for row in local.location_ndg_rows : lower(row.ndg)])
+  site_folder = {
+    for s in local.sites : s.id => (
+      s.cc == "us" ? replace(s.admin1, " ", "_") : s.cc
+    )
+  }
+
+  # One folder per US state / non-US country under All Locations.
+  state_location_ndgs = {
+    for s in local.sites : local.site_folder[s.id] => {
+      ndg         = local.site_folder[s.id]
+      cc          = s.cc
+      description = s.cc == "us" ? "US state ${s.admin1}" : "Country ${s.cc}"
+    }...
+  }
+
+  # Site under its state/country folder.
+  # ISE: Location#All Locations#{State}#{site_id}
+  # e.g. Location#All Locations#California#us-los-angeles
   site_location_ndgs = {
     for s in local.sites : s.id => {
       site_id     = s.id
-      ise_name    = "Location#All Locations#${s.id}"
+      folder      = local.site_folder[s.id]
+      ise_name    = "Location#All Locations#${local.site_folder[s.id]}#${s.id}"
       description = s.admin1 != "" ? "${s.city}, ${s.admin1}" : s.city
     }
   }

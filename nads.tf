@@ -5,7 +5,7 @@
 #
 # Each NAD joins exactly two groups:
 #   Access:   access-marketing (CoS lock until Robert tags Access)
-#   Location: the device's site NDG — Location#All Locations#{site_id}
+#   Location: the state/city path — Location#All Locations#{State}#{site_id}
 # NADs do not join type-level regional/branch/hq/dc as their Location parent.
 resource "ise_network_device" "nad" {
   count = var.nad_count

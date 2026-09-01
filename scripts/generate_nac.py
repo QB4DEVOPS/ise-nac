@@ -115,16 +115,39 @@ def main() -> int:
     if any(k.lower() == "access" or k.lower().startswith("access_") for k in (devices[0].keys() if devices else [])):
         raise SystemExit("devices.csv must not have an Access column; Access is locked to access-marketing")
 
-    # One Location NDG per site. ISE: Location#All Locations#{site_id}
-    # site_id is already ISE-legal ([a-z0-9-]+); sanitize if not, fail if empty.
+    # Naming lock: "regional" is ONLY the type-level NDG. US folder = slugged
+    # admin1 (California). Non-US folder = cc. Never name a folder regional.
+    # Site ISE path: Location#All Locations#{State}#{site_id}
+    reserved_types = loc_names | {"regional", "branch", "hq", "dc"}
+    site_folder_of: dict[str, str] = {}
     site_leaf_of: dict[str, str] = {}
+    folder_meta: dict[str, dict[str, str]] = {}
     for row in sites:
+        if row["cc"] == "us" and not (row.get("admin1") or "").strip():
+            raise SystemExit(f"US site {row['id']} has no admin1 (state folder)")
+        folder = ise_ndg_leaf(row["admin1"] if row["cc"] == "us" else row["cc"])
         leaf = ise_ndg_leaf(row["id"])
-        if leaf.lower() in loc_names:
+        if folder.lower() in reserved_types:
+            raise SystemExit(
+                f"Location folder {folder} must not reuse a type-level name "
+                "(regional is the site-type NDG only; never a state folder)"
+            )
+        if leaf.lower() in reserved_types:
             raise SystemExit(f"site NDG {leaf} collides with a type-level Location NDG")
-        if len(f"Location#All Locations#{leaf}") > 100:
+        if len(f"Location#All Locations#{folder}#{leaf}") > 100:
             raise SystemExit(f"ISE NDG path exceeds 100 chars: {row['id']}")
+        site_folder_of[row["id"]] = folder
         site_leaf_of[row["id"]] = leaf
+        if folder not in folder_meta:
+            folder_meta[folder] = {
+                "cc": row["cc"],
+                "admin1": row["admin1"],
+                "description": f"US state {row['admin1']}" if row["cc"] == "us" else f"Country {row['cc']}",
+            }
+        elif row["cc"] == "us" and folder_meta[folder]["admin1"] != row["admin1"]:
+            raise SystemExit(f"state folder {folder} maps to more than one admin1")
+        elif row["cc"] != "us" and folder_meta[folder]["cc"] != row["cc"]:
+            raise SystemExit(f"country folder {folder} maps to more than one cc")
 
     if len(sample) != 8:
         raise SystemExit(f"sample_nads.csv expected 8 rows, got {len(sample)}")
@@ -155,7 +178,7 @@ def main() -> int:
         "# Rebuild: python3 scripts/generate_nac.py",
         "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv",
         "# TACACS objects: command_sets.yaml shell_profiles.yaml",
-        "# Location NDGs: type-level in location_ndgs.yaml; one site NDG per sites.yaml id",
+        "# Location NDGs: type-level in location_ndgs.yaml; state/city from sites.yaml",
         "",
         "lab:",
         "  pan:",
@@ -194,6 +217,18 @@ def main() -> int:
                 ],
             )
         )
+    for folder in sorted(folder_meta, key=lambda n: (folder_meta[n]["cc"] != "us", n)):
+        meta = folder_meta[folder]
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("ndg", yq(folder)),
+                    ("description", yq(meta["description"])),
+                    ("placeholder", "false"),
+                ],
+            )
+        )
     for row in sites:
         desc = f"{row['city']}, {row['admin1']}" if row.get("admin1") else row["city"]
         lines.extend(
@@ -203,6 +238,7 @@ def main() -> int:
                     ("ndg", yq(site_leaf_of[row["id"]])),
                     ("description", yq(desc)),
                     ("placeholder", "false"),
+                    ("parent", yq(site_folder_of[row["id"]])),
                 ],
             )
         )

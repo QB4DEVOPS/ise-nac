@@ -39,7 +39,8 @@ resource "ise_network_device_group" "ndg" {
 }
 
 # ISE already has Location / All Locations. Do not recreate that root.
-# Type-level siblings (regional, branch, hq, dc). NADs do not join these.
+# Type-level siblings only: regional (largest-city type), branch, hq, dc.
+# "regional" is never a state folder name.
 resource "ise_network_device_group" "location" {
   for_each    = local.location_ndgs
   name        = "Location#All Locations#${each.value.ndg}"
@@ -47,14 +48,33 @@ resource "ise_network_device_group" "location" {
   root_group  = "Location"
 }
 
-# One Location NDG per sites.yaml row. ISE: Location#All Locations#{site_id}
-# e.g. Location#All Locations#us-los-angeles
+# One Location folder per US state (admin1) or non-US country (cc).
+# Example: Location#All Locations#California
+# Must not be named regional/branch/hq/dc.
+resource "ise_network_device_group" "state_location" {
+  for_each    = local.state_location_ndgs
+  name        = "Location#All Locations#${each.value.ndg}"
+  description = each.value.description
+  root_group  = "Location"
+
+  lifecycle {
+    precondition {
+      condition     = !contains(local.type_location_names, lower(each.value.ndg))
+      error_message = "State/country Location folder '${each.value.ndg}' must not reuse a type-level name (regional/branch/hq/dc)."
+    }
+  }
+}
+
+# One site under its state/country folder.
+# ISE: Location#All Locations#{State}#{site_id}
+# e.g. Location#All Locations#California#us-los-angeles
 # sites.yaml types stay regional/branch. Do not invent hq/dc city tags.
 resource "ise_network_device_group" "site_location" {
   for_each    = local.site_location_ndgs
   name        = each.value.ise_name
   description = each.value.description
   root_group  = "Location"
+  depends_on  = [ise_network_device_group.state_location]
 }
 
 # Empty identity groups. No users and no passwords.
