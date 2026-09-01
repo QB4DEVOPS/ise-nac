@@ -1,10 +1,12 @@
 locals {
   # Excel CSVs are UTF-8 with BOM. Terraform csvdecode needs the BOM stripped.
-  ndgs    = csvdecode(trimprefix(file("${path.module}/ndgs.csv"), "\ufeff"))
-  authc   = csvdecode(trimprefix(file("${path.module}/tacacs_authc.csv"), "\ufeff"))
-  authz   = csvdecode(trimprefix(file("${path.module}/tacacs_authz.csv"), "\ufeff"))
-  devices = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
-  sites   = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
+  ndgs     = csvdecode(trimprefix(file("${path.module}/ndgs.csv"), "\ufeff"))
+  authc    = csvdecode(trimprefix(file("${path.module}/tacacs_authc.csv"), "\ufeff"))
+  authz    = csvdecode(trimprefix(file("${path.module}/tacacs_authz.csv"), "\ufeff"))
+  na_authc = csvdecode(trimprefix(file("${path.module}/network_access_authc.csv"), "\ufeff"))
+  na_authz = csvdecode(trimprefix(file("${path.module}/network_access_authz.csv"), "\ufeff"))
+  devices  = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
+  sites    = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
 
   # Type-level Location NDGs (siblings under All Locations).
   # ISE: Location#All Locations#{ndg}. NADs do not join these.
@@ -55,10 +57,18 @@ locals {
   # Optional 8-row reference slice. Not the apply inventory.
   sample_nad_rows = csvdecode(trimprefix(file("${path.module}/sample_nads.csv"), "\ufeff"))
 
-  # CSV says "ISE Internal Users". ISE's built-in store name is "Internal Users".
+  # CSV says "ISE Internal Users" / "ISE Internal Endpoints".
+  # ISE built-in store names are "Internal Users" and "Internal Endpoints".
   identity_source_name = {
-    "ISE Internal Users" = "Internal Users"
+    "ISE Internal Users"     = "Internal Users"
+    "ISE Internal Endpoints" = "Internal Endpoints"
   }
+
+  endpoint_identity_groups   = yamldecode(file("${path.module}/endpoint_identity_groups.yaml")).endpoint_identity_groups
+  allowed_protocols          = yamldecode(file("${path.module}/allowed_protocols.yaml")).allowed_protocols
+  authorization_profiles     = yamldecode(file("${path.module}/authorization_profiles.yaml")).authorization_profiles
+  network_access_policy_sets = yamldecode(file("${path.module}/network_access.yaml")).network_access_policy_sets
+  wired_policy_set           = local.network_access_policy_sets[0]
 
   command_sets   = toset([for row in local.authz : row.command_set])
   shell_profiles = toset([for row in local.authz : row.shell_profile])

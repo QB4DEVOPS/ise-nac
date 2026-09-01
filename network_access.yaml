@@ -1,0 +1,18 @@
+# One Network Access policy set. Not Device Admin (that stays ise_device_admin_policy_set).
+# CiscoDevNet/ise 0.3.4: ise_network_access_policy_set.
+# service_name is one Allowed Protocols name (Wired_8021X).
+# Condition: Radius NAS-Port-Type equals Ethernet (wired).
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_policy_set
+network_access_policy_sets:
+  - name: Wired 802.1X MAB
+    description: Wired 802.1X then MAB from Git. Not Device Admin.
+    is_proxy: false
+    rank: 0
+    service_name: Wired_8021X
+    state: enabled
+    condition_type: ConditionAttributes
+    condition_is_negate: false
+    condition_dictionary_name: Radius
+    condition_attribute_name: NAS-Port-Type
+    condition_operator: equals
+    condition_attribute_value: Ethernet
