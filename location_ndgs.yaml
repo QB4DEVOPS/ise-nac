@@ -1,0 +1,17 @@
+# Type-level Location NDGs under ISE All Locations.
+# ISE name: Location#All Locations#{ndg}  root_group: Location
+# Do NOT add per-city Location NDGs (400 ISE objects). Types only.
+# regional and branch exist in sites.yaml. hq and dc have no tagged sites.
+location_ndgs:
+  - ndg: regional
+    description: Sites typed regional in sites.yaml
+    placeholder: false
+  - ndg: branch
+    description: Sites typed branch in sites.yaml
+    placeholder: false
+  - ndg: hq
+    description: no sites tagged yet
+    placeholder: true
+  - ndg: dc
+    description: no sites tagged yet
+    placeholder: true

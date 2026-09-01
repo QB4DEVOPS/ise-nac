@@ -32,6 +32,9 @@ if ($env:ISE_HOST) {
 if ($env:ISE_USERNAME) {
     $env:TF_VAR_ise_username = $env:ISE_USERNAME
 }
+if ($env:NAD_TACACS_SECRET) {
+    $env:TF_VAR_nad_tacacs_secret = $env:NAD_TACACS_SECRET
+}
 
 Write-Host "Loaded .env. PAN host: $($env:ISE_HOST)"
 Write-Host "Next: terraform init   then   terraform plan   then   terraform apply"

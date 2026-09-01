@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -52,6 +53,7 @@ def main() -> int:
     devices = read_csv("devices.csv")
     authc = read_csv("tacacs_authc.csv")
     authz = read_csv("tacacs_authz.csv")
+    sample = read_csv("sample_nads.csv")
 
     if len(sites) != 400:
         raise SystemExit(f"sites.csv expected 400 rows, got {len(sites)}")
@@ -62,11 +64,68 @@ def main() -> int:
     if {d["role"] for d in devices} != {"sw"}:
         raise SystemExit("devices.csv has roles other than sw")
 
+    try:
+        import yaml
+    except ImportError:
+        raise SystemExit("PyYAML is required to read location_ndgs.yaml")
+    loc_path = ROOT / "location_ndgs.yaml"
+    loc_raw = yaml.safe_load(loc_path.read_text(encoding="utf-8")) or {}
+    location_ndgs = loc_raw.get("location_ndgs") or []
+    if not isinstance(location_ndgs, list) or not location_ndgs:
+        raise SystemExit("location_ndgs.yaml must list type-level Location NDGs")
+    if len(location_ndgs) > 8:
+        raise SystemExit("location_ndgs.yaml has too many rows; type-level only (no per-city)")
+    site_types = {s["type"].lower() for s in sites}
+    loc_names = set()
+    for row in location_ndgs:
+        name = str(row.get("ndg", "")).lower()
+        loc_names.add(name)
+        placeholder = bool(row.get("placeholder"))
+        desc = str(row.get("description", ""))
+        if placeholder:
+            if name in site_types:
+                raise SystemExit(f"placeholder Location NDG {name} is tagged in sites.csv")
+            if desc != "no sites tagged yet":
+                raise SystemExit(f"placeholder Location NDG {name} description must be 'no sites tagged yet'")
+        elif name not in site_types:
+            raise SystemExit(f"Location NDG {name} has no sites in sites.csv")
+    missing_types = site_types - loc_names
+    if missing_types:
+        raise SystemExit(f"sites.csv types missing from location_ndgs.yaml: {sorted(missing_types)}")
+    for required in ("hq", "dc"):
+        if required not in loc_names and required not in site_types:
+            raise SystemExit(f"location_ndgs.yaml must include placeholder {required}")
+
+    if len(sample) != 8:
+        raise SystemExit(f"sample_nads.csv expected 8 rows, got {len(sample)}")
+    access_counts = Counter(r["access_ndg"] for r in sample)
+    expect_access = {
+        "access-marketing": 2,
+        "access-hr": 2,
+        "access-ceo": 2,
+        "access-sourcecode": 2,
+    }
+    if access_counts != expect_access:
+        raise SystemExit(f"sample_nads.csv must be 2 per Access NDG, got {dict(access_counts)}")
+    host_to_site = {d["hostname"]: d["site_code"] for d in devices}
+    site_type = {s["id"]: s["type"] for s in sites}
+    sample_types = []
+    for row in sample:
+        host = row["hostname"]
+        if host not in host_to_site:
+            raise SystemExit(f"sample_nads.csv hostname not in devices.csv: {host}")
+        sample_types.append(site_type[host_to_site[host]])
+    if set(sample_types) != {"regional", "branch"}:
+        raise SystemExit("sample NADs must span regional and branch site types")
+    if any(t in {"hq", "dc"} for t in sample_types):
+        raise SystemExit("sample NADs must not invent hq/dc site membership")
+
     lines: list[str] = [
         "# Generated ISE-as-code feed. Do not edit by hand.",
         "# Rebuild: python3 scripts/generate_nac.py",
-        "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv",
+        "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv",
         "# TACACS objects: command_sets.yaml shell_profiles.yaml",
+        "# Location NDGs (type-level only): location_ndgs.yaml",
         "",
         "lab:",
         "  pan:",
@@ -88,6 +147,20 @@ def main() -> int:
                     ("ndg", yq(row["ndg"])),
                     ("description", yq(row["description"])),
                     ("min_tier", yq(row["min_tier"])),
+                ],
+            )
+        )
+
+    lines.append("")
+    lines.append("location_ndgs:")
+    for row in location_ndgs:
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("ndg", yq(str(row["ndg"]))),
+                    ("description", yq(str(row["description"]))),
+                    ("placeholder", "true" if row.get("placeholder") else "false"),
                 ],
             )
         )

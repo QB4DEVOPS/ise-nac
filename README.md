@@ -25,16 +25,17 @@ Run this in PowerShell **before** `terraform apply`. Python 3.10+ is required ([
 
 ```
 pip install nac-validate
-nac-validate nac.yaml sites.yaml -s .schema.yaml -r .rules
+nac-validate nac.yaml sites.yaml location_ndgs.yaml -s .schema.yaml -r .rules
 ```
 
-That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml`. `.rules/` also reads `tacacs_authz.csv`, `command_sets.yaml`, and Terraform (`local.ise_tacacs_command_set_name` / `local.ise_tacacs_shell_profile_name` in `locals.tf`, commands in `main.tf`) — the names and commands apply POSTs to ISE, not only `nac.yaml`:
+That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml` / `location_ndgs.yaml`. `.rules/` also reads `tacacs_authz.csv`, `command_sets.yaml`, and Terraform (`local.ise_tacacs_command_set_name` / `local.ise_tacacs_shell_profile_name` in `locals.tf`, commands in `main.tf`) — the names and commands apply POSTs to ISE, not only `nac.yaml`:
 
 1. TACACS **command-set** and **profile** names may only use letters, digits, underscore, and space. Hyphens fail (`auditor-internal` / `auditor-external`). NDG hyphens (`access-marketing`) stay.
 2. Non-T4 command sets must list real IOS commands with `permit_unmatched = false`. T4 may be empty with `permit_unmatched = true`. Empty sets with `permit_unmatched = false` are invalid (HTTP 400).
 3. **Rule 103 FAILS** (non-zero exit) if command `arguments` contain regex metacharacters (`(`, `)`, `?`, `|`, `.`, etc.). Plain words and `*` only. Missing `command_sets.yaml` also fails (closed). PCRE such as `ver(sion)?.*` 400s on ISE.
 4. Shell profiles POST `session_attributes` (`type=MANDATORY`, `name=priv-lvl`, `value=1` or `15`). Empty profiles 400 on ISE 3.5.
 5. **Rule 105 FAILS** if any string is duplicated in the **combined** set of all command-set ISE names and all profile ISE names (one ERS namespace). Every TACACS object is suffixed (underscore only). Command sets: `T1_cs` `T2_cs` `T3_cs` `T4_cs` `vendor_cs` `contractor_cs` `auditor_internal_cs` `auditor_external_cs` `test_cs`. Profiles: `T1_shell` `T2_shell` `T3_shell` `T4_shell` `vendor_shell` `contractor_shell` `auditor_internal_shell` `auditor_external_shell`. No profile named `test_cs`. CSV keys stay `T1`. Identity groups, NDGs, and authz rule names are unchanged.
+6. **Rule 106 FAILS** if a user identity group name equals any string in that TACACS bag. Live groups (`T1`, `auditor-internal`) stay; `T1` does not collide with `T1_cs` / `T1_shell`. Suffix an identity group only when it would reuse a command-set or profile ISE name.
 
 If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed. It still does not talk to ISE.
 
@@ -91,9 +92,10 @@ terraform apply
 
 ## First apply (no 6,250 NADs)
 
-Default NAD count is **0**. First apply creates policy objects only:
+Default NAD count is **0**. A normal apply creates policy objects only:
 
-- Four NDGs from `ndgs.csv`: `access-marketing`, `access-hr`, `access-ceo`, `access-sourcecode`
+- Four Access NDGs from `ndgs.csv`: `access-marketing`, `access-hr`, `access-ceo`, `access-sourcecode`
+- Four type-level Location NDGs under ISE All Locations (`Location#All Locations#…`): `regional`, `branch` (from `sites.yaml` types), plus placeholders `hq` and `dc` with description `no sites tagged yet`. No per-city Location NDGs.
 - TACACS authentication sequence from `tacacs_authc.csv`
 - TACACS authorization rules from `tacacs_authz.csv` in ISE push order (first match wins)
 
@@ -101,12 +103,17 @@ This does **not** deploy ESXi, an OVA, or C:\Marco paths.
 
 ## Tiny NAD sample later
 
-To push two sample switches only (not 6,250):
+Default `nad_count` stays **0**. Do not apply 6,250 devices. The curated sample is **8** switches (`sample_nads.csv`): 2 per Access NDG, spread across regional and branch. Each sample NAD joins **both** its Access NDG and the Location NDG for that device's site type.
+
+Put the TACACS shared secret in `.env` as `NAD_TACACS_SECRET` (never in git). Then:
 
 ```
 . .\load-env.ps1
-terraform apply -var "nad_count=2"
+$env:TF_VAR_nad_count = "8"
+terraform apply
 ```
+
+Same thing without PowerShell env assignment: `TF_VAR_nad_count=8` in the environment. Required: `TF_VAR_nad_tacacs_secret` (loaded from `NAD_TACACS_SECRET`). There is no secret default in git.
 
 ## Provider
 
@@ -125,6 +132,6 @@ These still produce a valid `terraform init`. Some objects are incomplete becaus
 | `time_bound=yes` | Flag only (vendor, auditor-external identity) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
 | Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |
-| NAD → NDG | `devices.csv` has no NDG column | Sample NADs (if `nad_count=2`) go in `access-marketing`. |
+| NAD → NDG | `sample_nads.csv` picks Access NDG; Location NDG comes from the site type | Sample NADs (if `TF_VAR_nad_count=8`) join Access **and** Location. Default count is 0. |
 
 See [PLAN.md](PLAN.md) for the device-admin design.

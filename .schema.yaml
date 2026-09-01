@@ -3,6 +3,7 @@
 # sites.yaml only has sites; nac.yaml has lab, ndgs, sites, tacacs, devices.
 lab: include('lab', required=False)
 ndgs: list(include('ndg'), required=False)
+location_ndgs: list(include('location_ndg'), required=False)
 sites: list(include('site'), required=False)
 tacacs_authc: list(include('tacacs_authc_rule'), required=False)
 tacacs_authz: list(include('tacacs_authz_rule'), required=False)
@@ -27,12 +28,17 @@ ndg:
   description: str()
   min_tier: enum('T1', 'T2', 'T3', 'T4')
 
+location_ndg:
+  ndg: str()
+  description: str()
+  placeholder: bool()
+
 site:
   id: str()
   city: str()
   admin1: str()
   cc: regex('^[a-z]{2}$')
-  type: enum('regional', 'branch')
+  type: enum('regional', 'branch', 'hq', 'dc')
 
 tacacs_authc_rule:
   order: int()

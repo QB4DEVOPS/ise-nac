@@ -1,7 +1,8 @@
 # Generated ISE-as-code feed. Do not edit by hand.
 # Rebuild: python3 scripts/generate_nac.py
-# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv
+# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv
 # TACACS objects: command_sets.yaml shell_profiles.yaml
+# Location NDGs (type-level only): location_ndgs.yaml
 
 lab:
   pan:
@@ -26,6 +27,20 @@ ndgs:
   - ndg: access-sourcecode
     description: T4 may administer NADs in this group
     min_tier: T4
+
+location_ndgs:
+  - ndg: regional
+    description: Sites typed regional in sites.yaml
+    placeholder: false
+  - ndg: branch
+    description: Sites typed branch in sites.yaml
+    placeholder: false
+  - ndg: hq
+    description: no sites tagged yet
+    placeholder: true
+  - ndg: dc
+    description: no sites tagged yet
+    placeholder: true
 
 sites:
   - id: us-huntsville

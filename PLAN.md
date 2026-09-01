@@ -18,7 +18,7 @@ Customer-ready **device administration** on Cisco ISE, expressed as Network as C
 
 | Artifact | What it is |
 | --- | --- |
-| NDG tree | **Access groups only** (who can log into which NADs). Not a site tree |
+| NDG tree | Access groups (who can log into which NADs) plus **type-level Location** groups (`regional`, `branch`, placeholders `hq`/`dc`). Not a per-city tree |
 | Command sets | T1–T4 ladder. Vendor (time-bound, NDG-scoped). Contractor. Auditor internal (all NADs, read-only). Auditor external (time-bound, read-only) |
 | Generator | Stamps 15k NAD records off the site list (CSV) |
 | ISE deploy | PAN / MnT / PSN split. Four regional PSNs in the story, two in the lab |
@@ -49,9 +49,9 @@ Example: `usnyc-sw-01` → `10.1.1.1/32`
 
 No overlap with underlay/P2P. Loopbacks are management only.
 
-## NDG — access groups only
+## NDG — Access groups plus type-level Location
 
-Four groups. That is the list.
+Four Access groups. That is the access list.
 
 | NDG | Who may administer those NADs |
 | --- | --- |
@@ -60,7 +60,18 @@ Four groups. That is the list.
 | `access-ceo` | T3+ |
 | `access-sourcecode` | T4 |
 
-Vendor is time-bound and scoped to one of these. Auditors are read-only across all four. Do not add Country or Site NDGs.
+Vendor is time-bound and scoped to one of these. Auditors are read-only across all four.
+
+Location NDGs sit under ISE **All Locations** (`Location#All Locations#{type}`). Types only — do not create 400 per-city Location NDGs.
+
+| Location NDG | Source |
+| --- | --- |
+| `regional` | Exists in `sites.yaml` (50 US state largest cities) |
+| `branch` | Exists in `sites.yaml` (the other 350 cities) |
+| `hq` | Placeholder. No sites tagged `hq` yet |
+| `dc` | Placeholder. No sites tagged `dc` yet |
+
+Do not reclassify cities into HQ/DC without evidence. Do not add Country NDGs.
 
 ## Out of v1
 

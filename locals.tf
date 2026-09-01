@@ -4,14 +4,36 @@ locals {
   authc   = csvdecode(trimprefix(file("${path.module}/tacacs_authc.csv"), "\ufeff"))
   authz   = csvdecode(trimprefix(file("${path.module}/tacacs_authz.csv"), "\ufeff"))
   devices = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
+  sites   = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
+
+  # Type-level Location NDGs. ISE already has Location#All Locations.
+  # Children: Location#All Locations#{ndg}. No per-city groups.
+  location_ndg_rows = yamldecode(file("${path.module}/location_ndgs.yaml")).location_ndgs
+  location_ndgs     = { for row in local.location_ndg_rows : row.ndg => row }
+
+  site_by_id         = { for s in local.sites : s.id => s }
+  device_by_hostname = { for d in local.devices : d.hostname => d }
+  sample_nad_rows    = csvdecode(trimprefix(file("${path.module}/sample_nads.csv"), "\ufeff"))
+  # Ordered sample (8): 2 per Access NDG, location from the device's site type.
+  sample_nads = [
+    for row in local.sample_nad_rows : merge(
+      local.device_by_hostname[row.hostname],
+      {
+        access_ndg    = row.access_ndg
+        location_type = local.site_by_id[local.device_by_hostname[row.hostname].site_code].type
+      }
+    )
+  ]
 
   # CSV says "ISE Internal Users". ISE's built-in store name is "Internal Users".
   identity_source_name = {
     "ISE Internal Users" = "Internal Users"
   }
 
-  command_sets    = toset([for row in local.authz : row.command_set])
-  shell_profiles  = toset([for row in local.authz : row.shell_profile])
+  command_sets   = toset([for row in local.authz : row.command_set])
+  shell_profiles = toset([for row in local.authz : row.shell_profile])
+  # Live ISE names (T1, auditor-internal). Not the TACACS CS/profile bag.
+  # T1 != T1_cs / T1_shell, so no suffix. Rename only if a name lands in that bag.
   identity_groups = toset([for row in local.authz : row.identity_group])
 
   # ISE TACACS names: alphanumeric, underscore, space. Hyphen is illegal

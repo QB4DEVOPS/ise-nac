@@ -174,6 +174,7 @@ def switch_count(site_type: str) -> int:
         return REGIONAL_SWITCHES
     if site_type == "branch":
         return BRANCH_SWITCHES
+    # hq/dc are Location NDG placeholders only until sites.yaml tags them.
     raise SystemExit(f"unknown site type {site_type!r}; not assigning extra HQ/DC")
 
 
