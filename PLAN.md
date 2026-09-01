@@ -82,21 +82,22 @@ NADs join the **state/city** Location NDG, not the type-level parent. Do not rec
 - Dual PAN
 - Per-nation ISE clusters / MnT split
 - Standing up gear on the LAN until Robert clears it
-- MAC endpoint lists (300k MACs). `endpoint_count` stays 0.
+- MAC endpoint lists at story scale (300k MACs). Lab is 110 generated MACs. Do not dump 15k.
 
 ## Wired 802.1X + MAB (this phase)
 
-Policy only in Git. After merge, Robert pull / init / apply. Do not apply from an agent.
+Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. Do not apply from an agent.
 
-- Empty endpoint identity groups: Workstation, IP-Phone, Printer. No guest.
+- Endpoint identity groups: Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers. Drops Workstation / IP-Phone / Printer. No guest.
+- 10 unique locally-administered lab MACs per group (110 total). Generator, not hardware. `endpoint_count` default **110**. Groups-only: `TF_VAR_endpoint_count=0`.
 - Two Allowed Protocols (`ise_allowed_protocols` 0.3.4): 802.1X EAP and MAB PAP/ASCII.
-- ACCESS_ACCEPT profiles: lab VLAN 10 data, 20 voice, 30 MAB.
-- One Network Access policy set. Dot1X → Internal Users. MAB → Internal Endpoints continue-if-not-found. Authorization first-match.
+- ACCESS_ACCEPT profiles: lab VLAN 10 data, 20 voice, 30 MAB. Authz: Phones → VLAN 20 (voice), Printers → VLAN 30 (MAB), all other groups → VLAN 10 (data). First-match.
+- One Network Access policy set. Dot1X → Internal Users. MAB → Internal Endpoints continue-if-not-found.
 - NAD `authentication_network_protocol` is `RADIUS`. Keep `tacacs_shared_secret`. Access stays `access-marketing`. No HQ/DC city tags. `nad_count` default stays 15000.
 
 ## Apply (after destroy)
 
-Default `nad_count` is **15000**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree, every `devices.csv` switch, TACACS device-admin, **and** wired 802.1X/MAB policy. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (env only; no secret in git). NAD protocol is `RADIUS` so 802.1X can use the NAD; `tacacs_shared_secret` stays. Empty TACACS or RADIUS secret with NADs to push fails. Policy-only (folders + TACACS + 802.1X/MAB, no switches): `TF_VAR_nad_count=0`.
+Default `nad_count` is **15000**. Default `endpoint_count` is **110**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree, every `devices.csv` switch, TACACS device-admin, wired 802.1X/MAB policy, **and** 110 lab MACs. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (env only; no secret in git). NAD protocol is `RADIUS` so 802.1X can use the NAD; `tacacs_shared_secret` stays. Empty TACACS or RADIUS secret with NADs to push fails. No switches: `TF_VAR_nad_count=0`. Groups-only (no MAC rows): `TF_VAR_endpoint_count=0`.
 
 One PAN: Location NDGs were ~50 seconds each. Full apply (400 sites + 151 folders + 15,000 NADs) will take a long time. Do not apply from an agent.
 

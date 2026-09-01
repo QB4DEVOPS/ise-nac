@@ -11,6 +11,7 @@ devices: list(include('device'), required=False)
 command_sets: list(include('command_set'), required=False)
 shell_profiles: list(include('shell_profile'), required=False)
 endpoint_identity_groups: list(include('endpoint_identity_group'), required=False)
+endpoints: list(include('endpoint'), required=False)
 allowed_protocols: list(include('allowed_protocol'), required=False)
 authorization_profiles: list(include('authorization_profile'), required=False)
 network_access_policy_sets: list(include('network_access_policy_set'), required=False)
@@ -98,6 +99,12 @@ endpoint_identity_group:
   name: str()
   description: str(required=False)
   system_defined: bool(required=False)
+
+# Lab MACs. Fake, locally administered unicast. Not hardware.
+endpoint:
+  mac: str()
+  endpoint_identity_group: str()
+  description: str(required=False)
 
 # CiscoDevNet/ise 0.3.4 ise_allowed_protocols required booleans.
 allowed_protocol:

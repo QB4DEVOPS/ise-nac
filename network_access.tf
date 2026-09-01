@@ -1,6 +1,7 @@
 # Wired 802.1X + MAB Network Access policy. Not Device Admin (that stays in main.tf).
 # CiscoDevNet/ise 0.3.4 resources (verified, not invented):
 #   ise_endpoint_identity_group
+#   ise_endpoint                   (name, mac, group_id, static_group_assignment, static_profile_assignment)
 #   ise_allowed_protocols          (Network Access; not ise_allowed_protocols_tacacs)
 #   ise_authorization_profile      (access_type, vlan_name_id, vlan_tag_id, voice_domain_permission)
 #   ise_network_access_policy_set
@@ -8,9 +9,10 @@
 #   ise_network_access_authentication_rule_update_ranks
 #   ise_network_access_authorization_rule  (profiles = set of names)
 #   ise_network_access_authorization_rule_update_ranks
-# ise_endpoint exists in 0.3.4 but is not used. endpoint_count stays 0. No MAC list. No guest.
+# 11 groups. 110 fake lab MACs (endpoints.csv). Default endpoint_count=110. No guest.
 # Schema cites:
 #   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
+#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint
 #   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/allowed_protocols
 #   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/authorization_profile
 #   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_policy_set
@@ -22,6 +24,29 @@ resource "ise_endpoint_identity_group" "this" {
   name           = each.value.name
   description    = each.value.description
   system_defined = each.value.system_defined
+}
+
+# Lab MACs from endpoints.csv. Default endpoint_count=110 (all 11×10).
+# Groups-only (no MAC rows): TF_VAR_endpoint_count=0. Do not dump 15k MACs.
+# 0.3.4 required: name, mac, static_group_assignment, static_profile_assignment.
+# group_id is the Identity Group ID (ise_endpoint_identity_group.id).
+# MACs are generated locally-administered unicast (first octet 02). Not hardware.
+resource "ise_endpoint" "this" {
+  count = var.endpoint_count
+
+  name                      = local.endpoints[count.index].mac
+  mac                       = local.endpoints[count.index].mac
+  description               = local.endpoints[count.index].description
+  group_id                  = ise_endpoint_identity_group.this[local.endpoints[count.index].endpoint_identity_group].id
+  static_group_assignment   = true
+  static_profile_assignment = false
+
+  lifecycle {
+    precondition {
+      condition     = var.endpoint_count <= length(local.endpoints)
+      error_message = "endpoint_count cannot exceed endpoints.csv (${length(local.endpoints)}). Default is all ${length(local.endpoints)} lab MACs. Groups-only is TF_VAR_endpoint_count=0."
+    }
+  }
 }
 
 # Required 0.3.4 booleans come from allowed_protocols.yaml. Optional inner-method

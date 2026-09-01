@@ -37,11 +37,11 @@ variable "nad_radius_secret" {
 
 variable "endpoint_count" {
   type        = number
-  description = "MAC endpoints to push. Stays 0: endpoint identity groups only. Do not generate a MAC list."
-  default     = 0
+  description = "How many endpoints.csv lab MACs to push (first N, inventory order). Default 110 = all 11 groups × 10. Set TF_VAR_endpoint_count=0 for groups-only (no MAC rows). Do not dump 15k MACs."
+  default     = 110
 
   validation {
-    condition     = var.endpoint_count == 0
-    error_message = "endpoint_count stays 0. Workstation / IP-Phone / Printer groups only. Do not generate 300k MACs."
+    condition     = var.endpoint_count >= 0 && var.endpoint_count <= 110
+    error_message = "endpoint_count must be 0 (groups only, no MACs) through 110 (all endpoints.csv lab MACs, the default). Groups-only is TF_VAR_endpoint_count=0. Do not dump 15k MACs."
   }
 }

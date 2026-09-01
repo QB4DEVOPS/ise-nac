@@ -83,8 +83,13 @@ run "default_pushes_all_devices" {
   }
 
   assert {
-    condition     = var.endpoint_count == 0
-    error_message = "endpoint_count default stays 0 at full NAD inventory."
+    condition     = var.endpoint_count == 110
+    error_message = "endpoint_count default is 110 lab MACs at full NAD inventory."
+  }
+
+  assert {
+    condition     = length(ise_endpoint.this) == 110
+    error_message = "A normal apply must plan 110 ise_endpoint lab MACs with 15000 NADs."
   }
 
   assert {

@@ -7,6 +7,7 @@ locals {
   na_authz = csvdecode(trimprefix(file("${path.module}/network_access_authz.csv"), "\ufeff"))
   devices  = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
   sites    = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
+  endpoints = csvdecode(trimprefix(file("${path.module}/endpoints.csv"), "\ufeff"))
 
   # Type-level Location NDGs (siblings under All Locations).
   # ISE: Location#All Locations#{ndg}. NADs do not join these.
