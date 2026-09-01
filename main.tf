@@ -51,6 +51,7 @@ resource "ise_network_device_group" "location" {
 # One Location folder per US state (admin1) or non-US country (cc).
 # Example: Location#All Locations#California
 # Must not be named regional/branch/hq/dc.
+# for_each values are objects (ndg/cc/description), not grouped site tuples.
 resource "ise_network_device_group" "state_location" {
   for_each    = local.state_location_ndgs
   name        = "Location#All Locations#${each.value.ndg}"
