@@ -27,3 +27,10 @@ variable "nad_tacacs_secret" {
   default     = ""
   description = "TACACS shared secret for NADs. Set via TF_VAR_nad_tacacs_secret or NAD_TACACS_SECRET in .env. Never commit a real secret."
 }
+
+variable "nad_radius_secret" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "RADIUS shared secret for NADs. ISE requires this even when protocol is TACACS_PLUS. Set via TF_VAR_nad_radius_secret or NAD_RADIUS_SECRET in .env. Never commit a real secret."
+}

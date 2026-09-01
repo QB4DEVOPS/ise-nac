@@ -35,10 +35,19 @@ if ($env:ISE_USERNAME) {
 if ($env:NAD_TACACS_SECRET) {
     $env:TF_VAR_nad_tacacs_secret = $env:NAD_TACACS_SECRET
 }
+if ($env:NAD_RADIUS_SECRET) {
+    $env:TF_VAR_nad_radius_secret = $env:NAD_RADIUS_SECRET
+}
 
 Write-Host "Loaded .env. PAN host: $($env:ISE_HOST)"
-if (-not $env:NAD_TACACS_SECRET) {
-    Write-Host "NAD_TACACS_SECRET is empty. A normal apply (default 6250 NADs) will fail until you set it in .env."
+if (-not $env:NAD_TACACS_SECRET -or -not $env:NAD_RADIUS_SECRET) {
+    Write-Host "NAD_TACACS_SECRET and NAD_RADIUS_SECRET are both required for a normal apply (default 6250 NADs)."
+    if (-not $env:NAD_TACACS_SECRET) {
+        Write-Host "NAD_TACACS_SECRET is empty. Set it in .env."
+    }
+    if (-not $env:NAD_RADIUS_SECRET) {
+        Write-Host "NAD_RADIUS_SECRET is empty. ISE requires a RADIUS shared secret even for TACACS-only devices. Set it in .env."
+    }
     Write-Host "Policy-only (no switches): `$env:TF_VAR_nad_count = `"0`""
 }
 Write-Host "Next: terraform init   then   terraform plan   then   terraform apply"

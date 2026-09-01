@@ -52,7 +52,7 @@ Validate YAML first (`nac-validate` above). Then Terraform.
 
 `terraform init` only downloads the Cisco ISE plugin. The PAN does **not** need to be reachable.
 
-`terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up. A normal apply (default `nad_count=6250`) creates the Location tree **and** all 6,250 switches. `.env` must have `NAD_TACACS_SECRET`.
+`terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up. A normal apply (default `nad_count=6250`) creates the Location tree **and** all 6,250 switches. `.env` must have both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET`.
 
 After destroy, paste this in PowerShell (pull, load `.env`, init, apply):
 
@@ -84,7 +84,7 @@ That address is `ise_tacacs_command_set.test`. ISE name is `test_cs`: one comman
 
 ## After destroy (rebuild the system)
 
-After `terraform destroy` on pan1, pull this folder and apply. A normal apply builds the **Location tree and all 6,250 NADs** from `devices.csv`. Put `NAD_TACACS_SECRET` in `.env` first (never in git). `load-env.ps1` maps it to `TF_VAR_nad_tacacs_secret`. There is no secret default in git. Empty secret with `nad_count>0` fails with a clear error.
+After `terraform destroy` on pan1, pull this folder and apply. A normal apply builds the **Location tree and all 6,250 NADs** from `devices.csv`. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (never in git). `load-env.ps1` maps them to `TF_VAR_nad_tacacs_secret` and `TF_VAR_nad_radius_secret`. There is no secret default in git. Empty TACACS or RADIUS secret with `nad_count>0` fails with a clear error. ISE requires a RADIUS shared secret even for TACACS-only devices. Protocol stays `TACACS_PLUS`.
 
 ```
 git pull
@@ -125,7 +125,7 @@ Each NAD joins **both**:
 1. Access: **`access-marketing` only** (CoS lock). `devices.csv` has no Access column. Not a different default. Not round-robin. Not `hr` / `ceo` / `sourcecode` until Robert tags Access.
 2. Location: that device's state/city NDG (`Location#All Locations#{State}#{site_id}`). Not the type-level `regional` / `branch` / `hq` / `dc` groups.
 
-TACACS shared secret: `.env` `NAD_TACACS_SECRET` only (never in git). Required whenever `nad_count>0`. `TF_VAR_nad_count=N` pushes the first N rows of `devices.csv`.
+Shared secrets (never in git): `.env` `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET`. Both required whenever `nad_count>0`. One RADIUS secret for all NADs, same pattern as TACACS. Protocol stays `TACACS_PLUS` (do not switch NADs to RADIUS). CiscoDevNet/ise 0.3.4 field is `authentication_radius_shared_secret` (ERS `authenticationSettings.radiusSharedSecret`). `TF_VAR_nad_count=N` pushes the first N rows of `devices.csv`.
 
 ## Location NDG names
 

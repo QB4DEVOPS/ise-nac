@@ -5,10 +5,11 @@ mock_provider "ise" {}
 run "default_pushes_all_devices" {
   command = plan
 
-  # Dummy for this mock plan only. Variable default in git stays empty.
-  # Real secret is NAD_TACACS_SECRET / TF_VAR_nad_tacacs_secret (never in git).
+  # Dummy for this mock plan only. Variable defaults in git stay empty.
+  # Real secrets are NAD_TACACS_SECRET / NAD_RADIUS_SECRET (never in git).
   variables {
     nad_tacacs_secret = "mock-not-for-ise"
+    nad_radius_secret = "mock-not-for-ise"
   }
 
   assert {
@@ -42,8 +43,9 @@ run "default_pushes_all_devices" {
   }
 
   # First NAD: Huntsville, Alabama. Access + nested site Location only.
+  # network_device_groups is a set (CiscoDevNet/ise 0.3.4); compare as toset, not list.
   assert {
-    condition = ise_network_device.nad[0].network_device_groups == tolist([
+    condition = ise_network_device.nad[0].network_device_groups == toset([
       "Access#All Access#access-marketing",
       "Location#All Locations#Alabama#us-huntsville",
     ])
@@ -52,11 +54,21 @@ run "default_pushes_all_devices" {
 
   # Next regional site (index 20): still access-marketing, not round-robin hr/ceo.
   assert {
-    condition = ise_network_device.nad[20].network_device_groups == tolist([
+    condition = ise_network_device.nad[20].network_device_groups == toset([
       "Access#All Access#access-marketing",
       "Location#All Locations#Alaska#us-anchorage",
     ])
     error_message = "NAD[20] must join access-marketing plus Location#All Locations#Alaska#us-anchorage. Do not round-robin Access. Do not invent HQ/DC tags."
+  }
+
+  assert {
+    condition     = ise_network_device.nad[0].authentication_network_protocol == "TACACS_PLUS"
+    error_message = "NAD protocol stays TACACS_PLUS. Do not switch NADs to RADIUS."
+  }
+
+  assert {
+    condition     = length(ise_network_device.nad[0].authentication_radius_shared_secret) > 0
+    error_message = "NAD must set authentication_radius_shared_secret (ISE requires RADIUS secret even for TACACS_PLUS)."
   }
 
   assert {
@@ -88,12 +100,27 @@ run "policy_only_zero" {
   }
 }
 
-run "empty_secret_fails_when_pushing_nads" {
+run "empty_tacacs_secret_fails_when_pushing_nads" {
   command = plan
 
   variables {
     nad_count         = 1
     nad_tacacs_secret = ""
+    nad_radius_secret = "mock-not-for-ise"
+  }
+
+  expect_failures = [
+    ise_network_device.nad,
+  ]
+}
+
+run "empty_radius_secret_fails_when_pushing_nads" {
+  command = plan
+
+  variables {
+    nad_count         = 1
+    nad_tacacs_secret = "mock-not-for-ise"
+    nad_radius_secret = ""
   }
 
   expect_failures = [
