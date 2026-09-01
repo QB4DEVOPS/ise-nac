@@ -127,18 +127,28 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = ise_endpoint.this[0].group_id == ise_endpoint_identity_group.this["Phones"].id
-    error_message = "First 10 MACs belong to Phones (group_id = identity group id)."
+    condition     = local.endpoints[0].endpoint_identity_group == "Phones"
+    error_message = "First 10 MACs belong to Phones (CSV order; group_id is the identity group id at apply)."
   }
 
   assert {
-    condition     = ise_endpoint.this[10].group_id == ise_endpoint_identity_group.this["AP"].id
+    condition     = local.endpoints[10].endpoint_identity_group == "AP"
     error_message = "MAC 11 belongs to AP."
   }
 
   assert {
-    condition     = ise_endpoint.this[20].group_id == ise_endpoint_identity_group.this["Printers"].id
+    condition     = local.endpoints[20].endpoint_identity_group == "Printers"
     error_message = "MAC 21 belongs to Printers."
+  }
+
+  assert {
+    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Phones"]) == 10
+    error_message = "Phones must have 10 lab MACs."
+  }
+
+  assert {
+    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "RFID_Readers"]) == 10
+    error_message = "RFID_Readers must have 10 lab MACs."
   }
 
   assert {
