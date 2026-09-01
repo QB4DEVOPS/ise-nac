@@ -6,24 +6,48 @@ locals {
   devices = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
   sites   = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
 
-  # Type-level Location NDGs. ISE already has Location#All Locations.
-  # Children: Location#All Locations#{ndg}. No per-city groups.
+  # Type-level Location NDGs (siblings under All Locations).
+  # ISE: Location#All Locations#{ndg}. NADs do not join these.
   location_ndg_rows = yamldecode(file("${path.module}/location_ndgs.yaml")).location_ndgs
   location_ndgs     = { for row in local.location_ndg_rows : row.ndg => row }
 
-  site_by_id         = { for s in local.sites : s.id => s }
-  device_by_hostname = { for d in local.devices : d.hostname => d }
-  sample_nad_rows    = csvdecode(trimprefix(file("${path.module}/sample_nads.csv"), "\ufeff"))
-  # Ordered sample (8): 2 per Access NDG, location from the device's site type.
-  sample_nads = [
-    for row in local.sample_nad_rows : merge(
-      local.device_by_hostname[row.hostname],
-      {
-        access_ndg    = row.access_ndg
-        location_type = local.site_by_id[local.device_by_hostname[row.hostname].site_code].type
-      }
+  # Naming lock: "regional" is ONLY the type-level NDG (largest-city type),
+  # sibling of branch/hq/dc. A US state folder is admin1 (California), never
+  # "regional". Non-US folder is cc (no US state). site_id is already legal.
+  type_location_names = toset([for row in local.location_ndg_rows : lower(row.ndg)])
+  site_folder = {
+    for s in local.sites : s.id => (
+      s.cc == "us" ? replace(s.admin1, " ", "_") : s.cc
     )
-  ]
+  }
+
+  # One folder per US state / non-US country under All Locations.
+  state_location_ndgs = {
+    for s in local.sites : local.site_folder[s.id] => {
+      ndg         = local.site_folder[s.id]
+      cc          = s.cc
+      description = s.cc == "us" ? "US state ${s.admin1}" : "Country ${s.cc}"
+    }...
+  }
+
+  # Site under its state/country folder.
+  # ISE: Location#All Locations#{State}#{site_id}
+  # e.g. Location#All Locations#California#us-los-angeles
+  site_location_ndgs = {
+    for s in local.sites : s.id => {
+      site_id     = s.id
+      folder      = local.site_folder[s.id]
+      ise_name    = "Location#All Locations#${local.site_folder[s.id]}#${s.id}"
+      description = s.admin1 != "" ? "${s.city}, ${s.admin1}" : s.city
+    }
+  }
+
+  # CoS lock: every NAD in access-marketing until Robert tags Access.
+  # Not a different default. Not round-robin. Not hr/ceo/sourcecode.
+  default_access_ndg = "access-marketing"
+
+  # Optional 8-row reference slice. Not the apply inventory.
+  sample_nad_rows = csvdecode(trimprefix(file("${path.module}/sample_nads.csv"), "\ufeff"))
 
   # CSV says "ISE Internal Users". ISE's built-in store name is "Internal Users".
   identity_source_name = {

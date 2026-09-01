@@ -5,9 +5,23 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
+
+# ISE NDG leaf: alphanumeric, underscore, minus, dot. '#' is the path
+# separator. Spaces/punctuation become underscore. Empty names are illegal.
+_ISE_NDG_ILLEGAL = re.compile(r"[^A-Za-z0-9_.-]+")
+_ISE_NDG_MULTI_US = re.compile(r"_+")
+_ISE_NDG_LEAF = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
+
+
+def ise_ndg_leaf(name: str) -> str:
+    slug = _ISE_NDG_MULTI_US.sub("_", _ISE_NDG_ILLEGAL.sub("_", name.strip())).strip("_")
+    if not slug or not _ISE_NDG_LEAF.fullmatch(slug):
+        raise SystemExit(f"ISE NDG leaf name is illegal or empty: {name!r} -> {slug!r}")
+    return slug
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "nac.yaml"
@@ -74,7 +88,7 @@ def main() -> int:
     if not isinstance(location_ndgs, list) or not location_ndgs:
         raise SystemExit("location_ndgs.yaml must list type-level Location NDGs")
     if len(location_ndgs) > 8:
-        raise SystemExit("location_ndgs.yaml has too many rows; type-level only (no per-city)")
+        raise SystemExit("location_ndgs.yaml has too many rows; type-level only")
     site_types = {s["type"].lower() for s in sites}
     loc_names = set()
     for row in location_ndgs:
@@ -95,6 +109,45 @@ def main() -> int:
     for required in ("hq", "dc"):
         if required not in loc_names and required not in site_types:
             raise SystemExit(f"location_ndgs.yaml must include placeholder {required}")
+    if any(t in {"hq", "dc"} for t in site_types):
+        raise SystemExit("sites.yaml must not invent hq/dc city tags; types stay regional/branch")
+
+    if any(k.lower() == "access" or k.lower().startswith("access_") for k in (devices[0].keys() if devices else [])):
+        raise SystemExit("devices.csv must not have an Access column; Access is locked to access-marketing")
+
+    # Naming lock: "regional" is ONLY the type-level NDG. US folder = slugged
+    # admin1 (California). Non-US folder = cc. Never name a folder regional.
+    # Site ISE path: Location#All Locations#{State}#{site_id}
+    reserved_types = loc_names | {"regional", "branch", "hq", "dc"}
+    site_folder_of: dict[str, str] = {}
+    site_leaf_of: dict[str, str] = {}
+    folder_meta: dict[str, dict[str, str]] = {}
+    for row in sites:
+        if row["cc"] == "us" and not (row.get("admin1") or "").strip():
+            raise SystemExit(f"US site {row['id']} has no admin1 (state folder)")
+        folder = ise_ndg_leaf(row["admin1"] if row["cc"] == "us" else row["cc"])
+        leaf = ise_ndg_leaf(row["id"])
+        if folder.lower() in reserved_types:
+            raise SystemExit(
+                f"Location folder {folder} must not reuse a type-level name "
+                "(regional is the site-type NDG only; never a state folder)"
+            )
+        if leaf.lower() in reserved_types:
+            raise SystemExit(f"site NDG {leaf} collides with a type-level Location NDG")
+        if len(f"Location#All Locations#{folder}#{leaf}") > 100:
+            raise SystemExit(f"ISE NDG path exceeds 100 chars: {row['id']}")
+        site_folder_of[row["id"]] = folder
+        site_leaf_of[row["id"]] = leaf
+        if folder not in folder_meta:
+            folder_meta[folder] = {
+                "cc": row["cc"],
+                "admin1": row["admin1"],
+                "description": f"US state {row['admin1']}" if row["cc"] == "us" else f"Country {row['cc']}",
+            }
+        elif row["cc"] == "us" and folder_meta[folder]["admin1"] != row["admin1"]:
+            raise SystemExit(f"state folder {folder} maps to more than one admin1")
+        elif row["cc"] != "us" and folder_meta[folder]["cc"] != row["cc"]:
+            raise SystemExit(f"country folder {folder} maps to more than one cc")
 
     if len(sample) != 8:
         raise SystemExit(f"sample_nads.csv expected 8 rows, got {len(sample)}")
@@ -125,7 +178,7 @@ def main() -> int:
         "# Rebuild: python3 scripts/generate_nac.py",
         "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv",
         "# TACACS objects: command_sets.yaml shell_profiles.yaml",
-        "# Location NDGs (type-level only): location_ndgs.yaml",
+        "# Location NDGs: type-level in location_ndgs.yaml; state/city from sites.yaml",
         "",
         "lab:",
         "  pan:",
@@ -161,6 +214,31 @@ def main() -> int:
                     ("ndg", yq(str(row["ndg"]))),
                     ("description", yq(str(row["description"]))),
                     ("placeholder", "true" if row.get("placeholder") else "false"),
+                ],
+            )
+        )
+    for folder in sorted(folder_meta, key=lambda n: (folder_meta[n]["cc"] != "us", n)):
+        meta = folder_meta[folder]
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("ndg", yq(folder)),
+                    ("description", yq(meta["description"])),
+                    ("placeholder", "false"),
+                ],
+            )
+        )
+    for row in sites:
+        desc = f"{row['city']}, {row['admin1']}" if row.get("admin1") else row["city"]
+        lines.extend(
+            mapping(
+                2,
+                [
+                    ("ndg", yq(site_leaf_of[row["id"]])),
+                    ("description", yq(desc)),
+                    ("placeholder", "false"),
+                    ("parent", yq(site_folder_of[row["id"]])),
                 ],
             )
         )

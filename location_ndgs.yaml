@@ -1,7 +1,11 @@
 # Type-level Location NDGs under ISE All Locations.
 # ISE name: Location#All Locations#{ndg}  root_group: Location
-# Do NOT add per-city Location NDGs (400 ISE objects). Types only.
+# Naming lock: "regional" is ONLY this type (largest-city type), sibling of
+# branch/hq/dc. Do not name any US state folder regional.
+# State/city Location NDGs are derived from sites.yaml:
+#   Location#All Locations#{State}#{site_id}
 # regional and branch exist in sites.yaml. hq and dc have no tagged sites.
+# Do not invent HQ/DC city tags.
 location_ndgs:
   - ndg: regional
     description: Sites typed regional in sites.yaml

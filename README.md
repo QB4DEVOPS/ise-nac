@@ -92,28 +92,55 @@ terraform apply
 
 ## First apply (no 6,250 NADs)
 
-Default NAD count is **0**. A normal apply creates policy objects only:
+Default NAD count is **0**. A normal apply still creates policy objects **and** the Location NDG tree (state/country folders + 400 sites + 4 type-level). It does **not** create NADs.
 
 - Four Access NDGs from `ndgs.csv`: `access-marketing`, `access-hr`, `access-ceo`, `access-sourcecode`
-- Four type-level Location NDGs under ISE All Locations (`Location#All Locations#…`): `regional`, `branch` (from `sites.yaml` types), plus placeholders `hq` and `dc` with description `no sites tagged yet`. No per-city Location NDGs.
+- Four type-level Location NDGs under ISE All Locations: `regional` (largest-city **type** only), `branch`, plus placeholders `hq` and `dc`. **`regional` is never a state folder name.** NADs do **not** join these type groups.
+- One Location folder per US state (`admin1`) and per non-US country (`cc`). One site NDG under that folder: `Location#All Locations#{State}#{site_id}` (example `California#us-los-angeles`). Types stay `regional` / `branch`. No HQ/DC city tags.
 - TACACS authentication sequence from `tacacs_authc.csv`
 - TACACS authorization rules from `tacacs_authz.csv` in ISE push order (first match wins)
 
 This does **not** deploy ESXi, an OVA, or C:\Marco paths.
 
-## Tiny NAD sample later
+**Warning:** applying **6,250 NADs + 400 site Location NDGs + 151 state/country folders + 4 type-level** on one PAN will take a long time. Default `nad_count=0` still pushes the Location tree. Do not apply from an agent.
 
-Default `nad_count` stays **0**. Do not apply 6,250 devices. The curated sample is **8** switches (`sample_nads.csv`): 2 per Access NDG, spread across regional and branch. Each sample NAD joins **both** its Access NDG and the Location NDG for that device's site type.
+## NAD inventory (devices.csv)
 
-Put the TACACS shared secret in `.env` as `NAD_TACACS_SECRET` (never in git). Then:
+Default `nad_count` stays **0**. The intended inventory is every row in `devices.csv` (**6,250** access switches), not the old sample of 8. `sample_nads.csv` can stay as a tiny optional reference slice; `nad_count` does not read it.
+
+Each NAD joins **both**:
+
+1. Access: **`access-marketing` only** (CoS lock). `devices.csv` has no Access column. Not a different default. Not round-robin. Not `hr` / `ceo` / `sourcecode` until Robert tags Access.
+2. Location: that device's state/city NDG (`Location#All Locations#{State}#{site_id}`). Not the type-level `regional` / `branch` / `hq` / `dc` groups.
+
+Put the TACACS shared secret in `.env` as `NAD_TACACS_SECRET` (never in git). Full push:
 
 ```
 . .\load-env.ps1
-$env:TF_VAR_nad_count = "8"
+$env:TF_VAR_nad_count = "6250"
 terraform apply
 ```
 
-Same thing without PowerShell env assignment: `TF_VAR_nad_count=8` in the environment. Required: `TF_VAR_nad_tacacs_secret` (loaded from `NAD_TACACS_SECRET`). There is no secret default in git.
+Same thing without PowerShell env assignment: `TF_VAR_nad_count=6250` in the environment. Required: `TF_VAR_nad_tacacs_secret` (loaded from `NAD_TACACS_SECRET`). There is no secret default in git. `TF_VAR_nad_count=N` pushes the first N rows of `devices.csv`.
+
+## Location NDG names
+
+ISE already has `Location` / `All Locations`. This repo does not recreate that root. `#` is the path separator.
+
+| Object | ISE path | Source |
+| --- | --- | --- |
+| Type | `Location#All Locations#regional` (also `branch`, `hq`, `dc`) | `location_ndgs.yaml`. `regional` = largest-city **type** only. |
+| US state folder | `Location#All Locations#California` | Distinct `admin1` on US rows. Never named `regional`. |
+| Non-US folder | `Location#All Locations#gb` | Distinct `cc` (no US state). |
+| Site | `Location#All Locations#California#us-los-angeles` | One `sites.yaml` `id` under its state/country folder |
+
+Leaf names must be ISE-legal (letters, digits, underscore, minus, dot; no `#`).
+
+- **US state folder:** slug `admin1` — spaces → `_`. Identity when the name is already one word (`California`). Transforms: `District of Columbia` → `District_of_Columbia`, `New Hampshire` → `New_Hampshire`, `New Jersey` → `New_Jersey`, `New Mexico` → `New_Mexico`, `New York` → `New_York`, `North Carolina` → `North_Carolina`, `North Dakota` → `North_Dakota`, `Rhode Island` → `Rhode_Island`, `South Carolina` → `South_Carolina`, `South Dakota` → `South_Dakota`, `West Virginia` → `West_Virginia`. None of these is `regional`.
+- **Non-US folder:** `cc` as-is (`gb`, `de`, …).
+- **Site leaf:** `sites.yaml` `id` as-is (`us-los-angeles`). Already `[a-z0-9-]+`; no transform.
+
+HQ/DC city tags are **not** invented.
 
 ## Provider
 
@@ -132,6 +159,6 @@ These still produce a valid `terraform init`. Some objects are incomplete becaus
 | `time_bound=yes` | Flag only (vendor, auditor-external identity) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
 | Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |
-| NAD → NDG | `sample_nads.csv` picks Access NDG; Location NDG comes from the site type | Sample NADs (if `TF_VAR_nad_count=8`) join Access **and** Location. Default count is 0. |
+| NAD → NDG | Access locked to `access-marketing`. Location is `Location#All Locations#{State}#{site_id}` | `TF_VAR_nad_count=6250` joins Access **and** the state/city Location. Default count is 0. |
 
 See [PLAN.md](PLAN.md) for the device-admin design.
