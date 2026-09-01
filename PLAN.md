@@ -83,6 +83,12 @@ NADs join the **state/city** Location NDG, not the type-level parent. Do not rec
 - Per-nation ISE clusters / MnT split
 - Standing up gear on the LAN until Robert clears it
 
+## Apply (after destroy)
+
+Default `nad_count` is **6250**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree **and** every `devices.csv` switch. `NAD_TACACS_SECRET` is required (env only; no secret in git). Empty secret with NADs to push fails. Policy-only (folders + TACACS, no switches): `TF_VAR_nad_count=0`.
+
+One PAN: Location NDGs were ~50 seconds each. Full apply (400 sites + 151 folders + 6,250 NADs) will take a long time. Do not apply from an agent.
+
 ## Next
 
 1. Freeze this plan

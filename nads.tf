@@ -1,7 +1,7 @@
-# Inventory is devices.csv (6,250 access switches). Default count is 0 so a
-# normal apply does not push them. Full push: TF_VAR_nad_count=6250 (and
-# TF_VAR_nad_tacacs_secret from env). sample_nads.csv is an optional 8-row
-# reference slice only; it is not selected by nad_count.
+# Inventory is devices.csv (6,250 access switches). Default count is 6250 so a
+# normal apply pushes every row. Policy-only (no switches): TF_VAR_nad_count=0.
+# TACACS secret from TF_VAR_nad_tacacs_secret / NAD_TACACS_SECRET (env only).
+# sample_nads.csv is an optional 8-row reference slice; nad_count does not read it.
 #
 # Each NAD joins exactly two groups:
 #   Access:   access-marketing (CoS lock until Robert tags Access)
@@ -35,7 +35,7 @@ resource "ise_network_device" "nad" {
     }
     precondition {
       condition     = var.nad_count <= length(local.devices)
-      error_message = "nad_count cannot exceed devices.csv (${length(local.devices)}). Default 0. Full push is TF_VAR_nad_count=6250."
+      error_message = "nad_count cannot exceed devices.csv (${length(local.devices)}). Default is all ${length(local.devices)} rows. Policy-only is TF_VAR_nad_count=0."
     }
     precondition {
       condition     = var.nad_count == 0 || length(var.nad_tacacs_secret) > 0
