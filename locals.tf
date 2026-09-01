@@ -21,13 +21,19 @@ locals {
     )
   }
 
-  # One folder per US state / non-US country under All Locations.
+  # One object per US state / non-US country folder under All Locations.
+  # Keyed by folder name. Values are objects {ndg, cc, description}.
+  # Do not leave this as a grouped map (`...` only): that makes for_each
+  # values tuples of site rows, and each.value.ndg then fails
+  # (Unsupported attribute — "This value does not have any attributes").
   state_location_ndgs = {
-    for s in local.sites : local.site_folder[s.id] => {
-      ndg         = local.site_folder[s.id]
-      cc          = s.cc
-      description = s.cc == "us" ? "US state ${s.admin1}" : "Country ${s.cc}"
-    }...
+    for folder, rows in {
+      for s in local.sites : local.site_folder[s.id] => {
+        ndg         = local.site_folder[s.id]
+        cc          = s.cc
+        description = s.cc == "us" ? "US state ${s.admin1}" : "Country ${s.cc}"
+      }...
+    } : folder => rows[0]
   }
 
   # Site under its state/country folder.
