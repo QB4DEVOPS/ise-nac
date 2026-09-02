@@ -71,6 +71,15 @@ MA-L OUI + generated last 3 octets. Source:
 https://standards-oui.ieee.org/oui/oui.txt. CSV cites `oui` and IEEE
 `organization`. Not hardware. No guest. No 15k dump.
 
+`users.csv` / `users.yaml` are lab Internal Users from
+`scripts/generate_users.py`. Eight accounts, one per TACACS identity
+group (T1, T2, T3, T4, vendor, contractor, auditor-internal,
+auditor-external). Hyphens stay. No password column. Login/enable
+secrets stay in `.env` (`USER_PASSWORD_DEFAULT`,
+`USER_ENABLE_PASSWORD_DEFAULT`). `user_count` default 8. Not 150k.
+ISE Internal User store max is 300,000. ERS POSTs one user per create
+(`ise_internal_user` 0.3.4).
+
 Locked IEEE MA-L OUIs (https://standards-oui.ieee.org/oui/oui.txt), verified
 against the (hex) assignment — do not invent others:
 
@@ -110,7 +119,8 @@ set lists real commands and denies unmatched. Shell privilege is
 `session_attributes` in `shell_profiles.yaml` (`type=MANDATORY`,
 `name=priv-lvl`). Country is not a condition.
 
-No passwords, admin accounts, or lab management addresses.
+No admin accounts or lab management addresses in Git. Internal User
+login/enable secrets are `.env` only (`USER_PASSWORD_DEFAULT`).
 
 ## Access switches (`devices.csv`)
 

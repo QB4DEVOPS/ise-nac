@@ -1,0 +1,9 @@
+﻿username,identity_group,first_name,last_name,email,enabled,description
+lab-t1,T1,Lab,T1,lab-t1@test.lab,true,Lab Internal User for TACACS identity group T1. Not a production account.
+lab-t2,T2,Lab,T2,lab-t2@test.lab,true,Lab Internal User for TACACS identity group T2. Not a production account.
+lab-t3,T3,Lab,T3,lab-t3@test.lab,true,Lab Internal User for TACACS identity group T3. Not a production account.
+lab-t4,T4,Lab,T4,lab-t4@test.lab,true,Lab Internal User for TACACS identity group T4. Not a production account.
+lab-vendor,vendor,Lab,Vendor,lab-vendor@test.lab,true,Lab Internal User for TACACS identity group vendor. Not a production account.
+lab-contractor,contractor,Lab,Contractor,lab-contractor@test.lab,true,Lab Internal User for TACACS identity group contractor. Not a production account.
+lab-auditor-internal,auditor-internal,Lab,AuditorInternal,lab-auditor-internal@test.lab,true,Lab Internal User for TACACS identity group auditor-internal. Not a production account.
+lab-auditor-external,auditor-external,Lab,AuditorExternal,lab-auditor-external@test.lab,true,Lab Internal User for TACACS identity group auditor-external. Not a production account.

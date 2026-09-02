@@ -45,3 +45,28 @@ variable "endpoint_count" {
     error_message = "endpoint_count must be 0 (groups only, no MACs) through 110 (all endpoints.csv lab MACs, the default). Groups-only is TF_VAR_endpoint_count=0. Do not dump 15k MACs."
   }
 }
+
+variable "user_count" {
+  type        = number
+  description = "How many users.csv lab Internal Users to push (first N, inventory order). Default 8 = one per TACACS identity group (T1–T4, vendor, contractor, auditor-internal, auditor-external). Set TF_VAR_user_count=0 to skip user rows (identity groups still apply). Do not dump 150k users."
+  default     = 8
+
+  validation {
+    condition     = var.user_count >= 0 && var.user_count <= 8
+    error_message = "user_count must be 0 (no Internal User rows) through 8 (all users.csv lab users, the default). Skip users with TF_VAR_user_count=0. Do not dump 150k users."
+  }
+}
+
+variable "user_password" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "Login password for Internal Users (ise_internal_user.password). Set via TF_VAR_user_password or USER_PASSWORD_DEFAULT in .env. Required when user_count>0. Never commit a real secret."
+}
+
+variable "user_enable_password" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "TACACS enable password for Internal Users (ise_internal_user.enable_password). Set via TF_VAR_user_enable_password or USER_ENABLE_PASSWORD_DEFAULT in .env. Empty reuses user_password. Never commit a real secret."
+}

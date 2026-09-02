@@ -10,6 +10,7 @@ run "default_pushes_all_devices" {
   variables {
     nad_tacacs_secret = "mock-not-for-ise"
     nad_radius_secret = "mock-not-for-ise"
+    user_password     = "mock-not-for-ise"
   }
 
   assert {
@@ -101,13 +102,24 @@ run "default_pushes_all_devices" {
     condition     = ise_tacacs_profile.this["T1"].name == "T1_shell"
     error_message = "TACACS shell profile ISE names stay *_shell."
   }
+
+  assert {
+    condition     = var.user_count == 8
+    error_message = "user_count default is 8 lab Internal Users at full NAD inventory."
+  }
+
+  assert {
+    condition     = length(ise_internal_user.this) == 8
+    error_message = "A normal apply must plan 8 ise_internal_user lab accounts with 15000 NADs."
+  }
 }
 
 run "policy_only_zero" {
   command = plan
 
   variables {
-    nad_count = 0
+    nad_count     = 0
+    user_password = "mock-not-for-ise"
   }
 
   assert {
@@ -128,6 +140,7 @@ run "empty_tacacs_secret_fails_when_pushing_nads" {
     nad_count         = 1
     nad_tacacs_secret = ""
     nad_radius_secret = "mock-not-for-ise"
+    user_password     = "mock-not-for-ise"
   }
 
   expect_failures = [
@@ -142,6 +155,7 @@ run "empty_radius_secret_fails_when_pushing_nads" {
     nad_count         = 1
     nad_tacacs_secret = "mock-not-for-ise"
     nad_radius_secret = ""
+    user_password     = "mock-not-for-ise"
   }
 
   expect_failures = [

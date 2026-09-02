@@ -10,6 +10,7 @@ Customer-ready **device administration** on Cisco ISE, expressed as Network as C
 - Product: TACACS device admin **plus** wired 802.1X / MAB (this phase)
 - RADIUS on NADs so 802.1X can use the switch; TACACS shared secret stays
 - Guest / unknown / wireless stay **out**
+- Lab Internal Users from `users.csv` (8, not 150k). Secrets in `.env` only
 - Ignore internode latency
 - One Palo Alto as a choke. Dual-home is a later commit, after Git rebuild works
 - CML is optional. Terraform is the truck. YAML is the policy
@@ -83,6 +84,7 @@ NADs join the **state/city** Location NDG, not the type-level parent. Do not rec
 - Per-nation ISE clusters / MnT split
 - Standing up gear on the LAN until Robert clears it
 - MAC endpoint lists at story scale (300k MACs). Lab is 110 generated MACs. Do not dump 15k.
+- Internal User inventory at story scale (~100k–150k). Lab is 8 generated users. ISE store max is 300,000. Do not dump 150k in this phase.
 
 ## Wired 802.1X + MAB (this phase)
 
@@ -95,9 +97,20 @@ Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. 
 - One Network Access policy set. Dot1X → Internal Users. MAB → Internal Endpoints continue-if-not-found.
 - NAD `authentication_network_protocol` is `RADIUS`. Keep `tacacs_shared_secret`. Access stays `access-marketing`. No HQ/DC city tags. `nad_count` default stays 15000.
 
+## Internal Users (lab)
+
+Eight lab Internal Users in Git. After merge, Robert pull / init / apply. Do not apply from an agent. Do not put secrets in Git.
+
+- Source: `users.csv` / `users.yaml`. Generator: `scripts/generate_users.py`.
+- One lab user per existing TACACS identity group: T1, T2, T3, T4, vendor, contractor, `auditor-internal`, `auditor-external` (hyphens stay; do not invent `auditor_internal`).
+- Terraform: CiscoDevNet/ise **0.3.4** `ise_internal_user` (not `ise_user`). Fields used: `name`, `password`, `enable_password`, `change_password`, `enabled`, `first_name`, `last_name`, `email`, `description`, `identity_groups` (comma-separated **group IDs**), `password_id_store`, `password_never_expires`.
+- Passwords from env only: `USER_PASSWORD_DEFAULT` → `TF_VAR_user_password`. Optional `USER_ENABLE_PASSWORD_DEFAULT` → `TF_VAR_user_enable_password` (empty reuses login). Fail if `user_count>0` and login secret is empty.
+- `user_count` default **8** (lab CSV length; house style matches `nad_count` / `endpoint_count`). Skip user rows: `TF_VAR_user_count=0`.
+- ERS POSTs one user per create. ISE Internal User store max is 300,000. This phase is the lab CSV, not 150k.
+
 ## Apply (after destroy)
 
-Default `nad_count` is **15000**. Default `endpoint_count` is **110**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree, every `devices.csv` switch, TACACS device-admin, wired 802.1X/MAB policy, **and** 110 lab MACs. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (env only; no secret in git). NAD protocol is `RADIUS` so 802.1X can use the NAD; `tacacs_shared_secret` stays. Empty TACACS or RADIUS secret with NADs to push fails. No switches: `TF_VAR_nad_count=0`. Groups-only (no MAC rows): `TF_VAR_endpoint_count=0`.
+Default `nad_count` is **15000**. Default `endpoint_count` is **110**. Default `user_count` is **8**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree, every `devices.csv` switch, TACACS device-admin, wired 802.1X/MAB policy, 110 lab MACs, **and** 8 lab Internal Users. After pull, `.env` needs `NAD_TACACS_SECRET`, `NAD_RADIUS_SECRET`, and `USER_PASSWORD_DEFAULT` (env only; no secret in git). NAD protocol is `RADIUS` so 802.1X can use the NAD; `tacacs_shared_secret` stays. Empty TACACS or RADIUS secret with NADs to push fails. Empty Internal User login secret with users to push fails. No switches: `TF_VAR_nad_count=0`. Groups-only (no MAC rows): `TF_VAR_endpoint_count=0`. No Internal User rows: `TF_VAR_user_count=0`.
 
 One PAN: Location NDGs were ~50 seconds each. Full apply (400 sites + 151 folders + 15,000 NADs) will take a long time. Do not apply from an agent.
 

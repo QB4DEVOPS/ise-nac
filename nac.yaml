@@ -1,9 +1,10 @@
 # Generated ISE-as-code feed. Do not edit by hand.
 # Rebuild: python3 scripts/generate_nac.py
-# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv endpoints.csv
+# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv endpoints.csv users.csv
 # TACACS objects: command_sets.yaml shell_profiles.yaml
 # Network Access: endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml
 #   network_access.yaml network_access_authc.csv network_access_authz.csv
+# Internal Users: users.yaml (8 lab users; secrets stay in env)
 # Location NDGs: type-level in location_ndgs.yaml; state/city from sites.yaml
 
 lab:
@@ -5380,6 +5381,71 @@ network_access_policy_sets:
     condition_attribute_name: NAS-Port-Type
     condition_operator: equals
     condition_attribute_value: Ethernet
+
+# Generated lab Internal Users. Do not edit by hand.
+# Rebuild: python3 scripts/generate_users.py
+# One lab user per TACACS identity group (8). Not 150k. Not 300k.
+# Groups match tacacs_authz.csv: T1 T2 T3 T4 vendor contractor
+#   auditor-internal auditor-external (hyphens stay).
+# CiscoDevNet/ise 0.3.4 ise_internal_user. Secrets stay in env.
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/internal_user
+users:
+  - username: lab-t1
+    identity_group: T1
+    first_name: Lab
+    last_name: T1
+    email: "lab-t1@test.lab"
+    enabled: true
+    description: Lab Internal User for TACACS identity group T1. Not a production account.
+  - username: lab-t2
+    identity_group: T2
+    first_name: Lab
+    last_name: T2
+    email: "lab-t2@test.lab"
+    enabled: true
+    description: Lab Internal User for TACACS identity group T2. Not a production account.
+  - username: lab-t3
+    identity_group: T3
+    first_name: Lab
+    last_name: T3
+    email: "lab-t3@test.lab"
+    enabled: true
+    description: Lab Internal User for TACACS identity group T3. Not a production account.
+  - username: lab-t4
+    identity_group: T4
+    first_name: Lab
+    last_name: T4
+    email: "lab-t4@test.lab"
+    enabled: true
+    description: Lab Internal User for TACACS identity group T4. Not a production account.
+  - username: lab-vendor
+    identity_group: vendor
+    first_name: Lab
+    last_name: Vendor
+    email: "lab-vendor@test.lab"
+    enabled: true
+    description: Lab Internal User for TACACS identity group vendor. Not a production account.
+  - username: lab-contractor
+    identity_group: contractor
+    first_name: Lab
+    last_name: Contractor
+    email: "lab-contractor@test.lab"
+    enabled: true
+    description: Lab Internal User for TACACS identity group contractor. Not a production account.
+  - username: lab-auditor-internal
+    identity_group: auditor-internal
+    first_name: Lab
+    last_name: AuditorInternal
+    email: "lab-auditor-internal@test.lab"
+    enabled: true
+    description: Lab Internal User for TACACS identity group auditor-internal. Not a production account.
+  - username: lab-auditor-external
+    identity_group: auditor-external
+    first_name: Lab
+    last_name: AuditorExternal
+    email: "lab-auditor-external@test.lab"
+    enabled: true
+    description: Lab Internal User for TACACS identity group auditor-external. Not a production account.
 
 devices:
   - hostname: ushun-sw-01

@@ -8,7 +8,8 @@ run "wired_8021x_mab_policy" {
   command = plan
 
   variables {
-    nad_count = 0
+    nad_count     = 0
+    user_password = "mock-not-for-ise"
   }
 
   assert {
@@ -400,6 +401,7 @@ run "groups_only_zero_endpoints" {
   variables {
     nad_count      = 0
     endpoint_count = 0
+    user_password  = "mock-not-for-ise"
   }
 
   assert {
@@ -424,6 +426,7 @@ run "endpoint_count_over_max_fails" {
   variables {
     nad_count      = 0
     endpoint_count = 111
+    user_password  = "mock-not-for-ise"
   }
 
   expect_failures = [

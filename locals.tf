@@ -1,13 +1,14 @@
 locals {
   # Excel CSVs are UTF-8 with BOM. Terraform csvdecode needs the BOM stripped.
-  ndgs     = csvdecode(trimprefix(file("${path.module}/ndgs.csv"), "\ufeff"))
-  authc    = csvdecode(trimprefix(file("${path.module}/tacacs_authc.csv"), "\ufeff"))
-  authz    = csvdecode(trimprefix(file("${path.module}/tacacs_authz.csv"), "\ufeff"))
-  na_authc = csvdecode(trimprefix(file("${path.module}/network_access_authc.csv"), "\ufeff"))
-  na_authz = csvdecode(trimprefix(file("${path.module}/network_access_authz.csv"), "\ufeff"))
-  devices  = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
-  sites    = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
+  ndgs      = csvdecode(trimprefix(file("${path.module}/ndgs.csv"), "\ufeff"))
+  authc     = csvdecode(trimprefix(file("${path.module}/tacacs_authc.csv"), "\ufeff"))
+  authz     = csvdecode(trimprefix(file("${path.module}/tacacs_authz.csv"), "\ufeff"))
+  na_authc  = csvdecode(trimprefix(file("${path.module}/network_access_authc.csv"), "\ufeff"))
+  na_authz  = csvdecode(trimprefix(file("${path.module}/network_access_authz.csv"), "\ufeff"))
+  devices   = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
+  sites     = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
   endpoints = csvdecode(trimprefix(file("${path.module}/endpoints.csv"), "\ufeff"))
+  users     = csvdecode(trimprefix(file("${path.module}/users.csv"), "\ufeff"))
 
   # Type-level Location NDGs (siblings under All Locations).
   # ISE: Location#All Locations#{ndg}. NADs do not join these.

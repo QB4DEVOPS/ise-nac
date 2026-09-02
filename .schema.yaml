@@ -17,6 +17,7 @@ authorization_profiles: list(include('authorization_profile'), required=False)
 network_access_policy_sets: list(include('network_access_policy_set'), required=False)
 network_access_authc: list(include('network_access_authc_rule'), required=False)
 network_access_authz: list(include('network_access_authz_rule'), required=False)
+users: list(include('internal_user'), required=False)
 ---
 lab:
   pan: include('pan')
@@ -177,3 +178,15 @@ network_access_authz_rule:
   name: str()
   endpoint_identity_group: str()
   profile: str()
+
+# Lab Internal Users. CiscoDevNet/ise 0.3.4 ise_internal_user.
+# identity_group must match a TACACS identity group from tacacs_authz.csv.
+# Secrets are not in this file (env only).
+internal_user:
+  username: str()
+  identity_group: str()
+  first_name: str(required=False)
+  last_name: str(required=False)
+  email: str(required=False)
+  enabled: bool()
+  description: str(required=False)

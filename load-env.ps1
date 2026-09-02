@@ -38,6 +38,12 @@ if ($env:NAD_TACACS_SECRET) {
 if ($env:NAD_RADIUS_SECRET) {
     $env:TF_VAR_nad_radius_secret = $env:NAD_RADIUS_SECRET
 }
+if ($env:USER_PASSWORD_DEFAULT) {
+    $env:TF_VAR_user_password = $env:USER_PASSWORD_DEFAULT
+}
+if ($env:USER_ENABLE_PASSWORD_DEFAULT) {
+    $env:TF_VAR_user_enable_password = $env:USER_ENABLE_PASSWORD_DEFAULT
+}
 
 Write-Host "Loaded .env. PAN host: $($env:ISE_HOST)"
 if (-not $env:NAD_TACACS_SECRET -or -not $env:NAD_RADIUS_SECRET) {
@@ -49,5 +55,10 @@ if (-not $env:NAD_TACACS_SECRET -or -not $env:NAD_RADIUS_SECRET) {
         Write-Host "NAD_RADIUS_SECRET is empty. NAD protocol is RADIUS (802.1X/MAB). Set it in .env."
     }
     Write-Host "Policy-only (no switches): `$env:TF_VAR_nad_count = `"0`""
+}
+if (-not $env:USER_PASSWORD_DEFAULT) {
+    Write-Host "USER_PASSWORD_DEFAULT is required for a normal apply (default 8 lab Internal Users)."
+    Write-Host "USER_PASSWORD_DEFAULT is empty. Set it in .env."
+    Write-Host "Skip Internal User rows: `$env:TF_VAR_user_count = `"0`""
 }
 Write-Host "Next: terraform init   then   terraform plan   then   terraform apply"
