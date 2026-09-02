@@ -43,7 +43,7 @@ _BANNED = ("password", "passwd", "secret", "token", "changeme", "cisco123")
 _USER_RES = re.compile(r'resource\s+"ise_internal_user"\s+')
 _WRONG_RES = re.compile(r'resource\s+"ise_user"\s+')
 _USER_DEFAULT = re.compile(r'variable\s+"user_count"[\s\S]*?default\s+=\s+8', re.M)
-_ENDPOINT_DEFAULT = re.compile(r'variable\s+"endpoint_count"[\s\S]*?default\s+=\s+110', re.M)
+_ENDPOINT_DEFAULT = re.compile(r'variable\s+"endpoint_count"[\s\S]*?default\s+=\s+150000', re.M)
 _NAD_DEFAULT = re.compile(r'variable\s+"nad_count"[\s\S]*?default\s+=\s+15000', re.M)
 _IDG_RES = re.compile(r'resource\s+"ise_user_identity_group"\s+')
 _PROVIDER = re.compile(r'source\s+=\s+"CiscoDevNet/ise"')
@@ -265,7 +265,7 @@ put secrets in users.csv."""
         if not _USER_DEFAULT.search(vars_tf):
             add("variable user_count default must be 8 (all lab Internal Users).", "variables.tf")
         if not _ENDPOINT_DEFAULT.search(vars_tf):
-            add("Keep endpoint_count default 110.", "variables.tf")
+            add("Keep endpoint_count default 150000 (enterprise CSV apply path).", "variables.tf")
         if not _NAD_DEFAULT.search(vars_tf):
             add("Keep nad_count default 15000.", "variables.tf")
         if "users.csv" not in locals_tf:
