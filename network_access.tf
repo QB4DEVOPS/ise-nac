@@ -9,8 +9,9 @@
 #   ise_network_access_authentication_rule_update_ranks
 #   ise_network_access_authorization_rule  (profiles = set of names)
 #   ise_network_access_authorization_rule_update_ranks
-# 11 groups. 110 lab MACs (endpoints.csv, IEEE MA-L OUI + generated NIC suffix).
-# Default endpoint_count=110. No guest.
+# 11 groups. Apply path: 150k from endpoints_enterprise.csv (phone+PC desks).
+# Lab endpoints.csv (110) is Git inventory only. Default endpoint_count=150000.
+# No guest. Do not apply both files.
 # Schema cites:
 #   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
 #   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint
@@ -27,8 +28,9 @@ resource "ise_endpoint_identity_group" "this" {
   system_defined = each.value.system_defined
 }
 
-# Lab MACs from endpoints.csv. Default endpoint_count=110 (all 11×10).
-# Groups-only (no MAC rows): TF_VAR_endpoint_count=0. Do not dump 15k MACs.
+# Enterprise MACs from endpoints_enterprise.csv. Default endpoint_count=150000.
+# Groups-only (no MAC rows): TF_VAR_endpoint_count=0. Cap with TF_VAR_endpoint_count.
+# Lab endpoints.csv is not this resource (inventory only; do not apply both).
 # 0.3.4 required: name, mac, static_group_assignment, static_profile_assignment.
 # group_id is the Identity Group ID (ise_endpoint_identity_group.id).
 # MACs use locked IEEE MA-L OUIs; last 3 octets are generated. Not hardware.
@@ -45,7 +47,7 @@ resource "ise_endpoint" "this" {
   lifecycle {
     precondition {
       condition     = var.endpoint_count <= length(local.endpoints)
-      error_message = "endpoint_count cannot exceed endpoints.csv (${length(local.endpoints)}). Default is all ${length(local.endpoints)} lab MACs. Groups-only is TF_VAR_endpoint_count=0."
+      error_message = "endpoint_count cannot exceed endpoints_enterprise.csv (${length(local.endpoints)}). Default is all ${length(local.endpoints)} enterprise rows. Groups-only is TF_VAR_endpoint_count=0."
     }
   }
 }

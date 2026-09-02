@@ -70,6 +70,8 @@ def main() -> int:
     na_authc = read_csv("network_access_authc.csv")
     na_authz = read_csv("network_access_authz.csv")
     sample = read_csv("sample_nads.csv")
+    # Lab 110 for nac.yaml / nac-validate only. Terraform apply reads
+    # endpoints_enterprise.csv (see locals.tf). Do not fold 150k into this feed.
     endpoints = read_csv("endpoints.csv")
     users = read_csv("users.csv")
 
@@ -283,6 +285,7 @@ def main() -> int:
         "# Generated ISE-as-code feed. Do not edit by hand.",
         "# Rebuild: python3 scripts/generate_nac.py",
         "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv endpoints.csv users.csv",
+        "# Lab endpoints.csv only (110) in this YAML feed. Terraform apply reads endpoints_enterprise.csv (endpoint_count default 150000).",
         "# TACACS objects: command_sets.yaml shell_profiles.yaml",
         "# Network Access: endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml",
         "#   network_access.yaml network_access_authc.csv network_access_authz.csv",

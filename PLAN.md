@@ -83,7 +83,7 @@ NADs join the **state/city** Location NDG, not the type-level parent. Do not rec
 - Dual PAN
 - Per-nation ISE clusters / MnT split
 - Standing up gear on the LAN until Robert clears it
-- MAC endpoint lists at story scale (300k MACs). Lab is 110 generated MACs. Do not dump 15k.
+- Applying lab endpoints.csv (110) together with the 150k enterprise file (150k+110 will not fit a Small PAN). Lab 110 stays Git inventory only.
 - Internal User inventory at story scale (~100k–150k). Lab is 8 generated users. ISE store max is 300,000. Do not dump 150k in this phase.
 
 ## Wired 802.1X + MAB (this phase)
@@ -91,7 +91,7 @@ NADs join the **state/city** Location NDG, not the type-level parent. Do not rec
 Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. Do not apply from an agent.
 
 - Endpoint identity groups: Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers. Drops Workstation / IP-Phone / Printer. No guest.
-- 10 unique lab MACs per group (110 total). IEEE MA-L OUI + generated last 3 octets. Generator, not hardware. `endpoint_count` default **110**. Groups-only: `TF_VAR_endpoint_count=0`.
+- 10 unique lab MACs per group (110 total) stay in `endpoints.csv` / `endpoints.yaml` as Git inventory. Generator, not hardware. Terraform apply does **not** read that file.
 - Two Allowed Protocols (`ise_allowed_protocols` 0.3.4): 802.1X EAP and MAB PAP/ASCII.
 - ACCESS_ACCEPT profiles: lab VLAN 10 data, 20 voice, 30 MAB. Authz: Phones → VLAN 20 (voice), Printers → VLAN 30 (MAB), all other groups → VLAN 10 (data). First-match.
 - One Network Access policy set. Dot1X → Internal Users. MAB → Internal Endpoints continue-if-not-found.
@@ -110,7 +110,19 @@ Eight lab Internal Users in Git. After merge, Robert pull / init / apply. Do not
 
 ## Apply (after destroy)
 
-Default `nad_count` is **15000**. Default `endpoint_count` is **110**. Default `user_count` is **8**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree, every `devices.csv` switch, TACACS device-admin, wired 802.1X/MAB policy, 110 lab MACs, **and** 8 lab Internal Users. After pull, `.env` needs `NAD_TACACS_SECRET`, `NAD_RADIUS_SECRET`, and `USER_PASSWORD_DEFAULT` (env only; no secret in git). NAD protocol is `RADIUS` so 802.1X can use the NAD; `tacacs_shared_secret` stays. Empty TACACS or RADIUS secret with NADs to push fails. Empty Internal User login secret with users to push fails. No switches: `TF_VAR_nad_count=0`. Groups-only (no MAC rows): `TF_VAR_endpoint_count=0`. No Internal User rows: `TF_VAR_user_count=0`.
+Default `nad_count` is **15000**. Default `endpoint_count` is **150000**. Default `user_count` is **8**. After destroy: `git pull`, `terraform init`, `load-env.ps1`, `terraform apply` creates the Location tree, every `devices.csv` switch, TACACS device-admin, wired 802.1X/MAB policy, **150k enterprise MACs** from `endpoints_enterprise.csv`, **and** 8 lab Internal Users. After pull, `.env` needs `NAD_TACACS_SECRET`, `NAD_RADIUS_SECRET`, and `USER_PASSWORD_DEFAULT` (env only; no secret in git). NAD protocol is `RADIUS` so 802.1X can use the NAD; `tacacs_shared_secret` stays. Empty TACACS or RADIUS secret with NADs to push fails. Empty Internal User login secret with users to push fails. No switches: `TF_VAR_nad_count=0`. Groups-only (no MAC rows): `TF_VAR_endpoint_count=0`. Cap MACs: `TF_VAR_endpoint_count=N`. No Internal User rows: `TF_VAR_user_count=0`. Do **not** apply lab `endpoints.csv` (110) together with the 150k file.
+
+## Enterprise endpoint inventory (apply path)
+
+NDO-200 lock (CoS 2026-09-01):
+
+- **150,000** endpoint rows. Not 300k. Terraform **must** `csvdecode` `endpoints_enterprise.csv` and create `ise_endpoint` for those rows.
+- **75,000** desks. Each desk is a **phone and a PC on the same switch port** (75k Phones + 75k Windows).
+- File: `endpoints_enterprise.csv`. Rebuild: `python3 scripts/generate_enterprise_endpoints.py`.
+- Placement: 15,000 `devices.csv` switches × 5 desks = 75,000 desks. Ports `Gi1/0/1`–`Gi1/0/5`. Phone IEEE MA-L `00:04:f2` (Polycom) and Windows/PC `10:e7:c6` (Hewlett Packard) share that port. Columns: `desk`, `switch`, `port`, `site`.
+- **`endpoint_count` default is 150000.** `TF_VAR_endpoint_count` can cap. Groups-only: `TF_VAR_endpoint_count=0`.
+- Lab `endpoints.csv` / `endpoints.yaml` / `scripts/generate_endpoints.py` stay **110** in Git as inventory only. Terraform does not read the lab file. Do not apply both (Small PAN).
+- CSV only (no 150k YAML). GitHub size. `nac-validate` stays on the lab YAML set.
 
 One PAN: Location NDGs were ~50 seconds each. Full apply (400 sites + 151 folders + 15,000 NADs) will take a long time. Do not apply from an agent.
 

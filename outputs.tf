@@ -1,5 +1,5 @@
 output "what_apply_will_do" {
-  description = "Counts for this apply. Default nads_to_push is 15000 (all of devices.csv). Default endpoints_to_push is 110 (all of endpoints.csv). Default users_to_push is 8 (all of users.csv). TF_VAR_nad_count=0 is no switches. TF_VAR_endpoint_count=0 is groups-only (no MAC rows). TF_VAR_user_count=0 skips Internal User rows."
+  description = "Counts for this apply. Default nads_to_push is 15000 (all of devices.csv). Default endpoints_to_push is 150000 (all of endpoints_enterprise.csv). Default users_to_push is 8 (all of users.csv). TF_VAR_nad_count=0 is no switches. TF_VAR_endpoint_count=0 is groups-only (no MAC rows). TF_VAR_user_count=0 skips Internal User rows. Lab endpoints.csv (110) is not the apply path."
   value = {
     access_ndgs                = length(local.ndgs)
     default_access_ndg         = local.default_access_ndg

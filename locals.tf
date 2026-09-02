@@ -7,7 +7,9 @@ locals {
   na_authz  = csvdecode(trimprefix(file("${path.module}/network_access_authz.csv"), "\ufeff"))
   devices   = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
   sites     = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
-  endpoints = csvdecode(trimprefix(file("${path.module}/endpoints.csv"), "\ufeff"))
+  # Apply path: 150k enterprise inventory. Lab endpoints.csv (110) stays in
+  # Git only — do not csvdecode it here (150k+110 will not fit a Small PAN).
+  endpoints = csvdecode(trimprefix(file("${path.module}/endpoints_enterprise.csv"), "\ufeff"))
   users     = csvdecode(trimprefix(file("${path.module}/users.csv"), "\ufeff"))
 
   # Type-level Location NDGs (siblings under All Locations).

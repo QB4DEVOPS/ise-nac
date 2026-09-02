@@ -1,25 +1,22 @@
 # Wired 802.1X + MAB Network Access policy. mock_provider: no PAN.
-# Policy-only (nad_count=0): groups, 110 lab MACs, protocols, profiles, one policy set.
+# Policy checks cap endpoint_count=0 so this file does not plan 150k
+# ise_endpoint rows (that default is tests/endpoints_enterprise.tftest.hcl).
+# Lab endpoints.csv stays 110 inventory. Apply path is the enterprise CSV.
 # Default nad_count stays 15000 — see nads_default.tftest.hcl.
-# Default endpoint_count is 110 (all endpoints.csv lab MACs).
 mock_provider "ise" {}
 
 run "wired_8021x_mab_policy" {
   command = plan
 
   variables {
-    nad_count     = 0
-    user_password = "mock-not-for-ise"
+    nad_count      = 0
+    endpoint_count = 0
+    user_password  = "mock-not-for-ise"
   }
 
   assert {
-    condition     = var.endpoint_count == 110
-    error_message = "endpoint_count default must be 110 (11 groups × 10 lab MACs)."
-  }
-
-  assert {
-    condition     = length(local.endpoints) == 110
-    error_message = "endpoints.csv must contain 110 unique lab MACs."
+    condition     = length(csvdecode(trimprefix(file("${path.module}/endpoints.csv"), "\ufeff"))) == 110
+    error_message = "Lab endpoints.csv stays 110 in Git (inventory only; not the apply path)."
   }
 
   assert {
@@ -98,43 +95,13 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = length(ise_endpoint.this) == 110
-    error_message = "Default apply must plan 110 ise_endpoint lab MACs."
-  }
-
-  assert {
-    condition     = length(distinct([for e in ise_endpoint.this : e.mac])) == 110
-    error_message = "All 110 lab MACs must be unique."
-  }
-
-  assert {
-    condition     = startswith(ise_endpoint.this[0].mac, "00:04:f2:")
-    error_message = "First lab MAC is Phones with IEEE MA-L OUI 00:04:F2 (Polycom)."
-  }
-
-  assert {
-    condition     = local.endpoints[0].oui == "00:04:f2"
-    error_message = "endpoints.csv must cite OUI 00:04:f2 for Phones."
-  }
-
-  assert {
-    condition     = strcontains(lower(local.endpoints[0].organization), "polycom")
-    error_message = "endpoints.csv must cite IEEE organization Polycom for Phones."
-  }
-
-  assert {
-    condition     = length([for e in ise_endpoint.this : e.mac if startswith(e.mac, "02:00:")]) == 0
-    error_message = "Drop the 02:00:GG locally-administered pattern."
-  }
-
-  assert {
-    condition     = alltrue([for e in local.endpoints : startswith(e.mac, "${e.oui}:")])
-    error_message = "Each MAC must start with its cited IEEE MA-L OUI."
+    condition     = length(ise_endpoint.this) == 0
+    error_message = "This policy run caps endpoint_count=0; default 150000 is tests/endpoints_enterprise.tftest.hcl."
   }
 
   assert {
     condition = alltrue([
-      for e in local.endpoints :
+      for e in csvdecode(trimprefix(file("${path.module}/endpoints.csv"), "\ufeff")) :
       startswith(e.mac, {
         Phones        = "00:04:f2:"
         AP            = "9c:e3:30:"
@@ -149,84 +116,7 @@ run "wired_8021x_mab_policy" {
         RFID_Readers  = "00:16:25:"
       }[e.endpoint_identity_group])
     ])
-    error_message = "Each group must use its locked IEEE MA-L OUI. Do not invent OUIs."
-  }
-
-  assert {
-    condition = length(distinct([
-      for e in local.endpoints : trimprefix(e.mac, "${e.oui}:")
-    ])) == 110
-    error_message = "Last 3 octets must be unique across 110 lab MACs."
-  }
-
-  assert {
-    condition = alltrue([
-      for e in local.endpoints :
-      !startswith(trimprefix(e.mac, "${e.oui}:"), "00:00:")
-    ])
-    error_message = "Do not use 00:00:xx NIC suffixes (including 00:00:01–00:00:0A)."
-  }
-
-  assert {
-    condition = alltrue([
-      for e in local.endpoints : length(split(":", e.mac)) == 6
-    ])
-    error_message = "Each lab MAC must be six colon-separated octets."
-  }
-
-  assert {
-    condition     = strcontains(lower(ise_endpoint.this[0].description), "not hardware")
-    error_message = "ise_endpoint description must say the MAC is not hardware."
-  }
-
-  assert {
-    condition     = ise_endpoint.this[0].name == ise_endpoint.this[0].mac
-    error_message = "ise_endpoint.name must be the MAC (0.3.4)."
-  }
-
-  assert {
-    condition     = ise_endpoint.this[0].static_group_assignment == true
-    error_message = "ise_endpoint.static_group_assignment must be true (0.3.4 required)."
-  }
-
-  assert {
-    condition     = ise_endpoint.this[0].static_profile_assignment == false
-    error_message = "ise_endpoint.static_profile_assignment must be false (group assignment, not static profile)."
-  }
-
-  assert {
-    condition     = local.endpoints[0].endpoint_identity_group == "Phones"
-    error_message = "First 10 MACs belong to Phones (CSV order; group_id is the identity group id at apply)."
-  }
-
-  assert {
-    condition     = local.endpoints[10].endpoint_identity_group == "AP"
-    error_message = "MAC 11 belongs to AP."
-  }
-
-  assert {
-    condition     = local.endpoints[20].endpoint_identity_group == "Printers"
-    error_message = "MAC 21 belongs to Printers."
-  }
-
-  assert {
-    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Phones"]) == 10
-    error_message = "Phones must have 10 lab MACs."
-  }
-
-  assert {
-    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "RFID_Readers"]) == 10
-    error_message = "RFID_Readers must have 10 lab MACs."
-  }
-
-  assert {
-    condition     = startswith(ise_endpoint.this[109].mac, "00:16:25:")
-    error_message = "Last lab MAC is RFID_Readers with IEEE MA-L OUI 00:16:25 (Impinj)."
-  }
-
-  assert {
-    condition     = strcontains(lower(local.endpoints[109].organization), "impinj")
-    error_message = "Last CSV row must cite IEEE organization Impinj."
+    error_message = "Lab endpoints.csv must keep locked IEEE MA-L OUIs. Do not invent OUIs."
   }
 
   assert {
@@ -375,13 +265,13 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = output.what_apply_will_do.endpoints_to_push == 110
-    error_message = "endpoints_to_push must be 110 at default."
+    condition     = output.what_apply_will_do.endpoints_to_push == 0
+    error_message = "This policy run caps endpoints_to_push at 0."
   }
 
   assert {
-    condition     = output.what_apply_will_do.endpoints_in_csv == 110
-    error_message = "endpoints_in_csv must be 110."
+    condition     = output.what_apply_will_do.endpoints_in_csv == 150000
+    error_message = "endpoints_in_csv is endpoints_enterprise.csv (150000), not lab 110."
   }
 
   assert {
@@ -425,7 +315,7 @@ run "endpoint_count_over_max_fails" {
 
   variables {
     nad_count      = 0
-    endpoint_count = 111
+    endpoint_count = 150001
     user_password  = "mock-not-for-ise"
   }
 

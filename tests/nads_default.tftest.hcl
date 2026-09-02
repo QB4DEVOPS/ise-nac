@@ -11,6 +11,7 @@ run "default_pushes_all_devices" {
     nad_tacacs_secret = "mock-not-for-ise"
     nad_radius_secret = "mock-not-for-ise"
     user_password     = "mock-not-for-ise"
+    endpoint_count    = 0
   }
 
   assert {
@@ -84,13 +85,8 @@ run "default_pushes_all_devices" {
   }
 
   assert {
-    condition     = var.endpoint_count == 110
-    error_message = "endpoint_count default is 110 lab MACs at full NAD inventory."
-  }
-
-  assert {
-    condition     = length(ise_endpoint.this) == 110
-    error_message = "A normal apply must plan 110 ise_endpoint lab MACs with 15000 NADs."
+    condition     = length(ise_endpoint.this) == 0
+    error_message = "This NAD mock caps endpoint_count=0; default 150000 is tests/endpoints_enterprise.tftest.hcl."
   }
 
   assert {
@@ -118,8 +114,9 @@ run "policy_only_zero" {
   command = plan
 
   variables {
-    nad_count     = 0
-    user_password = "mock-not-for-ise"
+    nad_count      = 0
+    endpoint_count = 0
+    user_password  = "mock-not-for-ise"
   }
 
   assert {
@@ -141,6 +138,7 @@ run "empty_tacacs_secret_fails_when_pushing_nads" {
     nad_tacacs_secret = ""
     nad_radius_secret = "mock-not-for-ise"
     user_password     = "mock-not-for-ise"
+    endpoint_count    = 0
   }
 
   expect_failures = [
@@ -156,6 +154,7 @@ run "empty_radius_secret_fails_when_pushing_nads" {
     nad_tacacs_secret = "mock-not-for-ise"
     nad_radius_secret = ""
     user_password     = "mock-not-for-ise"
+    endpoint_count    = 0
   }
 
   expect_failures = [
