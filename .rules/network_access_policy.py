@@ -28,6 +28,7 @@ _AUTHZ_CSV = _ROOT / "network_access_authz.csv"
 _NA_TF = _ROOT / "network_access.tf"
 _NADS_TF = _ROOT / "nads.tf"
 _VARS_TF = _ROOT / "variables.tf"
+_LOCALS_TF = _ROOT / "locals.tf"
 _MAIN_TF = _ROOT / "main.tf"
 
 _LOCKED_GROUPS = (
@@ -69,7 +70,11 @@ _AUTHC_RANK = re.compile(r'resource\s+"ise_network_access_authentication_rule_up
 _AUTHZ_RANK = re.compile(r'resource\s+"ise_network_access_authorization_rule_update_ranks"')
 _NAD_PROTO = re.compile(r'authentication_network_protocol\s+=\s+"RADIUS"')
 _NAD_TACACS_SECRET = re.compile(r"tacacs_shared_secret\s+=")
-_ENDPOINT_DEFAULT = re.compile(r'variable\s+"endpoint_count"[\s\S]*?default\s+=\s+110', re.M)
+_ENDPOINT_DEFAULT = re.compile(r'variable\s+"endpoint_count"[\s\S]*?default\s+=\s+150000', re.M)
+_LAB_ENDPOINTS_FILE = re.compile(r'file\("\$\{path\.module\}/endpoints\.csv"\)')
+_ENTERPRISE_ENDPOINTS_FILE = re.compile(
+    r'file\("\$\{path\.module\}/endpoints_enterprise\.csv"\)'
+)
 _MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
 _LOCKED_OUI = {
     "Phones": "00:04:f2",
@@ -159,12 +164,16 @@ Authorization profiles ACCESS_ACCEPT with lab VLAN 10 data, 20 voice, 30 MAB.
 Phones → Wired_Voice, Printers → Wired_Printer, all other groups → Wired_Data.
 One Network Access policy set (not Device Admin). Dot1X → Internal Users.
 MAB → Internal Endpoints continue-if-not-found. Authorization first-match
-with rank-update resources. Default endpoint_count=110."""
+with rank-update resources. Terraform apply default endpoint_count=150000
+from endpoints_enterprise.csv. Lab endpoints.csv / endpoints.yaml stay 110
+(inventory only; not csvdecode'd by Terraform). Do not apply both."""
     recommendation = """\
-Keep endpoint_count default 110 (all endpoints.csv lab MACs). Groups-only is
-TF_VAR_endpoint_count=0. Do not add guest or a 15k MAC dump. Keep TACACS
-Device Admin (*_cs / *_shell) unchanged. NAD protocol is RADIUS; keep both
-NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
+Keep endpoint_count default 150000 (all endpoints_enterprise.csv rows).
+Groups-only is TF_VAR_endpoint_count=0. Cap with TF_VAR_endpoint_count.
+Lab endpoints.csv stays 110 in Git; do not apply it with the 150k file
+(Small PAN). Do not add guest. Keep TACACS Device Admin (*_cs / *_shell)
+unchanged. NAD protocol is RADIUS; keep both NAD_TACACS_SECRET and
+NAD_RADIUS_SECRET."""
     references = [
         "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group",
         "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint",
@@ -459,6 +468,7 @@ NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
         na_tf = _NA_TF.read_text(encoding="utf-8") if _NA_TF.is_file() else ""
         nads_tf = _NADS_TF.read_text(encoding="utf-8") if _NADS_TF.is_file() else ""
         vars_tf = _VARS_TF.read_text(encoding="utf-8") if _VARS_TF.is_file() else ""
+        locals_tf = _LOCALS_TF.read_text(encoding="utf-8") if _LOCALS_TF.is_file() else ""
         main_tf = _MAIN_TF.read_text(encoding="utf-8") if _MAIN_TF.is_file() else ""
 
         if not _NA_TF.is_file():
@@ -525,7 +535,23 @@ NAD_TACACS_SECRET and NAD_RADIUS_SECRET."""
         if not _NAD_TACACS_SECRET.search(nads_tf):
             add("Keep tacacs_shared_secret on NADs.", "nads.tf")
         if not _ENDPOINT_DEFAULT.search(vars_tf):
-            add("variable endpoint_count default must be 110 (all lab MACs).", "variables.tf")
+            add(
+                "variable endpoint_count default must be 150000 "
+                "(all endpoints_enterprise.csv rows).",
+                "variables.tf",
+            )
+        if not _ENTERPRISE_ENDPOINTS_FILE.search(locals_tf):
+            add(
+                "locals.tf must csvdecode endpoints_enterprise.csv for ise_endpoint "
+                "(apply path, 150k).",
+                "locals.tf",
+            )
+        if _LAB_ENDPOINTS_FILE.search(locals_tf):
+            add(
+                "locals.tf must not csvdecode endpoints.csv "
+                "(lab 110 is inventory only; do not apply both).",
+                "locals.tf",
+            )
 
         blob = "\n".join(
             [

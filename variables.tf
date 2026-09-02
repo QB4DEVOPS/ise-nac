@@ -37,12 +37,12 @@ variable "nad_radius_secret" {
 
 variable "endpoint_count" {
   type        = number
-  description = "How many endpoints.csv lab MACs to push (first N, inventory order). Default 110 = all 11 groups × 10. Set TF_VAR_endpoint_count=0 for groups-only (no MAC rows). Do not dump 15k MACs. endpoints_enterprise.csv (150k desks/phone+PC) is Git inventory only — pan1 apply stays 110 until Robert says so."
-  default     = 110
+  description = "How many endpoints_enterprise.csv rows to push (first N, inventory order). Default 150000 = all desks (75k phone + 75k PC). Set TF_VAR_endpoint_count=0 for groups-only (no MAC rows). TF_VAR_endpoint_count can cap below 150000. Lab endpoints.csv (110) stays in Git as inventory only — do not apply both (150k+110 will not fit a Small PAN)."
+  default     = 150000
 
   validation {
-    condition     = var.endpoint_count >= 0 && var.endpoint_count <= 110
-    error_message = "endpoint_count must be 0 (groups only, no MACs) through 110 (all endpoints.csv lab MACs, the default). Groups-only is TF_VAR_endpoint_count=0. Do not dump 15k MACs."
+    condition     = var.endpoint_count >= 0 && var.endpoint_count <= 150000
+    error_message = "endpoint_count must be 0 (groups only, no MACs) through 150000 (all endpoints_enterprise.csv rows, the default). Groups-only is TF_VAR_endpoint_count=0. Cap with TF_VAR_endpoint_count. Do not apply the lab 110 file."
   }
 }
 

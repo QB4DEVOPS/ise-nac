@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Build endpoints_enterprise.csv: 150,000 Git-only desk MACs.
+"""Build endpoints_enterprise.csv: 150,000 desk MACs for Terraform apply.
 
-NDO-200 lock (Robert 2026-09-01, CoS restated):
+NDO-200 lock (CoS 2026-09-01):
   150,000 endpoint rows. Not 300k.
   75,000 desks. Each desk is a phone AND a PC on the SAME switch port.
   Phones OUI 00:04:f2 (Polycom). Windows/PC OUI 10:e7:c6 (Hewlett Packard).
-  110 lab MACs in endpoints.csv stay the pan1 default. This file is Git
-  inventory only. Terraform must not read it. Do not apply until Robert says so.
+  Terraform apply csvdecodes this file. endpoint_count default 150000.
+  Lab endpoints.csv / endpoints.yaml / generate_endpoints.py stay 110 in Git
+  as inventory only. Do not apply both (150k+110 will not fit a Small PAN).
 
 Placement (devices.csv math is exact, not ugly):
   15,000 access switches × 5 desks = 75,000 desks.
@@ -426,7 +427,7 @@ def print_summary(rows: list[dict[str, str]], wrote: bool) -> None:
         f"lock desks={DESK_COUNT} rows={TARGET_COUNT} "
         f"switches={TARGET_SWITCHES} desks_per_switch={DESKS_PER_SWITCH}"
     )
-    print(f"pan1 apply stays endpoints.csv / endpoint_count=110. Do not apply this file.")
+    print(f"terraform apply csvdecodes this file; endpoint_count default={TARGET_COUNT}. Lab endpoints.csv is inventory only.")
     print(
         f"sample {phone['desk']} {phone['switch']} {phone['port']} {phone['site']} "
         f"Phones {phone['mac']} | Windows {pc['mac']}"

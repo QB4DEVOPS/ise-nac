@@ -8,8 +8,9 @@ run "lab_internal_users" {
   command = plan
 
   variables {
-    nad_count     = 0
-    user_password = "mock-not-for-ise"
+    nad_count      = 0
+    endpoint_count = 0
+    user_password  = "mock-not-for-ise"
   }
 
   assert {
@@ -138,11 +139,6 @@ run "lab_internal_users" {
   }
 
   assert {
-    condition     = var.endpoint_count == 110
-    error_message = "endpoint_count default stays 110."
-  }
-
-  assert {
     condition     = local.default_access_ndg == "access-marketing"
     error_message = "Access stays access-marketing."
   }
@@ -162,8 +158,9 @@ run "users_only_zero" {
   command = plan
 
   variables {
-    nad_count  = 0
-    user_count = 0
+    nad_count      = 0
+    user_count     = 0
+    endpoint_count = 0
   }
 
   assert {
@@ -186,9 +183,10 @@ run "empty_password_fails_when_pushing_users" {
   command = plan
 
   variables {
-    nad_count     = 0
-    user_count    = 1
-    user_password = ""
+    nad_count      = 0
+    user_count     = 1
+    user_password  = ""
+    endpoint_count = 0
   }
 
   expect_failures = [
@@ -200,9 +198,10 @@ run "user_count_over_max_fails" {
   command = plan
 
   variables {
-    nad_count     = 0
-    user_count    = 9
-    user_password = "mock-not-for-ise"
+    nad_count      = 0
+    user_count     = 9
+    user_password  = "mock-not-for-ise"
+    endpoint_count = 0
   }
 
   expect_failures = [
