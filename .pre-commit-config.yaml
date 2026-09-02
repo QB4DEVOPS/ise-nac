@@ -3,7 +3,7 @@ repos:
     rev: v2.0.0
     hooks:
       - id: nac-validate
-        files: '^(nac|sites|command_sets|shell_profiles|location_ndgs|endpoint_identity_groups|endpoints|allowed_protocols|authorization_profiles|network_access)\.yaml$'
+        files: '^(nac|sites|command_sets|shell_profiles|location_ndgs|endpoint_identity_groups|endpoints|allowed_protocols|authorization_profiles|network_access|users)\.yaml$'
         pass_filenames: false
         args:
           - "-s"
@@ -18,3 +18,4 @@ repos:
           - "allowed_protocols.yaml"
           - "authorization_profiles.yaml"
           - "network_access.yaml"
+          - "users.yaml"

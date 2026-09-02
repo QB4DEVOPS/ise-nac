@@ -9,7 +9,8 @@ run "state_and_site_location_are_objects" {
   # Policy-only so this run stays a Location for_each check (616 objects),
   # not 15,000 NAD creates. Default nad_count is 15000 — see nads_default.tftest.hcl.
   variables {
-    nad_count = 0
+    nad_count     = 0
+    user_password = "mock-not-for-ise"
   }
 
   assert {

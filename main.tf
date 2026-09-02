@@ -79,7 +79,8 @@ resource "ise_network_device_group" "site_location" {
   depends_on  = [ise_network_device_group.state_location]
 }
 
-# Empty identity groups. No users and no passwords.
+# User identity groups from tacacs_authz.csv. Lab Internal Users join these
+# via ise_internal_user.identity_groups (0.3.4: comma-separated group IDs).
 # Names stay as applied (T1, auditor-internal). They are not in the TACACS
 # command-set + profile ISE name bag (T1_cs, T1_shell, …). Suffix only if
 # an identity group string later equals a command-set or profile ISE name.

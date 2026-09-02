@@ -17,7 +17,7 @@ copy .env.example .env
 notepad .env
 ```
 
-Change `ISE_PASSWORD=changeme` to the real lab password. Save. Close Notepad.
+Change `ISE_PASSWORD=changeme` to the real lab admin password. Set `NAD_TACACS_SECRET`, `NAD_RADIUS_SECRET`, and `USER_PASSWORD_DEFAULT` (empty placeholders in `.env.example`). Save. Close Notepad.
 
 On ISE, turn on **ERS** and **Open API** (Administration → System → Settings → API Settings). Device Admin / TACACS must be licensed.
 
@@ -27,10 +27,10 @@ Run this in PowerShell **before** `terraform apply`. Python 3.10+ is required ([
 
 ```
 pip install nac-validate
-nac-validate nac.yaml sites.yaml location_ndgs.yaml endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml network_access.yaml -s .schema.yaml -r .rules
+nac-validate nac.yaml sites.yaml location_ndgs.yaml endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml network_access.yaml users.yaml -s .schema.yaml -r .rules
 ```
 
-That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml` / `location_ndgs.yaml` and the Network Access YAML. `.rules/` also reads `tacacs_authz.csv`, `command_sets.yaml`, Network Access CSV/YAML, and Terraform (`local.ise_tacacs_command_set_name` / `local.ise_tacacs_shell_profile_name` in `locals.tf`, commands in `main.tf`, `network_access.tf`) — the names and commands apply POSTs to ISE, not only `nac.yaml`:
+That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-validate). `.schema.yaml` checks the shape of `nac.yaml` / `sites.yaml` / `location_ndgs.yaml`, the Network Access YAML, and `users.yaml`. `.rules/` also reads `tacacs_authz.csv`, `command_sets.yaml`, Network Access CSV/YAML, `users.csv`, and Terraform (`local.ise_tacacs_command_set_name` / `local.ise_tacacs_shell_profile_name` in `locals.tf`, commands in `main.tf`, `network_access.tf`, `users.tf`) — the names and commands apply POSTs to ISE, not only `nac.yaml`:
 
 1. TACACS **command-set** and **profile** names may only use letters, digits, underscore, and space. Hyphens fail (`auditor-internal` / `auditor-external`). NDG hyphens (`access-marketing`) stay.
 2. Non-T4 command sets must list real IOS commands with `permit_unmatched = false`. T4 may be empty with `permit_unmatched = true`. Empty sets with `permit_unmatched = false` are invalid (HTTP 400).
@@ -39,6 +39,7 @@ That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-
 5. **Rule 105 FAILS** if any string is duplicated in the **combined** set of all command-set ISE names and all profile ISE names (one ERS namespace). Every TACACS object is suffixed (underscore only). Command sets: `T1_cs` `T2_cs` `T3_cs` `T4_cs` `vendor_cs` `contractor_cs` `auditor_internal_cs` `auditor_external_cs` `test_cs`. Profiles: `T1_shell` `T2_shell` `T3_shell` `T4_shell` `vendor_shell` `contractor_shell` `auditor_internal_shell` `auditor_external_shell`. No profile named `test_cs`. CSV keys stay `T1`. Identity groups, NDGs, and authz rule names are unchanged.
 6. **Rule 106 FAILS** if a user identity group name equals any string in that TACACS bag. Live groups (`T1`, `auditor-internal`) stay; `T1` does not collide with `T1_cs` / `T1_shell`. Suffix an identity group only when it would reuse a command-set or profile ISE name.
 7. **Rule 107 FAILS** unless wired 802.1X + MAB stays the CoS lock: eleven endpoint identity groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers). 10 unique lab MACs per group (`endpoint_count` default **110**) using locked IEEE MA-L OUIs plus generated last 3 octets. No `02:00:GG`. No `00:00:01`–`00:00:0A`. No guest. No 15k MAC dump. Two `ise_allowed_protocols` (802.1X EAP and MAB PAP/ASCII). ACCESS_ACCEPT VLANs 10/20/30. Phones → VLAN 20 voice, Printers → VLAN 30 MAB, all other groups → VLAN 10 data. One Network Access policy set (not Device Admin). Dot1X → Internal Users; MAB → Internal Endpoints continue-if-not-found.
+8. **Rule 108 FAILS** unless `users.csv` / `users.yaml` is **8** lab Internal Users (one per TACACS identity group: T1, T2, T3, T4, vendor, contractor, `auditor-internal`, `auditor-external`). Terraform resource is `ise_internal_user` (CiscoDevNet/ise **0.3.4**, not `ise_user`). `user_count` default **8**. Secrets stay in `.env` (`USER_PASSWORD_DEFAULT` / `TF_VAR_user_password`). No password column in Git. Not 150k. ERS POSTs one user per create; ISE Internal User store max is 300,000.
 
 If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed. It still does not talk to ISE.
 
@@ -55,7 +56,7 @@ Validate YAML first (`nac-validate` above). Then Terraform.
 
 `terraform init` only downloads the Cisco ISE plugin. The PAN does **not** need to be reachable.
 
-`terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up. A normal apply (default `nad_count=15000`, `endpoint_count=110`) creates the Location tree, all 15,000 switches, TACACS device-admin, wired 802.1X/MAB policy, **and** 110 lab MACs. `.env` must have both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET`.
+`terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up. A normal apply (default `nad_count=15000`, `endpoint_count=110`, `user_count=8`) creates the Location tree, all 15,000 switches, TACACS device-admin, wired 802.1X/MAB policy, 110 lab MACs, **and** 8 lab Internal Users. `.env` must have `NAD_TACACS_SECRET`, `NAD_RADIUS_SECRET`, and `USER_PASSWORD_DEFAULT`.
 
 After merge (Robert, not an agent), paste this in PowerShell (pull, load `.env`, init, apply):
 
@@ -87,7 +88,7 @@ That address is `ise_tacacs_command_set.test`. ISE name is `test_cs`: one comman
 
 ## After destroy (rebuild the system)
 
-After `terraform destroy` on pan1, pull this folder and apply. A normal apply builds the **Location tree, all 15,000 NADs, TACACS device-admin, wired 802.1X/MAB policy, and 110 lab MACs** from Git. After pull, `.env` needs both `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET` (never in git). `load-env.ps1` maps them to `TF_VAR_nad_tacacs_secret` and `TF_VAR_nad_radius_secret`. There is no secret default in git. Empty TACACS or RADIUS secret with `nad_count>0` fails with a clear error. NAD `authentication_network_protocol` is `RADIUS` so 802.1X can use the NAD. `tacacs_shared_secret` stays set.
+After `terraform destroy` on pan1, pull this folder and apply. A normal apply builds the **Location tree, all 15,000 NADs, TACACS device-admin, wired 802.1X/MAB policy, 110 lab MACs, and 8 lab Internal Users** from Git. After pull, `.env` needs `NAD_TACACS_SECRET`, `NAD_RADIUS_SECRET`, and `USER_PASSWORD_DEFAULT` (never in git). `load-env.ps1` maps them to `TF_VAR_nad_tacacs_secret`, `TF_VAR_nad_radius_secret`, and `TF_VAR_user_password`. There is no secret default in git. Empty TACACS or RADIUS secret with `nad_count>0` fails with a clear error. Empty `USER_PASSWORD_DEFAULT` with `user_count>0` fails with a clear error. NAD `authentication_network_protocol` is `RADIUS` so 802.1X can use the NAD. `tacacs_shared_secret` stays set.
 
 ```
 git pull
@@ -109,10 +110,11 @@ A normal apply creates:
 - TACACS authentication sequence from `tacacs_authc.csv`
 - TACACS authorization rules from `tacacs_authz.csv` in ISE push order (first match wins)
 - Wired 802.1X + MAB Network Access policy (11 endpoint groups, 110 lab MACs, no guest)
+- 8 lab Internal Users from `users.csv` (one per TACACS identity group). Login/enable secrets from `.env` only.
 
 This does **not** deploy ESXi, an OVA, or C:\Marco paths.
 
-Policy-only (Location tree + TACACS + wired 802.1X/MAB + 110 lab MACs, **no** switches):
+Policy-only (Location tree + TACACS + wired 802.1X/MAB + 110 lab MACs + 8 lab Internal Users, **no** switches):
 
 ```
 . .\load-env.ps1
@@ -121,6 +123,8 @@ terraform apply
 ```
 
 Groups-only (same, **no** MAC rows): `$env:TF_VAR_endpoint_count = "0"`
+
+Skip Internal User rows (identity groups still apply): `$env:TF_VAR_user_count = "0"`
 
 ## NAD inventory (devices.csv)
 
@@ -174,6 +178,37 @@ Lab MACs use locked IEEE MA-L OUIs from https://standards-oui.ieee.org/oui/oui.t
 
 TACACS device-admin stays (`*_cs` / `*_shell`, Device Admin policy set, GUI canary `"-target=ise_tacacs_command_set.test"`).
 
+## Internal Users (`users.csv`)
+
+Lab Internal Users in Git. After merge, Robert pull / init / apply. This PR does **not** apply to ISE. Secrets never go in Git.
+
+| Object | Source | 0.3.4 resource / field |
+| --- | --- | --- |
+| User identity groups | `tacacs_authz.csv` — T1, T2, T3, T4, vendor, contractor, `auditor-internal`, `auditor-external` (hyphens stay) | `ise_user_identity_group` |
+| Lab Internal Users | `users.csv` / `users.yaml` — 8 lab accounts, one per TACACS group. Generator: `scripts/generate_users.py`. Not 150k. | `ise_internal_user` |
+
+CiscoDevNet/ise **0.3.4** resource name is **`ise_internal_user`** (not `ise_user`). Schema fields this repo sets:
+
+| Field | Source |
+| --- | --- |
+| `name` | `users.csv` `username` |
+| `password` | env only: `USER_PASSWORD_DEFAULT` → `TF_VAR_user_password` |
+| `enable_password` | env: `USER_ENABLE_PASSWORD_DEFAULT` → `TF_VAR_user_enable_password` (empty reuses login) |
+| `change_password` | `false` (lab first login must work; provider default is `true`) |
+| `enabled` | CSV `enabled` |
+| `first_name` / `last_name` / `email` / `description` | CSV |
+| `identity_groups` | comma-separated **identity group IDs** from `ise_user_identity_group.this[group].id` |
+| `password_id_store` | `Internal Users` |
+| `password_never_expires` | `true` (lab; ISE 3.2+) |
+
+Not set: `account_name_alias`, `custom_attributes`.
+
+CSV columns (no secret column): `username`, `identity_group`, `first_name`, `last_name`, `email`, `enabled`, `description`. `identity_group` must match a live TACACS identity group. Multiple groups can be comma-separated later; the lab CSV has one each.
+
+`user_count` default is **8** (house style: lab CSV length, same idea as `nad_count=15000` / `endpoint_count=110`). Skip user rows: `TF_VAR_user_count=0`. Empty `USER_PASSWORD_DEFAULT` with `user_count>0` fails with a clear error. Do not generate 150k users.
+
+ERS creates **one user per POST** (`POST /ers/config/internaluser`). ISE Internal User store **max is 300,000** ([Performance and Scalability Guide](https://www.cisco.com/c/en/us/td/docs/security/ise/performance_and_scalability/b_ise_perf_and_scale.html)). This PR is the lab CSV only. Schema: [ise_internal_user 0.3.4](https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/internal_user). ERS: [Create User](https://developer.cisco.com/docs/identity-services-engine/latest/create-user/).
+
 ## Provider
 
 This repo uses **CiscoDevNet/ise** (current public Cisco ISE Terraform provider, tested with ISE 3.5). It is the current replacement for the older `CiscoISE/ciscoise` beta.
@@ -189,7 +224,7 @@ These still produce a valid `terraform init`. Some objects are incomplete becaus
 | TACACS command sets | `command_sets.yaml` — YAML `name:` is the ISE name (`T1_cs`–`T3_cs`, `vendor_cs`, `contractor_cs`, `auditor_internal_cs`, `auditor_external_cs`). T4_cs empty with `permit_unmatched=true`. CSV keys stay `T1`. Arguments are literals + `*` (no PCRE). | `ise_tacacs_command_set` `name` is `local.ise_tacacs_command_set_name` (`T1_cs`). Canary `.test` POSTs `test_cs`. `permit_unmatched=false` except T4. |
 | TACACS shell profiles | `shell_profiles.yaml` — YAML `name:` is the ISE name (`T1_shell`, `T2_shell`, …). `session_attributes` `type=MANDATORY` `name=priv-lvl` `value=1` for T1 and `auditor_*`; `15` for T2/T3/T4/vendor/contractor. CSV keys stay `T1`. | `ise_tacacs_profile` name is `local.ise_tacacs_shell_profile_name` (`T1_shell`, not `T1`). ISE ERS shares one name namespace with command sets. Authz `profile` uses `.name`. Names cannot contain hyphens. |
 | `time_bound=yes` | Flag only (vendor, auditor-external identity) | Not attached. Hours were not in the CSV. The provider *can* create a time-and-date condition if hours are added later. |
-| Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Empty groups. No users and no passwords. |
+| Identity groups | Names (`T1`–`T4`, vendor, contractor, auditor-*) | Groups from `tacacs_authz.csv`. Lab Internal Users from `users.csv` join via `ise_internal_user.identity_groups` (group IDs). Default `user_count=8`. `TF_VAR_user_count=0` skips user rows. Secrets in `.env` only. |
 | Identity store | CSV says `ISE Internal Users` | Mapped to ISE's built-in store name `Internal Users`. Not Active Directory. |
 | NAD → NDG | Access locked to `access-marketing`. Location is `Location#All Locations#{State}#{site_id}` | Default `nad_count=15000` joins Access **and** the state/city Location. Protocol is `RADIUS`. `TF_VAR_nad_count=0` is policy-only. |
 | Endpoint identity groups | `endpoint_identity_groups.yaml` — Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers | 11 groups. Default `endpoint_count=110` pushes `endpoints.csv`. `TF_VAR_endpoint_count=0` is groups-only. |

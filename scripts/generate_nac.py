@@ -71,6 +71,7 @@ def main() -> int:
     na_authz = read_csv("network_access_authz.csv")
     sample = read_csv("sample_nads.csv")
     endpoints = read_csv("endpoints.csv")
+    users = read_csv("users.csv")
 
     if len(sites) != 400:
         raise SystemExit(f"sites.csv expected 400 rows, got {len(sites)}")
@@ -250,13 +251,42 @@ def main() -> int:
     if any("guest" in (e.get("endpoint_identity_group") or "").lower() for e in endpoints):
         raise SystemExit("Guest endpoints are not in this phase")
 
+    locked_idg = (
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "vendor",
+        "contractor",
+        "auditor-internal",
+        "auditor-external",
+    )
+    authz_idg = {(row.get("identity_group") or "").strip() for row in authz}
+    authz_idg.discard("")
+    if len(users) != 8:
+        raise SystemExit(f"users.csv expected 8 lab Internal Users, got {len(users)}")
+    usernames = [u["username"] for u in users]
+    if len(usernames) != len(set(usernames)):
+        raise SystemExit("users.csv has duplicate usernames")
+    user_groups = [u["identity_group"] for u in users]
+    if tuple(user_groups) != locked_idg:
+        raise SystemExit(f"users.csv identity_group order must be {list(locked_idg)}, got {user_groups}")
+    if any(g not in authz_idg for g in user_groups):
+        raise SystemExit("users.csv identity_group must match tacacs_authz.csv")
+    if users and any("pass" in k.lower() for k in users[0].keys()):
+        raise SystemExit("users.csv must not contain a password column")
+    user_blob = ",".join(users[0].keys()) + "," + ",".join(v for u in users for v in u.values())
+    if "password" in user_blob.lower():
+        raise SystemExit("refusing to copy a password out of users.csv")
+
     lines: list[str] = [
         "# Generated ISE-as-code feed. Do not edit by hand.",
         "# Rebuild: python3 scripts/generate_nac.py",
-        "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv endpoints.csv",
+        "# Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv endpoints.csv users.csv",
         "# TACACS objects: command_sets.yaml shell_profiles.yaml",
         "# Network Access: endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml",
         "#   network_access.yaml network_access_authc.csv network_access_authz.csv",
+        "# Internal Users: users.yaml (8 lab users; secrets stay in env)",
         "# Location NDGs: type-level in location_ndgs.yaml; state/city from sites.yaml",
         "",
         "lab:",
@@ -421,6 +451,7 @@ def main() -> int:
         "allowed_protocols.yaml",
         "authorization_profiles.yaml",
         "network_access.yaml",
+        "users.yaml",
     ):
         body = (ROOT / extra).read_text(encoding="utf-8").rstrip()
         if body:
