@@ -170,7 +170,20 @@ Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. 
 | Authentication | `network_access_authc.csv` — Dot1X → Internal Users; MAB → Internal Endpoints `CONTINUE` | `ise_network_access_authentication_rule` + `ise_network_access_authentication_rule_update_ranks` |
 | Authorization | `network_access_authz.csv` — first match: Phones → `Wired_Voice` (VLAN 20), Printers → `Wired_Printer` (VLAN 30), all other groups → `Wired_Data` (VLAN 10) | `ise_network_access_authorization_rule` (`profiles`) + `ise_network_access_authorization_rule_update_ranks` |
 
-`endpoint_count` default is **110**. Groups-only (no MAC rows): `TF_VAR_endpoint_count=0`. Do not generate 15k or 300k MACs. No guest.
+`endpoint_count` default is **110**. Groups-only (no MAC rows): `TF_VAR_endpoint_count=0`. Do not grow `endpoints.csv` past 110. No guest.
+
+## Enterprise endpoint inventory (Git only)
+
+NDO-200 lock (Robert 2026-09-01, CoS restated): **150,000** rows, **75,000** desks, each desk a **phone and a PC on the same switch port**. Not 300k.
+
+| Object | Source |
+| --- | --- |
+| Enterprise CSV | `endpoints_enterprise.csv` — exactly 150000 data rows. Rebuild: `python3 scripts/generate_enterprise_endpoints.py`. Check: `python3 scripts/generate_enterprise_endpoints.py --verify`. |
+| Lab apply set | `endpoints.csv` / `endpoints.yaml` / `scripts/generate_endpoints.py` — still 110. Terraform `ise_endpoint` reads this file only. |
+
+Placement: 15,000 `devices.csv` access switches × 5 desks = 75,000 desks. Each desk uses one access port (`Gi1/0/1`–`Gi1/0/5` on that switch). The Phones row (IEEE MA-L `00:04:f2` Polycom) and the Windows/PC row (`10:e7:c6` Hewlett Packard) share that port, site, and switch. Columns `desk`, `switch`, `port`, `site` are on every row so the pairing is visible in Excel.
+
+**Do not apply the 150k file.** pan1 apply is still `TF_VAR_endpoint_count` / default **110** against the lab 110. Terraform does not `csvdecode` `endpoints_enterprise.csv`. Applying 150k is off until Robert says so. No 150k YAML (GitHub size). `nac-validate` still runs on the existing YAML set only.
 
 Lab MACs use locked IEEE MA-L OUIs from https://standards-oui.ieee.org/oui/oui.txt plus generated last 3 octets (SHA-256 lab suffixes, unique across 110). Not `02:00:GG`. Not `00:00:01`–`00:00:0A`. CSV cites `oui` and IEEE `organization`. Documented as lab. Not copied from hardware.
 

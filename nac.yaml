@@ -1,6 +1,7 @@
 # Generated ISE-as-code feed. Do not edit by hand.
 # Rebuild: python3 scripts/generate_nac.py
 # Excel originals: sites.csv ndgs.csv devices.csv tacacs_authc.csv tacacs_authz.csv sample_nads.csv endpoints.csv users.csv
+# Lab endpoints.csv only (110). endpoints_enterprise.csv is Git inventory; not this feed. pan1 apply stays 110.
 # TACACS objects: command_sets.yaml shell_profiles.yaml
 # Network Access: endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml
 #   network_access.yaml network_access_authc.csv network_access_authz.csv

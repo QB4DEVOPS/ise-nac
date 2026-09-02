@@ -37,7 +37,7 @@ variable "nad_radius_secret" {
 
 variable "endpoint_count" {
   type        = number
-  description = "How many endpoints.csv lab MACs to push (first N, inventory order). Default 110 = all 11 groups × 10. Set TF_VAR_endpoint_count=0 for groups-only (no MAC rows). Do not dump 15k MACs."
+  description = "How many endpoints.csv lab MACs to push (first N, inventory order). Default 110 = all 11 groups × 10. Set TF_VAR_endpoint_count=0 for groups-only (no MAC rows). Do not dump 15k MACs. endpoints_enterprise.csv (150k desks/phone+PC) is Git inventory only — pan1 apply stays 110 until Robert says so."
   default     = 110
 
   validation {

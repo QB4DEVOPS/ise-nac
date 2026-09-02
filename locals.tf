@@ -7,6 +7,8 @@ locals {
   na_authz  = csvdecode(trimprefix(file("${path.module}/network_access_authz.csv"), "\ufeff"))
   devices   = csvdecode(trimprefix(file("${path.module}/devices.csv"), "\ufeff"))
   sites     = csvdecode(trimprefix(file("${path.module}/sites.csv"), "\ufeff"))
+  # Lab 110 only. Do not csvdecode endpoints_enterprise.csv (150k is Git
+  # inventory; pan1 apply stays endpoint_count=110 until Robert says so).
   endpoints = csvdecode(trimprefix(file("${path.module}/endpoints.csv"), "\ufeff"))
   users     = csvdecode(trimprefix(file("${path.module}/users.csv"), "\ufeff"))
 

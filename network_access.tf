@@ -29,6 +29,7 @@ resource "ise_endpoint_identity_group" "this" {
 
 # Lab MACs from endpoints.csv. Default endpoint_count=110 (all 11×10).
 # Groups-only (no MAC rows): TF_VAR_endpoint_count=0. Do not dump 15k MACs.
+# Do not point this resource at endpoints_enterprise.csv (150k Git-only).
 # 0.3.4 required: name, mac, static_group_assignment, static_profile_assignment.
 # group_id is the Identity Group ID (ise_endpoint_identity_group.id).
 # MACs use locked IEEE MA-L OUIs; last 3 octets are generated. Not hardware.
