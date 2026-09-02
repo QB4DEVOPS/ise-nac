@@ -68,8 +68,13 @@ run "lab_internal_users" {
   }
 
   assert {
-    condition     = local.users[7].name == "lab-auditor-external"
+    condition     = ise_internal_user.this[7].name == "lab-auditor-external"
     error_message = "Last lab Internal User must be lab-auditor-external."
+  }
+
+  assert {
+    condition     = local.users[7].username == "lab-auditor-external"
+    error_message = "users.csv last username must be lab-auditor-external."
   }
 
   assert {
