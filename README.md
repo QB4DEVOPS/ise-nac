@@ -2,7 +2,7 @@
 
 ISE Network as Code: device-admin TACACS plus wired 802.1X/MAB policy.
 
-This PR does **not** apply to ISE. After merge, Robert: pull, load `.env`, `terraform init`, `terraform apply`. Do not apply from an agent.
+This PR does **not** apply to ISE. After merge, Robert: **[APPLY.md](APPLY.md)** (first apply, no switches). Do not apply from an agent.
 
 Robert: use PowerShell in this folder. The command is `terraform` (not `tf`).
 
@@ -20,6 +20,12 @@ notepad .env
 Change `ISE_PASSWORD=changeme` to the real lab admin password. Set `NAD_TACACS_SECRET`, `NAD_RADIUS_SECRET`, and `USER_PASSWORD_DEFAULT` (empty placeholders in `.env.example`). Save. Close Notepad.
 
 On ISE, turn on **ERS** and **Open API** (Administration → System → Settings → API Settings). Device Admin / TACACS must be licensed.
+
+## First apply
+
+On a new ISE box, follow **[APPLY.md](APPLY.md)** (numbered PowerShell on DESKTOP-DMVUP78). First apply sets `$env:TF_VAR_nad_count = "0"`. Do not start from the full-system `terraform apply` later in this file — Git default is 15,000 switches.
+
+For apply, set `ISE_USERNAME=terraform` in `.env`. `.env.example` still shows `iseadmin` (first-boot user). Do not mix those passwords.
 
 ## Validate YAML before apply
 
@@ -52,13 +58,15 @@ pre-commit install
 
 ## Commands
 
+**First apply on a blank ISE:** **[APPLY.md](APPLY.md)**. Set `$env:TF_VAR_nad_count = "0"`. The blocks below are the full-system path (15,000 switches). Do not use them on a blank box.
+
 Validate YAML first (`nac-validate` above). Then Terraform.
 
 `terraform init` only downloads the Cisco ISE plugin. The PAN does **not** need to be reachable.
 
 `terraform plan` and `terraform apply` talk to the PAN at `ISE_HOST` (`192.168.1.90`). The PAN must be up. A normal apply (default `nad_count=15000`, `endpoint_count=150000`, `user_count=8`) creates the Location tree, all 15,000 switches, TACACS device-admin, wired 802.1X/MAB policy, **150k enterprise MACs**, **and** 8 lab Internal Users. `.env` must have `NAD_TACACS_SECRET`, `NAD_RADIUS_SECRET`, and `USER_PASSWORD_DEFAULT`.
 
-After merge (Robert, not an agent), paste this in PowerShell (pull, load `.env`, init, apply):
+First apply is **[APPLY.md](APPLY.md)** (`TF_VAR_nad_count=0`). The block below is the full-system path (15,000 switches), not the first apply.
 
 ```
 git pull
