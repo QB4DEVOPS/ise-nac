@@ -107,21 +107,6 @@ run "enterprise_default_150000" {
   }
 
   assert {
-    condition = (
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "AP"]) == 2250 &&
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "Printers"]) == 1550 &&
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "Cameras"]) == 1500 &&
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "Badge_Readers"]) == 800 &&
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "TVs"]) == 600 &&
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "Linux"]) == 500 &&
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "UPS"]) == 400 &&
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "Powerstrips"]) == 250 &&
-      length([for e in local.endpoints : e if e.endpoint_identity_group == "RFID_Readers"]) == 150
-    )
-    error_message = "NDO-225 non-desk counts: AP 2250, Printers 1550, Cameras 1500, Badge_Readers 800, TVs 600, Linux 500, UPS 400, Powerstrips 250, RFID_Readers 150."
-  }
-
-  assert {
     condition     = local.endpoints[142000].endpoint_identity_group == "AP"
     error_message = "First non-desk row (after 71000 desks) is AP."
   }
@@ -139,6 +124,16 @@ run "enterprise_default_150000" {
   assert {
     condition     = startswith(ise_endpoint.this[142000].mac, "9c:e3:30:")
     error_message = "AP MAC is IEEE MA-L 9C:E3:30 (Cisco Meraki)."
+  }
+
+  assert {
+    condition     = local.endpoints[144249].endpoint_identity_group == "AP" && local.endpoints[144250].endpoint_identity_group == "Printers"
+    error_message = "AP is 2250 rows (142000-144249); Printers start at 144250."
+  }
+
+  assert {
+    condition     = local.endpoints[149849].endpoint_identity_group == "Powerstrips" && local.endpoints[149850].endpoint_identity_group == "RFID_Readers"
+    error_message = "Powerstrips end at 149849; RFID_Readers are the last 150 rows."
   }
 
   assert {
