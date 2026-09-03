@@ -8,17 +8,25 @@ Git default for switches is **15,000**. A bare `terraform apply` pushes all of t
 
 This first apply still pushes policy, **150,000** endpoints, and **8** lab users. That can take many hours. Stay on this PC. Do not close the window.
 
-## If apply dies
+## If apply dies mid-150k
 
-**STOP.**
+Do **not** start over. Re-run the **same** apply. Terraform state in this folder resumes.
 
-- Do **not** run `terraform destroy`
-- Do **not** start a second apply
-- Do **not** toast the ISE box
-- Leave this folder as it is. The state file in this folder is how we recover. You cannot fix a half-imported ISE.
-- Tell CoS
+Same window (or load `.env` again first). Paste **both** lines:
 
-A 150k test was killed at about 5 hours on a VM. Same rule: stop. Tell CoS.
+```
+$env:TF_VAR_nad_count = "0"
+terraform apply
+```
+
+Type `yes` if it asks.
+
+- NEVER run `terraform destroy`
+- NEVER delete `terraform.tfstate`, `.terraform`, or this folder
+- NEVER toast the ISE box
+- If this re-run also fails, **STOP**. Tell CoS. You cannot fix it.
+
+A 150k test was killed at about 5 hours on a VM. Same lock: re-run the same apply. Never destroy. Never delete state.
 
 ---
 
@@ -33,7 +41,7 @@ In the ISE GUI:
 3. Turn on **Open API**
 4. Confirm **Device Admin / TACACS** is licensed
 
-This is still required **before** Terraform. It was never lifted. If ERS, Open API, or Device Admin is off, stop. Tell CoS. Do not apply.
+This is still required **before** Terraform. It was never lifted. Checkboxes are not enough. Step 7 proves ERS and Device Admin actually answer. If ERS, Open API, or Device Admin is off, stop. Tell CoS. Do not apply.
 
 ## 2. ISE user named `terraform`
 
@@ -125,7 +133,33 @@ ISE does **not** need to be reachable for init. Init only downloads the Cisco IS
 
 Wait until it finishes. If init fails, stop. Tell CoS. Do not apply.
 
-## 7. First apply — no switches
+## 7. Preflight — ERS and Device Admin must answer
+
+GUI checkboxes are not enough. These two commands must succeed **before** the 150k apply.
+
+Stay in the **same** PowerShell window (after step 5 and step 6).
+
+**ERS** — can Terraform talk to ISE?
+
+```
+$env:TF_VAR_nad_count = "0"
+terraform plan
+```
+
+If plan cannot talk to ISE, ERS is not answering. **STOP.** Do not apply. Tell CoS.
+
+**Device Admin** — same window. This is the existing GUI canary (ISE name `test_cs`):
+
+```
+$env:TF_VAR_nad_count = "0"
+terraform apply "-target=ise_tacacs_command_set.test"
+```
+
+Type `yes` if it asks. If this 400s or cannot connect, Device Admin / TACACS is not answering. **STOP.** Do not start the 150k apply. Tell CoS.
+
+Only if **both** succeed, go to step 8.
+
+## 8. First apply — no switches
 
 Stay in the **same** PowerShell window.
 
@@ -140,7 +174,7 @@ When it asks you to confirm, type `yes` and press Enter.
 
 Git default `nad_count` is **15000**. If you forget the first line, Terraform pushes **15,000 switches**. Set `0` unless you want 15,000 switches.
 
-## 8. Endpoints are 150,000 — not 110
+## 9. Endpoints are 150,000 — not 110
 
 You do **not** set an endpoint count. The Git default is **150000**.
 
@@ -155,17 +189,15 @@ The small lab file `endpoints.csv` (**110**) stays in Git only. Terraform does n
 
 Do **not** apply 150,000 plus 110. A Small ISE tops out at 150,000.
 
-## 9. Users are 8
+## 10. Users are 8
 
 You do **not** set a user count. The Git default is **8**.
 
 Passwords come from `.env` (`USER_PASSWORD_DEFAULT`). Not from Git.
 
-## 10. Optional checks (recommended)
+## 11. Optional file check (recommended)
 
-Do these in the **same** window **before** apply, after step 6. Skip them if Python or the check is not installed. They do not talk to ISE except `terraform plan`.
-
-Check the files (same commands as README):
+Do this in the **same** window **before** step 8, after step 6. Skip if Python is not installed. This does **not** talk to ISE. Step 7 is the required ISE preflight.
 
 ```
 pip install nac-validate
@@ -173,15 +205,6 @@ nac-validate nac.yaml sites.yaml location_ndgs.yaml endpoint_identity_groups.yam
 ```
 
 If that prints errors, do not apply. Tell CoS.
-
-See the plan (no switches):
-
-```
-$env:TF_VAR_nad_count = "0"
-terraform plan
-```
-
-Then apply (step 7). Set `0` again if you opened a new window.
 
 ---
 

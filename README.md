@@ -23,7 +23,7 @@ On ISE, turn on **ERS** and **Open API** (Administration → System → Settings
 
 ## First apply
 
-On a new ISE box, follow **[APPLY.md](APPLY.md)** (numbered PowerShell on DESKTOP-DMVUP78). First apply sets `$env:TF_VAR_nad_count = "0"`. Do not start from the full-system `terraform apply` later in this file — Git default is 15,000 switches.
+On a new ISE box, follow **[APPLY.md](APPLY.md)** (numbered PowerShell on DESKTOP-DMVUP78). First apply sets `$env:TF_VAR_nad_count = "0"`. Do not start from the full-system `terraform apply` later in this file — Git default is 15,000 switches. APPLY.md step 7 is the required ERS / Device Admin preflight; if the 150k apply dies, re-run the same apply from that file (never destroy or delete state).
 
 For apply, set `ISE_USERNAME=terraform` in `.env`. `.env.example` still shows `iseadmin` (first-boot user). Do not mix those passwords.
 
