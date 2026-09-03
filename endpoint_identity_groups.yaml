@@ -8,7 +8,7 @@ endpoint_identity_groups:
     description: Wired IP phones. Voice VLAN 20. 10 lab MACs.
     system_defined: false
   - name: AP
-    description: Access points. Data VLAN 10. 10 lab MACs.
+    description: Access points. VLAN 40. 10 lab MACs.
     system_defined: false
   - name: Printers
     description: Wired MAB printers. VLAN 30. 10 lab MACs.
@@ -17,16 +17,16 @@ endpoint_identity_groups:
     description: Displays. Data VLAN 10. 10 lab MACs.
     system_defined: false
   - name: Badge_Readers
-    description: Badge readers. Data VLAN 10. 10 lab MACs.
+    description: Badge readers. VLAN 60. 10 lab MACs.
     system_defined: false
   - name: Cameras
-    description: Cameras. Data VLAN 10. 10 lab MACs.
+    description: Cameras. VLAN 50. 10 lab MACs.
     system_defined: false
   - name: UPS
-    description: UPS. Data VLAN 10. 10 lab MACs.
+    description: UPS. VLAN 70. 10 lab MACs.
     system_defined: false
   - name: Powerstrips
-    description: Power strips. Data VLAN 10. 10 lab MACs.
+    description: Power strips. VLAN 70. 10 lab MACs.
     system_defined: false
   - name: Linux
     description: Linux hosts. Data VLAN 10. 10 lab MACs.
@@ -35,5 +35,5 @@ endpoint_identity_groups:
     description: Windows hosts. Data VLAN 10. 10 lab MACs.
     system_defined: false
   - name: RFID_Readers
-    description: RFID readers. Data VLAN 10. 10 lab MACs.
+    description: RFID readers. VLAN 60. 10 lab MACs.
     system_defined: false

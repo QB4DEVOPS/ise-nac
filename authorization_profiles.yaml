@@ -1,4 +1,4 @@
-# Network Access authorization profiles. ACCESS_ACCEPT. Lab VLANs 10/20/30.
+# Network Access authorization profiles. ACCESS_ACCEPT. Lab VLANs 10–70.
 # CiscoDevNet/ise 0.3.4: ise_authorization_profile.
 # Schema used: name, description, access_type (ACCESS_ACCEPT|ACCESS_REJECT),
 # vlan_name_id (VLAN name or ID), vlan_tag_id (0-31), voice_domain_permission.
@@ -22,5 +22,29 @@ authorization_profiles:
     description: ACCESS_ACCEPT MAB. Lab VLAN 30.
     access_type: ACCESS_ACCEPT
     vlan_name_id: "30"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_AP
+    description: ACCESS_ACCEPT access points. Lab VLAN 40.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "40"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Camera
+    description: ACCESS_ACCEPT cameras. Lab VLAN 50.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "50"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Badge
+    description: ACCESS_ACCEPT badge and RFID readers. Lab VLAN 60.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "60"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Facilities
+    description: ACCESS_ACCEPT UPS and powerstrips. Lab VLAN 70.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "70"
     vlan_tag_id: 0
     voice_domain_permission: false
