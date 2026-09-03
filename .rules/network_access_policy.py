@@ -428,7 +428,8 @@ NAD_RADIUS_SECRET."""
                     "authorization_profiles.yaml",
                     name,
                 )
-            if int(p.get("vlan_tag_id") or -1) != 0:
+            tag = p.get("vlan_tag_id")
+            if tag is None or int(tag) != 0:
                 add(
                     f"Authorization profile '{name}' vlan_tag_id must be 0 "
                     "(0.3.4 ise_authorization_profile.vlan_tag_id).",
