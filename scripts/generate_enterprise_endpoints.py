@@ -1,23 +1,36 @@
 #!/usr/bin/env python3
-"""Build endpoints_enterprise.csv: 150,000 desk MACs for Terraform apply.
+"""Build endpoints_enterprise.csv: 150,000 MACs for Terraform apply.
 
-NDO-200 lock (CoS 2026-09-01):
-  150,000 endpoint rows. Not 300k.
-  75,000 desks. Each desk is a phone AND a PC on the SAME switch port.
-  Phones OUI 00:04:f2 (Polycom). Windows/PC OUI 10:e7:c6 (Hewlett Packard).
+NDO-225 lock (CoS 2026-09-03):
+  150,000 endpoint rows (Small PAN ceiling). Not 300k.
+  71,000 desks. Each desk is a phone AND a PC on the SAME switch port.
+  Remaining 8,000 rows are the other 9 endpoint identity groups.
+  No Wi-Fi clients. AP rows are Meraki access points (infrastructure).
   Terraform apply csvdecodes this file. endpoint_count default 150000.
   Lab endpoints.csv / endpoints.yaml / generate_endpoints.py stay 110 in Git
   as inventory only. Do not apply both (150k+110 will not fit a Small PAN).
 
+Locked per-group counts:
+  Phones 71000, Windows 71000, AP 2250, Printers 1550, Cameras 1500,
+  Badge_Readers 800, TVs 600, Linux 500, UPS 400, Powerstrips 250,
+  RFID_Readers 150. Total 150000.
+
 Placement (devices.csv math is exact, not ugly):
-  15,000 access switches × 5 desks = 75,000 desks.
-  Each switch uses Gi1/0/1 .. Gi1/0/5 (port_count is 48). Phone + PC share
-  that port (classic voice+data on one access port).
+  71,000 desks / 5 = 14,200 switches with Gi1/0/1 .. Gi1/0/5.
+  First 14,200 of 15,000 devices.csv switches get those 5 desks.
+  Last 800 switches have no desks (not every switch needs 5).
+  Phone + PC share that port (classic voice+data on one access port).
+  Non-desk: own port Gi1/0/6 (ABOVE the desk range) on the last 8,000
+  switches, one device each. Empty `desk` column. Site is the switch site.
+  Exact split: AP+Printers+Cameras+Badge_Readers+TVs+Linux = 7,200 land on
+  switches that also have desks; UPS+Powerstrips+RFID_Readers = 800 land on
+  the 800 desk-less switches.
 
 Pattern: {IEEE MA-L OUI}:{generated last 3 octets}
 OUI source of truth (MA-L): https://standards-oui.ieee.org/oui/oui.txt
-Last 3 octets are hashed suffixes — unique across 150k, not 00:00:01–0A,
-not 02:00:GG, not copied from a NIC. Not a 150k YAML (GitHub size).
+Reuse lab vendor OUIs from generate_endpoints.py. Last 3 octets are hashed
+suffixes — unique across 150k, not 00:00:01–0A, not 02:00:GG, not copied
+from a NIC. Not a 150k YAML (GitHub size).
 
 Rebuild:
   python3 scripts/generate_enterprise_endpoints.py
@@ -49,21 +62,63 @@ IEEE_HEX_RE = re.compile(
     r"^([0-9A-F]{2}-[0-9A-F]{2}-[0-9A-F]{2})\s+\(hex\)\s+(.+?)\s*$"
 )
 
-# Locked desk groups only. Do not invent AP/Printers/etc. at this scale.
+# Locked CoS mapping. Same IEEE MA-L OUIs as scripts/generate_endpoints.py.
+# Do not invent, randomize, or swap. Stop if IEEE MA-L disagrees.
 LOCKED_OUI = {
     "Phones": ("00:04:f2", "Polycom"),
+    "AP": ("9c:e3:30", "Cisco Meraki"),
+    "Printers": ("9c:7b:ef", "Hewlett Packard"),
+    "TVs": ("64:1b:2f", "Samsung Electronics"),
+    "Badge_Readers": ("00:30:8e", "HID Global"),
+    "Cameras": ("00:40:8c", "Axis Communications"),
+    "UPS": ("00:c0:b7", "APC"),
+    "Powerstrips": ("00:0d:5d", "Raritan"),
+    "Linux": ("00:c0:4f", "Dell"),
     "Windows": ("10:e7:c6", "Hewlett Packard"),
+    "RFID_Readers": ("00:16:25", "Impinj"),
 }
 ORG_ALIASES = {
     "apc": ("american power conversion",),
 }
 
+# NDO-225 locked counts. Desks first, then non-desk in this order.
+GROUP_COUNTS = {
+    "Phones": 71000,
+    "Windows": 71000,
+    "AP": 2250,
+    "Printers": 1550,
+    "Cameras": 1500,
+    "Badge_Readers": 800,
+    "TVs": 600,
+    "Linux": 500,
+    "UPS": 400,
+    "Powerstrips": 250,
+    "RFID_Readers": 150,
+}
+DESK_GROUPS = ("Phones", "Windows")
+NON_DESK_GROUPS = (
+    "AP",
+    "Printers",
+    "Cameras",
+    "Badge_Readers",
+    "TVs",
+    "Linux",
+    "UPS",
+    "Powerstrips",
+    "RFID_Readers",
+)
+
 TARGET_SWITCHES = 15000
 DESKS_PER_SWITCH = 5
-DESK_COUNT = TARGET_SWITCHES * DESKS_PER_SWITCH  # 75,000
+DESK_COUNT = GROUP_COUNTS["Phones"]  # 71,000
+DESK_SWITCH_COUNT = DESK_COUNT // DESKS_PER_SWITCH  # 14,200
 ROWS_PER_DESK = 2  # phone + PC
-TARGET_COUNT = DESK_COUNT * ROWS_PER_DESK  # 150,000
+NON_DESK_TOTAL = sum(GROUP_COUNTS[g] for g in NON_DESK_GROUPS)  # 8,000
+NON_DESK_SWITCH_COUNT = NON_DESK_TOTAL  # one non-desk device per switch
+TARGET_COUNT = DESK_COUNT * ROWS_PER_DESK + NON_DESK_TOTAL  # 150,000
 PORT_PREFIX = "Gi1/0/"
+DESK_PORT_MAX = DESKS_PER_SWITCH  # Gi1/0/1 .. Gi1/0/5
+NON_DESK_PORT_START = DESK_PORT_MAX + 1  # Gi1/0/6 and above
 COLUMNS = [
     "mac",
     "endpoint_identity_group",
@@ -76,11 +131,40 @@ COLUMNS = [
     "site",
 ]
 MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
+DESK_ID_RE = re.compile(r"^desk-\d{6}$")
 # Documented inventory salt (not a secret). Different from the 110 lab salt.
 ENTERPRISE_SALT = "ise-nac-enterprise-ieee-mal-v1"
 TRIVIAL_LAST = {f"00:00:{n:02x}" for n in range(1, 11)}
 DESCRIPTION = "Generated. Not hardware. IEEE MA-L."
 BANNED = ("password", "token", "secret")
+WIFI_NEEDLES = ("wi-fi", "wifi", "wireless client")
+
+
+def _assert_lock_math() -> None:
+    if DESK_COUNT % DESKS_PER_SWITCH != 0:
+        raise SystemExit(f"DESK_COUNT {DESK_COUNT} is not divisible by {DESKS_PER_SWITCH}")
+    if GROUP_COUNTS["Phones"] != GROUP_COUNTS["Windows"]:
+        raise SystemExit("Phones and Windows counts must match (one pair per desk)")
+    if sum(GROUP_COUNTS.values()) != TARGET_COUNT:
+        raise SystemExit(
+            f"GROUP_COUNTS sum {sum(GROUP_COUNTS.values())} != TARGET_COUNT {TARGET_COUNT}"
+        )
+    if TARGET_COUNT != 150000:
+        raise SystemExit("lock is 150000 rows")
+    if DESK_COUNT != 71000:
+        raise SystemExit("lock is 71000 desks")
+    if NON_DESK_TOTAL != 8000:
+        raise SystemExit("lock is 8000 non-desk rows")
+    if DESK_SWITCH_COUNT + (TARGET_SWITCHES - DESK_SWITCH_COUNT) != TARGET_SWITCHES:
+        raise SystemExit("desk switch split must cover devices.csv")
+    if TARGET_SWITCHES - NON_DESK_SWITCH_COUNT + NON_DESK_SWITCH_COUNT != TARGET_SWITCHES:
+        raise SystemExit("non-desk switch split must cover devices.csv")
+    extra = set(GROUP_COUNTS) - set(LOCKED_OUI)
+    missing = set(LOCKED_OUI) - set(GROUP_COUNTS)
+    if extra or missing:
+        raise SystemExit(f"group lock mismatch extra={sorted(extra)} missing={sorted(missing)}")
+    if "Wi-Fi Clients" in GROUP_COUNTS or "WiFi" in GROUP_COUNTS:
+        raise SystemExit("do not invent a Wi-Fi Clients group")
 
 
 def fetch_ieee_oui_text() -> str:
@@ -197,9 +281,9 @@ def load_devices() -> list[dict[str, str]]:
             ports = int(r["port_count"])
         except (KeyError, ValueError) as exc:
             raise SystemExit(f"devices.csv row missing port_count: {exc}") from exc
-        if ports < DESKS_PER_SWITCH:
+        if ports < NON_DESK_PORT_START:
             raise SystemExit(
-                f"{r['hostname']} port_count {ports} < {DESKS_PER_SWITCH} desks"
+                f"{r['hostname']} port_count {ports} < Gi1/0/{NON_DESK_PORT_START}"
             )
     return rows
 
@@ -225,36 +309,88 @@ def port_name(slot: int) -> str:
     return f"{PORT_PREFIX}{slot}"
 
 
+def port_slot(port: str) -> int | None:
+    if not re.fullmatch(rf"{re.escape(PORT_PREFIX)}[1-9]\d*", port):
+        return None
+    return int(port.rsplit("/", 1)[-1])
+
+
+def endpoint_row(
+    *,
+    group: str,
+    suffix: str,
+    ieee_org: str,
+    desk: str,
+    switch: str,
+    port: str,
+    site: str,
+) -> dict[str, str]:
+    oui, _locked = LOCKED_OUI[group]
+    return {
+        "mac": f"{oui}:{suffix}",
+        "endpoint_identity_group": group,
+        "oui": oui,
+        "organization": ieee_org,
+        "description": DESCRIPTION,
+        "desk": desk,
+        "switch": switch,
+        "port": port,
+        "site": site,
+    }
+
+
 def build(devices: list[dict[str, str]], ieee_org_by_group: dict[str, str]) -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
     used_suffixes = lab_suffixes()
     desk_n = 0
-    for sw in devices:
+    for sw in devices[:DESK_SWITCH_COUNT]:
         hostname = sw["hostname"]
         site = sw["site_code"]
         for slot in range(1, DESKS_PER_SWITCH + 1):
             desk_n += 1
             did = desk_id(desk_n)
             port = port_name(slot)
-            for group in ("Phones", "Windows"):
-                oui, _locked = LOCKED_OUI[group]
+            for group in DESK_GROUPS:
                 suffix = nic_suffix(f"{group}|{did}", used_suffixes)
-                mac = f"{oui}:{suffix}"
                 rows.append(
-                    {
-                        "mac": mac,
-                        "endpoint_identity_group": group,
-                        "oui": oui,
-                        "organization": ieee_org_by_group[group],
-                        "description": DESCRIPTION,
-                        "desk": did,
-                        "switch": hostname,
-                        "port": port,
-                        "site": site,
-                    }
+                    endpoint_row(
+                        group=group,
+                        suffix=suffix,
+                        ieee_org=ieee_org_by_group[group],
+                        desk=did,
+                        switch=hostname,
+                        port=port,
+                        site=site,
+                    )
                 )
     if desk_n != DESK_COUNT:
         raise SystemExit(f"internal desk count {desk_n} != {DESK_COUNT}")
+
+    # Last 8,000 switches; one non-desk device each on Gi1/0/6.
+    non_desk_switches = devices[-NON_DESK_SWITCH_COUNT:]
+    nd_i = 0
+    for group in NON_DESK_GROUPS:
+        want = GROUP_COUNTS[group]
+        for seq in range(1, want + 1):
+            sw = non_desk_switches[nd_i]
+            port = port_name(NON_DESK_PORT_START)
+            suffix = nic_suffix(f"{group}|infra|{seq:06d}", used_suffixes)
+            rows.append(
+                endpoint_row(
+                    group=group,
+                    suffix=suffix,
+                    ieee_org=ieee_org_by_group[group],
+                    desk="",  # non-desk: empty desk column
+                    switch=sw["hostname"],
+                    port=port,
+                    site=sw["site_code"],
+                )
+            )
+            nd_i += 1
+    if nd_i != NON_DESK_TOTAL:
+        raise SystemExit(f"internal non-desk count {nd_i} != {NON_DESK_TOTAL}")
+    if len(rows) != TARGET_COUNT:
+        raise SystemExit(f"internal row count {len(rows)} != {TARGET_COUNT}")
     return rows
 
 
@@ -286,17 +422,30 @@ def verify(rows: list[dict[str, str]], devices: list[dict[str, str]]) -> None:
     if overlap:
         errors.append(f"enterprise suffix collides with lab 110: {sorted(overlap)[:5]}")
     per_group = Counter(r["endpoint_identity_group"] for r in rows)
-    if per_group.get("Phones") != DESK_COUNT:
-        errors.append(f"Phones {per_group.get('Phones')} != {DESK_COUNT}")
-    if per_group.get("Windows") != DESK_COUNT:
-        errors.append(f"Windows {per_group.get('Windows')} != {DESK_COUNT}")
-    extra = set(per_group) - {"Phones", "Windows"}
+    for group, want in GROUP_COUNTS.items():
+        got = per_group.get(group)
+        if got != want:
+            errors.append(f"{group} {got} != {want}")
+    extra = set(per_group) - set(GROUP_COUNTS)
     if extra:
         errors.append(f"unknown groups in enterprise list: {sorted(extra)}")
+    if any("wifi" in g.lower() or "wi-fi" in g.lower() for g in per_group):
+        errors.append("Wi-Fi client group is not in this inventory")
+
+    desk_rows = [r for r in rows if (r.get("desk") or "").strip()]
+    non_desk_rows = [r for r in rows if not (r.get("desk") or "").strip()]
+    if len(non_desk_rows) != NON_DESK_TOTAL:
+        errors.append(f"non-desk rows {len(non_desk_rows)} != {NON_DESK_TOTAL}")
+    if len(desk_rows) != DESK_COUNT * ROWS_PER_DESK:
+        errors.append(f"desk rows {len(desk_rows)} != {DESK_COUNT * ROWS_PER_DESK}")
 
     by_desk: dict[str, list[dict[str, str]]] = defaultdict(list)
-    for r in rows:
-        by_desk[r["desk"]].append(r)
+    for r in desk_rows:
+        did = r["desk"]
+        if not DESK_ID_RE.fullmatch(did):
+            errors.append(f"desk id {did!r} is not desk-NNNNNN")
+            break
+        by_desk[did].append(r)
     if len(by_desk) != DESK_COUNT:
         errors.append(f"desk count {len(by_desk)} != {DESK_COUNT}")
 
@@ -307,7 +456,7 @@ def verify(rows: list[dict[str, str]], devices: list[dict[str, str]]) -> None:
             errors.append(f"{desk} has {len(items)} rows, want {ROWS_PER_DESK}")
             break
         groups = {i["endpoint_identity_group"] for i in items}
-        if groups != {"Phones", "Windows"}:
+        if groups != set(DESK_GROUPS):
             errors.append(f"{desk} groups {groups} != Phones+Windows")
             break
         places = {(i["switch"], i["port"], i["site"]) for i in items}
@@ -322,26 +471,79 @@ def verify(rows: list[dict[str, str]], devices: list[dict[str, str]]) -> None:
         if sw["site_code"] != site:
             errors.append(f"{desk} site {site!r} != devices.csv {sw['site_code']!r}")
             break
-        if not re.fullmatch(rf"{re.escape(PORT_PREFIX)}[1-9]\d*", port):
+        slot = port_slot(port)
+        if slot is None:
             errors.append(f"{desk} port {port!r} is not {PORT_PREFIX}N")
             break
-        slot = int(port.rsplit("/", 1)[-1])
-        if not (1 <= slot <= DESKS_PER_SWITCH):
-            errors.append(f"{desk} port {port} outside Gi1/0/1..{DESKS_PER_SWITCH}")
+        if not (1 <= slot <= DESK_PORT_MAX):
+            errors.append(f"{desk} port {port} outside Gi1/0/1..{DESK_PORT_MAX}")
             break
         desks_per_switch[switch] += 1
 
     if any(v != DESKS_PER_SWITCH for v in desks_per_switch.values()):
         bad = {k: v for k, v in desks_per_switch.items() if v != DESKS_PER_SWITCH}
         errors.append(f"desks per switch must be {DESKS_PER_SWITCH}: {list(bad.items())[:5]}")
-    if len(desks_per_switch) != TARGET_SWITCHES:
+    if len(desks_per_switch) != DESK_SWITCH_COUNT:
         errors.append(
-            f"switches used {len(desks_per_switch)} != {TARGET_SWITCHES} devices.csv rows"
+            f"switches with desks {len(desks_per_switch)} != {DESK_SWITCH_COUNT} "
+            f"(not every switch needs {DESKS_PER_SWITCH} desks)"
         )
+    expected_desk_hosts = {d["hostname"] for d in devices[:DESK_SWITCH_COUNT]}
+    if set(desks_per_switch) != expected_desk_hosts:
+        errors.append("desk switches must be the first 14200 devices.csv rows")
+
+    non_desk_hosts: set[str] = set()
+    for r in non_desk_rows:
+        group = r["endpoint_identity_group"]
+        if group in DESK_GROUPS:
+            errors.append(f"desk group {group} on a non-desk row {r.get('mac')}")
+            break
+        switch, port, site = r["switch"], r["port"], r["site"]
+        sw = device_by_host.get(switch)
+        if sw is None:
+            errors.append(f"non-desk switch {switch!r} not in devices.csv")
+            break
+        if sw["site_code"] != site:
+            errors.append(f"non-desk site {site!r} != devices.csv {sw['site_code']!r}")
+            break
+        slot = port_slot(port)
+        if slot is None:
+            errors.append(f"non-desk port {port!r} is not {PORT_PREFIX}N")
+            break
+        if slot < NON_DESK_PORT_START:
+            errors.append(f"non-desk port {port} is not above desk range Gi1/0/{DESK_PORT_MAX}")
+            break
+        if slot > int(sw["port_count"]):
+            errors.append(f"non-desk port {port} exceeds {switch} port_count {sw['port_count']}")
+            break
+        non_desk_hosts.add(switch)
+
+    if len(non_desk_hosts) != NON_DESK_SWITCH_COUNT:
+        errors.append(
+            f"switches with non-desk {len(non_desk_hosts)} != {NON_DESK_SWITCH_COUNT} "
+            "(one non-desk device per chosen switch)"
+        )
+    expected_nd_hosts = {d["hostname"] for d in devices[-NON_DESK_SWITCH_COUNT:]}
+    if non_desk_hosts and non_desk_hosts != expected_nd_hosts:
+        errors.append("non-desk switches must be the last 8000 devices.csv rows")
+
+    place_groups: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for r in rows:
+        place_groups[(r["switch"], r["port"])].append(r["endpoint_identity_group"])
+    for place, groups in place_groups.items():
+        if sorted(groups) == ["Phones", "Windows"]:
+            continue
+        if len(groups) == 1 and groups[0] in NON_DESK_GROUPS:
+            continue
+        errors.append(f"port occupancy {place} groups {groups} is not desk pair or single non-desk")
+        break
 
     for r in rows:
         mac = r["mac"]
         group = r["endpoint_identity_group"]
+        if group not in LOCKED_OUI:
+            errors.append(f"unknown group {group}")
+            break
         oui, _locked = LOCKED_OUI[group]
         if not MAC_RE.fullmatch(mac):
             errors.append(f"MAC not lowercase colon hex: {mac}")
@@ -378,14 +580,17 @@ def verify(rows: list[dict[str, str]], devices: list[dict[str, str]]) -> None:
         if "guest" in packed:
             errors.append("guest appears in enterprise inventory")
             break
+        if any(needle in packed for needle in WIFI_NEEDLES):
+            errors.append("Wi-Fi clients are not in this inventory")
+            break
         if any(bad in packed for bad in BANNED):
             errors.append(f"banned string present on {r.get('mac')}")
             break
 
     if TARGET_COUNT != 150000:
         errors.append("lock is 150000 rows")
-    if DESK_COUNT != 75000:
-        errors.append("lock is 75000 desks")
+    if DESK_COUNT != 71000:
+        errors.append("lock is 71000 desks")
     if errors:
         raise SystemExit("verification failed:\n  " + "\n  ".join(errors))
 
@@ -416,18 +621,32 @@ def write_csv(rows: list[dict[str, str]]) -> None:
 
 def print_summary(rows: list[dict[str, str]], wrote: bool) -> None:
     phone = next(r for r in rows if r["endpoint_identity_group"] == "Phones")
-    pc = next(r for r in rows if r["desk"] == phone["desk"] and r["endpoint_identity_group"] == "Windows")
-    last_desk = rows[-1]["desk"]
-    last_phone = next(r for r in rows if r["desk"] == last_desk and r["endpoint_identity_group"] == "Phones")
-    last_pc = next(r for r in rows if r["desk"] == last_desk and r["endpoint_identity_group"] == "Windows")
+    pc = next(
+        r
+        for r in rows
+        if r["desk"] == phone["desk"] and r["endpoint_identity_group"] == "Windows"
+    )
+    last_desk_id = desk_id(DESK_COUNT)
+    last_phone = next(
+        r for r in rows if r["desk"] == last_desk_id and r["endpoint_identity_group"] == "Phones"
+    )
+    last_pc = next(
+        r for r in rows if r["desk"] == last_desk_id and r["endpoint_identity_group"] == "Windows"
+    )
+    first_ap = next(r for r in rows if r["endpoint_identity_group"] == "AP")
+    last_rfid = next(r for r in reversed(rows) if r["endpoint_identity_group"] == "RFID_Readers")
     action = "wrote" if wrote else "verified"
     size = ENTERPRISE_CSV.stat().st_size if ENTERPRISE_CSV.is_file() else 0
     print(f"{action} {ENTERPRISE_CSV} ({len(rows)} rows, {size} bytes)")
     print(
-        f"lock desks={DESK_COUNT} rows={TARGET_COUNT} "
+        f"lock desks={DESK_COUNT} desk_switches={DESK_SWITCH_COUNT} "
+        f"non_desk={NON_DESK_TOTAL} rows={TARGET_COUNT} "
         f"switches={TARGET_SWITCHES} desks_per_switch={DESKS_PER_SWITCH}"
     )
-    print(f"terraform apply csvdecodes this file; endpoint_count default={TARGET_COUNT}. Lab endpoints.csv is inventory only.")
+    print(
+        "terraform apply csvdecodes this file; "
+        f"endpoint_count default={TARGET_COUNT}. Lab endpoints.csv is inventory only."
+    )
     print(
         f"sample {phone['desk']} {phone['switch']} {phone['port']} {phone['site']} "
         f"Phones {phone['mac']} | Windows {pc['mac']}"
@@ -436,6 +655,18 @@ def print_summary(rows: list[dict[str, str]], wrote: bool) -> None:
         f"last   {last_phone['desk']} {last_phone['switch']} {last_phone['port']} "
         f"{last_phone['site']} Phones {last_phone['mac']} | Windows {last_pc['mac']}"
     )
+    print(
+        f"non-desk desk={first_ap['desk']!r} {first_ap['switch']} {first_ap['port']} "
+        f"{first_ap['site']} AP {first_ap['mac']}"
+    )
+    print(
+        f"last-nd desk={last_rfid['desk']!r} {last_rfid['switch']} {last_rfid['port']} "
+        f"{last_rfid['site']} RFID_Readers {last_rfid['mac']}"
+    )
+    counts = Counter(r["endpoint_identity_group"] for r in rows)
+    for group, want in GROUP_COUNTS.items():
+        oui, locked_org = LOCKED_OUI[group]
+        print(f"  {group} {counts[group]} {oui} locked={locked_org!r}")
 
 
 def main() -> int:
@@ -446,6 +677,7 @@ def main() -> int:
         help="Check committed endpoints_enterprise.csv; do not write or fetch IEEE",
     )
     args = parser.parse_args()
+    _assert_lock_math()
     assert_lab_untouched()
     devices = load_devices()
     if args.verify:
@@ -463,7 +695,7 @@ def main() -> int:
         raise SystemExit(f"wc -l expected {TARGET_COUNT + 1}, got {len(lines)}")
     print_summary(rows, wrote=True)
     for group, (oui, locked_org) in LOCKED_OUI.items():
-        print(f"  {group} {oui} locked={locked_org!r} ieee={ieee_org_by_group[group]!r}")
+        print(f"  ieee {group} {oui} locked={locked_org!r} ieee={ieee_org_by_group[group]!r}")
     print(f"ieee_mal={IEEE_OUI_URL}")
     return 0
 
