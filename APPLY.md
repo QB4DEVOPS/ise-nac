@@ -159,6 +159,8 @@ Type `yes` if it asks. If this 400s or cannot connect, Device Admin / TACACS is 
 
 Only if **both** succeed, go to step 8.
 
+`terraform plan` proves ERS **talks**. The `test_cs` canary proves Device Admin. Neither proves ISE can ingest 150k. That first real ERS load is still step 8.
+
 ## 8. First apply — no switches
 
 Stay in the **same** PowerShell window.
@@ -208,12 +210,10 @@ If that prints errors, do not apply. Tell CoS.
 
 ---
 
-## After a good first apply
+## After a successful first apply
 
-Leave this folder as it is. Tell CoS it finished.
+This footer is **only** after a first apply that finished. If apply **died**, ignore this footer. Use the top section: re-run the same apply (`TF_VAR_nad_count=0`). Never destroy. Never delete state.
 
-Do not run `terraform apply` again unless CoS says so.
-
-Do not run `terraform destroy`.
+After a **successful** first apply only: leave this folder as it is. Tell CoS it finished. Do not start a new apply. Do not destroy.
 
 15,000 switches is a later apply. That is not this runbook.
