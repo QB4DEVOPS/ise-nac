@@ -65,11 +65,16 @@ policy rules in ISE push order (first match wins), same style as the TACACS CSVs
 YAML originals: `endpoint_identity_groups.yaml`, `endpoints.yaml`,
 `allowed_protocols.yaml`, `authorization_profiles.yaml`, `network_access.yaml`.
 Eleven groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS,
-Powerstrips, Linux, Windows, RFID_Readers). `endpoints.csv` is 110 lab
-MACs (10 per group) from `scripts/generate_endpoints.py`: locked IEEE
-MA-L OUI + generated last 3 octets. Source:
-https://standards-oui.ieee.org/oui/oui.txt. CSV cites `oui` and IEEE
-`organization`. Not hardware. No guest. No 15k dump.
+Powerstrips, Linux, Windows, RFID_Readers). Seven ACCESS_ACCEPT profiles
+(VLANs 10–70): `Wired_Data` 10, `Wired_Voice` 20 (voice), `Wired_Printer` 30,
+`Wired_AP` 40, `Wired_Camera` 50, `Wired_Badge` 60, `Wired_Facilities` 70.
+Authz first-match is not all-VLAN-10: Phones → Voice, Printers → Printer,
+AP → AP, Cameras → Camera, Badge_Readers/RFID_Readers → Badge,
+UPS/Powerstrips → Facilities, TVs/Linux/Windows → Data. No DACL. No guest.
+`endpoints.csv` is 110 lab MACs (10 per group) from
+`scripts/generate_endpoints.py`: locked IEEE MA-L OUI + generated last 3
+octets. Source: https://standards-oui.ieee.org/oui/oui.txt. CSV cites
+`oui` and IEEE `organization`. Not hardware. No 15k dump.
 
 `users.csv` / `users.yaml` are lab Internal Users from
 `scripts/generate_users.py`. Eight accounts, one per TACACS identity

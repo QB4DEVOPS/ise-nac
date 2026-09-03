@@ -4330,38 +4330,38 @@ network_access_authz:
   - order: 3
     name: ap
     endpoint_identity_group: AP
-    profile: Wired_Data
+    profile: Wired_AP
   - order: 4
-    name: tvs
-    endpoint_identity_group: TVs
-    profile: Wired_Data
+    name: cameras
+    endpoint_identity_group: Cameras
+    profile: Wired_Camera
   - order: 5
     name: badge_readers
     endpoint_identity_group: Badge_Readers
-    profile: Wired_Data
+    profile: Wired_Badge
   - order: 6
-    name: cameras
-    endpoint_identity_group: Cameras
-    profile: Wired_Data
+    name: rfid_readers
+    endpoint_identity_group: RFID_Readers
+    profile: Wired_Badge
   - order: 7
     name: ups
     endpoint_identity_group: UPS
-    profile: Wired_Data
+    profile: Wired_Facilities
   - order: 8
     name: powerstrips
     endpoint_identity_group: Powerstrips
-    profile: Wired_Data
+    profile: Wired_Facilities
   - order: 9
+    name: tvs
+    endpoint_identity_group: TVs
+    profile: Wired_Data
+  - order: 10
     name: linux
     endpoint_identity_group: Linux
     profile: Wired_Data
-  - order: 10
+  - order: 11
     name: windows
     endpoint_identity_group: Windows
-    profile: Wired_Data
-  - order: 11
-    name: rfid_readers
-    endpoint_identity_group: RFID_Readers
     profile: Wired_Data
 
 # IOS-XE access-switch TACACS command sets. Source for Terraform and nac.yaml.
@@ -4689,7 +4689,7 @@ endpoint_identity_groups:
     description: Wired IP phones. Voice VLAN 20. 10 lab MACs.
     system_defined: false
   - name: AP
-    description: Access points. Data VLAN 10. 10 lab MACs.
+    description: Access points. VLAN 40. 10 lab MACs.
     system_defined: false
   - name: Printers
     description: Wired MAB printers. VLAN 30. 10 lab MACs.
@@ -4698,16 +4698,16 @@ endpoint_identity_groups:
     description: Displays. Data VLAN 10. 10 lab MACs.
     system_defined: false
   - name: Badge_Readers
-    description: Badge readers. Data VLAN 10. 10 lab MACs.
+    description: Badge readers. VLAN 60. 10 lab MACs.
     system_defined: false
   - name: Cameras
-    description: Cameras. Data VLAN 10. 10 lab MACs.
+    description: Cameras. VLAN 50. 10 lab MACs.
     system_defined: false
   - name: UPS
-    description: UPS. Data VLAN 10. 10 lab MACs.
+    description: UPS. VLAN 70. 10 lab MACs.
     system_defined: false
   - name: Powerstrips
-    description: Power strips. Data VLAN 10. 10 lab MACs.
+    description: Power strips. VLAN 70. 10 lab MACs.
     system_defined: false
   - name: Linux
     description: Linux hosts. Data VLAN 10. 10 lab MACs.
@@ -4716,7 +4716,7 @@ endpoint_identity_groups:
     description: Windows hosts. Data VLAN 10. 10 lab MACs.
     system_defined: false
   - name: RFID_Readers
-    description: RFID readers. Data VLAN 10. 10 lab MACs.
+    description: RFID readers. VLAN 60. 10 lab MACs.
     system_defined: false
 
 # Generated lab endpoints. Do not edit by hand.
@@ -5337,7 +5337,7 @@ allowed_protocols:
     eap_tls_l_bit: false
     require_message_auth: false
 
-# Network Access authorization profiles. ACCESS_ACCEPT. Lab VLANs 10/20/30.
+# Network Access authorization profiles. ACCESS_ACCEPT. Lab VLANs 10–70.
 # CiscoDevNet/ise 0.3.4: ise_authorization_profile.
 # Schema used: name, description, access_type (ACCESS_ACCEPT|ACCESS_REJECT),
 # vlan_name_id (VLAN name or ID), vlan_tag_id (0-31), voice_domain_permission.
@@ -5361,6 +5361,30 @@ authorization_profiles:
     description: ACCESS_ACCEPT MAB. Lab VLAN 30.
     access_type: ACCESS_ACCEPT
     vlan_name_id: "30"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_AP
+    description: ACCESS_ACCEPT access points. Lab VLAN 40.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "40"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Camera
+    description: ACCESS_ACCEPT cameras. Lab VLAN 50.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "50"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Badge
+    description: ACCESS_ACCEPT badge and RFID readers. Lab VLAN 60.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "60"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Facilities
+    description: ACCESS_ACCEPT UPS and powerstrips. Lab VLAN 70.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "70"
     vlan_tag_id: 0
     voice_domain_permission: false
 

@@ -93,7 +93,7 @@ Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. 
 - Endpoint identity groups: Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers. Drops Workstation / IP-Phone / Printer. No guest.
 - 10 unique lab MACs per group (110 total) stay in `endpoints.csv` / `endpoints.yaml` as Git inventory. Generator, not hardware. Terraform apply does **not** read that file.
 - Two Allowed Protocols (`ise_allowed_protocols` 0.3.4): 802.1X EAP and MAB PAP/ASCII.
-- ACCESS_ACCEPT profiles: lab VLAN 10 data, 20 voice, 30 MAB. Authz: Phones → VLAN 20 (voice), Printers → VLAN 30 (MAB), all other groups → VLAN 10 (data). First-match.
+- ACCESS_ACCEPT profiles: lab VLANs 10–70. Authz first-match: Phones → VLAN 20 voice (`Wired_Voice`), Printers → VLAN 30 (`Wired_Printer`), AP → VLAN 40 (`Wired_AP`), Cameras → VLAN 50 (`Wired_Camera`), Badge_Readers/RFID_Readers → VLAN 60 (`Wired_Badge`), UPS/Powerstrips → VLAN 70 (`Wired_Facilities`), TVs/Linux/Windows → VLAN 10 (`Wired_Data`). Not all 11 groups on VLAN 10. No DACL.
 - One Network Access policy set. Dot1X → Internal Users. MAB → Internal Endpoints continue-if-not-found.
 - NAD `authentication_network_protocol` is `RADIUS`. Keep `tacacs_shared_secret`. Access stays `access-marketing`. No HQ/DC city tags. `nad_count` default stays 15000.
 

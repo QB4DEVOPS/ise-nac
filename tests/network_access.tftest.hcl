@@ -155,8 +155,8 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = length(ise_authorization_profile.this) == 3
-    error_message = "Exactly three ACCESS_ACCEPT authorization profiles."
+    condition     = length(ise_authorization_profile.this) == 7
+    error_message = "Exactly seven ACCESS_ACCEPT authorization profiles (VLANs 10–70)."
   }
 
   assert {
@@ -167,6 +167,11 @@ run "wired_8021x_mab_policy" {
   assert {
     condition     = ise_authorization_profile.this["Wired_Data"].vlan_name_id == "10"
     error_message = "Wired_Data vlan_name_id must be 10 (0.3.4 vlan_name_id)."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_Data"].voice_domain_permission == false
+    error_message = "Wired_Data voice_domain_permission must be false."
   }
 
   assert {
@@ -187,6 +192,60 @@ run "wired_8021x_mab_policy" {
   assert {
     condition     = ise_authorization_profile.this["Wired_Printer"].access_type == "ACCESS_ACCEPT"
     error_message = "Wired_Printer access_type must be ACCESS_ACCEPT."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_AP"].vlan_name_id == "40"
+    error_message = "Wired_AP vlan_name_id must be 40."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_AP"].voice_domain_permission == false
+    error_message = "Wired_AP voice_domain_permission must be false."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_Camera"].vlan_name_id == "50"
+    error_message = "Wired_Camera vlan_name_id must be 50."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_Camera"].voice_domain_permission == false
+    error_message = "Wired_Camera voice_domain_permission must be false."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_Badge"].vlan_name_id == "60"
+    error_message = "Wired_Badge vlan_name_id must be 60."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_Badge"].voice_domain_permission == false
+    error_message = "Wired_Badge voice_domain_permission must be false."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_Facilities"].vlan_name_id == "70"
+    error_message = "Wired_Facilities vlan_name_id must be 70."
+  }
+
+  assert {
+    condition     = ise_authorization_profile.this["Wired_Facilities"].voice_domain_permission == false
+    error_message = "Wired_Facilities voice_domain_permission must be false."
+  }
+
+  assert {
+    condition = alltrue([
+      for p in ise_authorization_profile.this : p.access_type == "ACCESS_ACCEPT"
+    ])
+    error_message = "Every authorization profile access_type must be ACCESS_ACCEPT."
+  }
+
+  assert {
+    condition = alltrue([
+      for p in ise_authorization_profile.this : p.vlan_tag_id == 0
+    ])
+    error_message = "Every authorization profile vlan_tag_id must be 0 (0.3.4)."
   }
 
   assert {
@@ -235,13 +294,48 @@ run "wired_8021x_mab_policy" {
   }
 
   assert {
-    condition     = ise_network_access_authorization_rule.authz["windows"].profiles == toset(["Wired_Data"])
-    error_message = "Authz windows must use Wired_Data (VLAN 10)."
+    condition     = ise_network_access_authorization_rule.authz["ap"].profiles == toset(["Wired_AP"])
+    error_message = "Authz ap must use Wired_AP (VLAN 40)."
   }
 
   assert {
-    condition     = ise_network_access_authorization_rule.authz["ap"].profiles == toset(["Wired_Data"])
-    error_message = "Authz ap must use Wired_Data (VLAN 10)."
+    condition     = ise_network_access_authorization_rule.authz["cameras"].profiles == toset(["Wired_Camera"])
+    error_message = "Authz cameras must use Wired_Camera (VLAN 50)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["badge_readers"].profiles == toset(["Wired_Badge"])
+    error_message = "Authz badge_readers must use Wired_Badge (VLAN 60)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["rfid_readers"].profiles == toset(["Wired_Badge"])
+    error_message = "Authz rfid_readers must use Wired_Badge (VLAN 60)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["ups"].profiles == toset(["Wired_Facilities"])
+    error_message = "Authz ups must use Wired_Facilities (VLAN 70)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["powerstrips"].profiles == toset(["Wired_Facilities"])
+    error_message = "Authz powerstrips must use Wired_Facilities (VLAN 70)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["tvs"].profiles == toset(["Wired_Data"])
+    error_message = "Authz tvs must use Wired_Data (VLAN 10)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["linux"].profiles == toset(["Wired_Data"])
+    error_message = "Authz linux must use Wired_Data (VLAN 10)."
+  }
+
+  assert {
+    condition     = ise_network_access_authorization_rule.authz["windows"].profiles == toset(["Wired_Data"])
+    error_message = "Authz windows must use Wired_Data (VLAN 10)."
   }
 
   assert {

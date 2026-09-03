@@ -51,16 +51,25 @@ _ENDPOINT_TOTAL = len(_LOCKED_GROUPS) * _MACS_PER_GROUP
 _AUTHZ_ORDER = (
     ("phones", "Phones", "Wired_Voice"),
     ("printers", "Printers", "Wired_Printer"),
-    ("ap", "AP", "Wired_Data"),
+    ("ap", "AP", "Wired_AP"),
+    ("cameras", "Cameras", "Wired_Camera"),
+    ("badge_readers", "Badge_Readers", "Wired_Badge"),
+    ("rfid_readers", "RFID_Readers", "Wired_Badge"),
+    ("ups", "UPS", "Wired_Facilities"),
+    ("powerstrips", "Powerstrips", "Wired_Facilities"),
     ("tvs", "TVs", "Wired_Data"),
-    ("badge_readers", "Badge_Readers", "Wired_Data"),
-    ("cameras", "Cameras", "Wired_Data"),
-    ("ups", "UPS", "Wired_Data"),
-    ("powerstrips", "Powerstrips", "Wired_Data"),
     ("linux", "Linux", "Wired_Data"),
     ("windows", "Windows", "Wired_Data"),
-    ("rfid_readers", "RFID_Readers", "Wired_Data"),
 )
+_LOCKED_PROFILES = {
+    "Wired_Data": ("10", False),
+    "Wired_Voice": ("20", True),
+    "Wired_Printer": ("30", False),
+    "Wired_AP": ("40", False),
+    "Wired_Camera": ("50", False),
+    "Wired_Badge": ("60", False),
+    "Wired_Facilities": ("70", False),
+}
 _GUEST_RE = re.compile(r"guest", re.I)
 _ENDPOINT_RES = re.compile(r'resource\s+"ise_endpoint"\s+')
 _NA_POLICY_RES = re.compile(r'resource\s+"ise_network_access_policy_set"\s+"([^"]+)"')
@@ -163,7 +172,7 @@ class Rule(RuleBase):
     id = "107"
     description = (
         "Wired 802.1X + MAB: eleven endpoint groups, 110 lab MACs, two Allowed "
-        "Protocols, ACCESS_ACCEPT VLANs 10/20/30, one Network Access policy set"
+        "Protocols, ACCESS_ACCEPT VLANs 10–70, one Network Access policy set"
     )
     severity = "HIGH"
     title = "WIRED 802.1X AND MAB NETWORK ACCESS POLICY LOCK"
@@ -175,8 +184,13 @@ Powerstrips, Linux, Windows, RFID_Readers). 10 unique lab MACs per group
 (110 total) using locked IEEE MA-L OUIs plus generated last 3 octets.
 No 02:00:GG. No 00:00:01–00:00:0A. No guest. No 15k MAC dump. Two Allowed
 Protocols (ise_allowed_protocols): 802.1X EAP and MAB PAP/ASCII.
-Authorization profiles ACCESS_ACCEPT with lab VLAN 10 data, 20 voice, 30 MAB.
-Phones → Wired_Voice, Printers → Wired_Printer, all other groups → Wired_Data.
+Authorization profiles ACCESS_ACCEPT with lab VLANs 10–70: Wired_Data 10,
+Wired_Voice 20 (voice_domain_permission), Wired_Printer 30, Wired_AP 40,
+Wired_Camera 50, Wired_Badge 60, Wired_Facilities 70. First-match authz:
+Phones → Wired_Voice, Printers → Wired_Printer, AP → Wired_AP,
+Cameras → Wired_Camera, Badge_Readers/RFID_Readers → Wired_Badge,
+UPS/Powerstrips → Wired_Facilities, TVs/Linux/Windows → Wired_Data.
+Not all 11 groups on VLAN 10.
 One Network Access policy set (not Device Admin). Dot1X → Internal Users.
 MAB → Internal Endpoints continue-if-not-found. Authorization first-match
 with rank-update resources. Terraform apply default endpoint_count=150000
@@ -385,18 +399,14 @@ NAD_RADIUS_SECRET."""
 
         profiles = _load_yaml(_PROFILES_YAML, "authorization_profiles")
         prof_by_name = {p.get("name"): p for p in profiles}
-        expect_vlan = {
-            "Wired_Data": ("10", False),
-            "Wired_Voice": ("20", True),
-            "Wired_Printer": ("30", False),
-        }
-        if set(prof_by_name) != set(expect_vlan):
+        if set(prof_by_name) != set(_LOCKED_PROFILES):
             add(
                 "authorization_profiles.yaml must define Wired_Data, Wired_Voice, "
-                f"Wired_Printer (got {sorted(prof_by_name)}).",
+                "Wired_Printer, Wired_AP, Wired_Camera, Wired_Badge, "
+                f"Wired_Facilities (got {sorted(prof_by_name)}).",
                 "authorization_profiles.yaml",
             )
-        for name, (vlan, voice) in expect_vlan.items():
+        for name, (vlan, voice) in _LOCKED_PROFILES.items():
             p = prof_by_name.get(name) or {}
             if p.get("access_type") != "ACCESS_ACCEPT":
                 add(
@@ -415,6 +425,13 @@ NAD_RADIUS_SECRET."""
             if bool(p.get("voice_domain_permission")) != voice:
                 add(
                     f"Authorization profile '{name}' voice_domain_permission must be {voice}.",
+                    "authorization_profiles.yaml",
+                    name,
+                )
+            if int(p.get("vlan_tag_id") or -1) != 0:
+                add(
+                    f"Authorization profile '{name}' vlan_tag_id must be 0 "
+                    "(0.3.4 ise_authorization_profile.vlan_tag_id).",
                     "authorization_profiles.yaml",
                     name,
                 )
@@ -468,7 +485,9 @@ NAD_RADIUS_SECRET."""
         if got_authz != list(_AUTHZ_ORDER):
             add(
                 "network_access_authz.csv first-match must be Phones→Wired_Voice, "
-                "Printers→Wired_Printer, then remaining groups→Wired_Data "
+                "Printers→Wired_Printer, AP→Wired_AP, Cameras→Wired_Camera, "
+                "Badge_Readers/RFID_Readers→Wired_Badge, "
+                "UPS/Powerstrips→Wired_Facilities, TVs/Linux/Windows→Wired_Data "
                 f"(got {got_authz}). Drop Workstation / IP-Phone / Printer. No guest.",
                 "network_access_authz.csv",
             )
