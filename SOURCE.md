@@ -100,14 +100,17 @@ against the (hex) assignment — do not invent others:
 Last 3 octets are hashed lab suffixes, unique across 110, not `00:00:01`–
 `00:00:0A`, not copied from a NIC. Drop the `02:00:GG` pattern.
 
-`endpoints_enterprise.csv` is the NDO-200 **apply** inventory: **150,000**
-rows, **75,000** desks, phone + PC on the same switch port. Generator:
-`scripts/generate_enterprise_endpoints.py`. Not hardware. Same IEEE MA-L
-OUIs for Phones (`00:04:F2` Polycom) and Windows (`10:E7:C6` Hewlett
-Packard). Placement is 5 desks per `devices.csv` switch (`Gi1/0/1`–
-`Gi1/0/5`). Terraform `csvdecode`s this file. `endpoint_count` default
-**150000**. Lab `endpoints.csv` (110) stays in Git as inventory only;
-do not apply both. No 150k YAML.
+`endpoints_enterprise.csv` is the NDO-225 **apply** inventory: **150,000**
+rows (Small PAN ceiling). **71,000** desks (phone + PC on the same switch
+port) plus **8,000** non-desk rows for the other 9 groups. No Wi-Fi
+clients; AP rows are Meraki access points. Generator:
+`scripts/generate_enterprise_endpoints.py`. Not hardware. Locked IEEE
+MA-L OUIs (same table as the lab 110). Desk placement is 14,200 of 15,000
+`devices.csv` switches × 5 desks (`Gi1/0/1`–`Gi1/0/5`); last 800 switches
+have no desks. Non-desk devices use an empty `desk` column and port
+`Gi1/0/6` on the last 8,000 switches. Terraform `csvdecode`s this file.
+`endpoint_count` default **150000**. Lab `endpoints.csv` (110) stays in
+Git as inventory only; do not apply both. No 150k YAML.
 
 `tacacs_authz.csv` is TACACS authorization rules in ISE push order (first match
 wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-bound,

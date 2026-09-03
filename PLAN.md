@@ -114,15 +114,29 @@ Default `nad_count` is **15000**. Default `endpoint_count` is **150000**. Defaul
 
 ## Enterprise endpoint inventory (apply path)
 
-NDO-200 lock (CoS 2026-09-01):
+NDO-225 lock (CoS 2026-09-03). Total stays **150,000** (Small PAN ceiling). Not 300k. Terraform **must** `csvdecode` `endpoints_enterprise.csv` and create `ise_endpoint` for those rows.
 
-- **150,000** endpoint rows. Not 300k. Terraform **must** `csvdecode` `endpoints_enterprise.csv` and create `ise_endpoint` for those rows.
-- **75,000** desks. Each desk is a **phone and a PC on the same switch port** (75k Phones + 75k Windows).
-- File: `endpoints_enterprise.csv`. Rebuild: `python3 scripts/generate_enterprise_endpoints.py`.
-- Placement: 15,000 `devices.csv` switches × 5 desks = 75,000 desks. Ports `Gi1/0/1`–`Gi1/0/5`. Phone IEEE MA-L `00:04:f2` (Polycom) and Windows/PC `10:e7:c6` (Hewlett Packard) share that port. Columns: `desk`, `switch`, `port`, `site`.
+| Group | Rows | Placement |
+| --- | --- | --- |
+| Phones (desk) | 71,000 | Same switch/port/site as the matching Windows row. `Gi1/0/1`–`Gi1/0/5`. OUI `00:04:f2` Polycom. |
+| Windows (desk) | 71,000 | Same switch/port/site as the matching Phones row. OUI `10:e7:c6` Hewlett Packard. |
+| AP | 2,250 | Meraki access points (infrastructure), not Wi-Fi *clients*. OUI `9c:e3:30`. |
+| Printers | 1,550 | Own port. OUI `9c:7b:ef` Hewlett Packard. |
+| Cameras | 1,500 | Own port. OUI `00:40:8c` Axis Communications AB. |
+| Badge_Readers | 800 | Own port. OUI `00:30:8e` Crossmatch/HID Global. |
+| TVs | 600 | Own port. OUI `64:1b:2f` Samsung Electronics. |
+| Linux | 500 | Own port. OUI `00:c0:4f` Dell Inc. |
+| UPS | 400 | Own port. OUI `00:c0:b7` AMERICAN POWER CONVERSION (APC). |
+| Powerstrips | 250 | Own port. OUI `00:0d:5d` Raritan Computer. |
+| RFID_Readers | 150 | Own port. OUI `00:16:25` Impinj. |
+| **Total** | **150,000** | No Wi-Fi Clients group. |
+
+- File: `endpoints_enterprise.csv`. Rebuild: `python3 scripts/generate_enterprise_endpoints.py`. Check: `python3 scripts/generate_enterprise_endpoints.py --verify`.
+- **71,000 desks.** Math is exact: 14,200 of 15,000 `devices.csv` switches × 5 desks. Ports `Gi1/0/1`–`Gi1/0/5`. Last 800 switches have no desks (not every switch needs 5). Phone + PC share that port. Column `desk` is `desk-NNNNNN`.
+- **8,000 non-desk rows.** One device each on the last 8,000 switches, port `Gi1/0/6` (above the desk range) at that switch's site. `desk` is empty. Exact split: AP through Linux (7,200) land on switches that also have desks; UPS + Powerstrips + RFID_Readers (800) land on the 800 desk-less switches.
 - **`endpoint_count` default is 150000.** `TF_VAR_endpoint_count` can cap. Groups-only: `TF_VAR_endpoint_count=0`.
 - Lab `endpoints.csv` / `endpoints.yaml` / `scripts/generate_endpoints.py` stay **110** in Git as inventory only. Terraform does not read the lab file. Do not apply both (Small PAN).
-- CSV only (no 150k YAML). GitHub size. `nac-validate` stays on the lab YAML set.
+- CSV only (no 150k YAML). GitHub size. `nac-validate` stays on the lab YAML set (plus enterprise CSV count checks).
 
 One PAN: Location NDGs were ~50 seconds each. Full apply (400 sites + 151 folders + 15,000 NADs) will take a long time. Do not apply from an agent.
 

@@ -9,7 +9,7 @@
 #   ise_network_access_authentication_rule_update_ranks
 #   ise_network_access_authorization_rule  (profiles = set of names)
 #   ise_network_access_authorization_rule_update_ranks
-# 11 groups. Apply path: 150k from endpoints_enterprise.csv (phone+PC desks).
+# 11 groups. Apply path: 150k from endpoints_enterprise.csv (71k desks + 8k infra).
 # Lab endpoints.csv (110) is Git inventory only. Default endpoint_count=150000.
 # No guest. Do not apply both files.
 # Schema cites:

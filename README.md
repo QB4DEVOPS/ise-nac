@@ -174,16 +174,33 @@ Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. 
 
 ## Enterprise endpoint inventory (apply path)
 
-NDO-200 lock (CoS 2026-09-01): **150,000** rows, **75,000** desks, each desk a **phone and a PC on the same switch port**. Not 300k. Terraform **must** read this file.
+NDO-225 lock (CoS 2026-09-03): **150,000** rows (Small PAN ceiling). **71,000** desks, each desk a **phone and a PC on the same switch port**, plus **8,000** infrastructure endpoints across the other 9 identity groups. No Wi-Fi *clients* — AP rows are Meraki access points. Not 300k. Terraform **must** read this file.
+
+| Group | Rows | Notes |
+| --- | --- | --- |
+| Phones | 71,000 | Desk. IEEE MA-L `00:04:f2` Polycom. |
+| Windows | 71,000 | Desk. IEEE MA-L `10:e7:c6` Hewlett Packard. Same switch/port/site as the phone. |
+| AP | 2,250 | Meraki AP infrastructure (`9c:e3:30`). Not wireless clients. |
+| Printers | 1,550 | `9c:7b:ef` Hewlett Packard. |
+| Cameras | 1,500 | `00:40:8c` Axis Communications AB. |
+| Badge_Readers | 800 | `00:30:8e` Crossmatch/HID Global. |
+| TVs | 600 | `64:1b:2f` Samsung Electronics. |
+| Linux | 500 | `00:c0:4f` Dell Inc. |
+| UPS | 400 | `00:c0:b7` AMERICAN POWER CONVERSION (APC). |
+| Powerstrips | 250 | `00:0d:5d` Raritan Computer. |
+| RFID_Readers | 150 | `00:16:25` Impinj. |
+| **Total** | **150,000** | |
 
 | Object | Source |
 | --- | --- |
 | Apply CSV | `endpoints_enterprise.csv` — exactly 150000 data rows. `ise_endpoint` (`name`, `mac`, `group_id`, `static_group_assignment`, `static_profile_assignment`). Rebuild: `python3 scripts/generate_enterprise_endpoints.py`. Check: `python3 scripts/generate_enterprise_endpoints.py --verify`. |
 | Lab inventory | `endpoints.csv` / `endpoints.yaml` / `scripts/generate_endpoints.py` — still 110. Terraform does **not** `csvdecode` this file. |
 
-Placement: 15,000 `devices.csv` access switches × 5 desks = 75,000 desks. Each desk uses one access port (`Gi1/0/1`–`Gi1/0/5` on that switch). The Phones row (IEEE MA-L `00:04:f2` Polycom) and the Windows/PC row (`10:e7:c6` Hewlett Packard) share that port, site, and switch. Columns `desk`, `switch`, `port`, `site` are on every row so the pairing is visible in Excel.
+Desk placement: 14,200 of 15,000 `devices.csv` access switches × 5 desks = 71,000 desks. Each desk uses one access port (`Gi1/0/1`–`Gi1/0/5`). The last 800 switches have no desks (not every switch needs 5). The Phones row and the Windows/PC row share that port, site, and switch. Column `desk` is `desk-NNNNNN`.
 
-**Default apply is 150k.** pan1 apply is `TF_VAR_endpoint_count` / default **150000** against `endpoints_enterprise.csv`. Do not apply the lab 110 with the 150k (Small PAN). No 150k YAML (GitHub size). `nac-validate` still runs on the existing YAML set (lab 110) only.
+Non-desk placement: one device each on the last 8,000 switches, port `Gi1/0/6` (above the desk range) at that switch's site. `desk` is **empty** on those rows. Exact split: AP through Linux (7,200) share a switch with desks; UPS + Powerstrips + RFID_Readers (800) sit on the 800 desk-less switches.
+
+**Default apply is 150k.** pan1 apply is `TF_VAR_endpoint_count` / default **150000** against `endpoints_enterprise.csv`. Do not apply the lab 110 with the 150k (Small PAN). No 150k YAML (GitHub size). `nac-validate` still runs on the existing YAML set (lab 110) and checks the enterprise CSV counts.
 
 Lab MACs use locked IEEE MA-L OUIs from https://standards-oui.ieee.org/oui/oui.txt plus generated last 3 octets (SHA-256 lab suffixes, unique across 110). Not `02:00:GG`. Not `00:00:01`–`00:00:0A`. CSV cites `oui` and IEEE `organization`. Documented as lab. Not copied from hardware.
 

@@ -97,13 +97,53 @@ run "enterprise_default_150000" {
   }
 
   assert {
-    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Phones"]) == 75000
-    error_message = "75000 Phones rows."
+    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Phones"]) == 71000
+    error_message = "71000 Phones rows (NDO-225 desks)."
   }
 
   assert {
-    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Windows"]) == 75000
-    error_message = "75000 Windows rows."
+    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Windows"]) == 71000
+    error_message = "71000 Windows rows (NDO-225 desks)."
+  }
+
+  assert {
+    condition = (
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "AP"]) == 2250 &&
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "Printers"]) == 1550 &&
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "Cameras"]) == 1500 &&
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "Badge_Readers"]) == 800 &&
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "TVs"]) == 600 &&
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "Linux"]) == 500 &&
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "UPS"]) == 400 &&
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "Powerstrips"]) == 250 &&
+      length([for e in local.endpoints : e if e.endpoint_identity_group == "RFID_Readers"]) == 150
+    )
+    error_message = "NDO-225 non-desk counts: AP 2250, Printers 1550, Cameras 1500, Badge_Readers 800, TVs 600, Linux 500, UPS 400, Powerstrips 250, RFID_Readers 150."
+  }
+
+  assert {
+    condition     = local.endpoints[142000].endpoint_identity_group == "AP"
+    error_message = "First non-desk row (after 71000 desks) is AP."
+  }
+
+  assert {
+    condition     = local.endpoints[142000].desk == ""
+    error_message = "Non-desk rows use an empty desk column."
+  }
+
+  assert {
+    condition     = local.endpoints[142000].port == "Gi1/0/6"
+    error_message = "Non-desk port is Gi1/0/6 (above desk range Gi1/0/1-5)."
+  }
+
+  assert {
+    condition     = startswith(ise_endpoint.this[142000].mac, "9c:e3:30:")
+    error_message = "AP MAC is IEEE MA-L 9C:E3:30 (Cisco Meraki)."
+  }
+
+  assert {
+    condition     = local.endpoints[149999].endpoint_identity_group == "RFID_Readers"
+    error_message = "Last enterprise row is RFID_Readers."
   }
 
   assert {

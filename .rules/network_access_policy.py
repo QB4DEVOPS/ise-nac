@@ -20,6 +20,7 @@ _ROOT = Path(__file__).resolve().parents[1]
 _GROUPS_YAML = _ROOT / "endpoint_identity_groups.yaml"
 _ENDPOINTS_YAML = _ROOT / "endpoints.yaml"
 _ENDPOINTS_CSV = _ROOT / "endpoints.csv"
+_ENTERPRISE_CSV = _ROOT / "endpoints_enterprise.csv"
 _PROTOCOLS_YAML = _ROOT / "allowed_protocols.yaml"
 _PROFILES_YAML = _ROOT / "authorization_profiles.yaml"
 _POLICY_YAML = _ROOT / "network_access.yaml"
@@ -76,6 +77,20 @@ _ENTERPRISE_ENDPOINTS_FILE = re.compile(
     r'file\("\$\{path\.module\}/endpoints_enterprise\.csv"\)'
 )
 _MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
+_ENTERPRISE_GROUP_COUNTS = {
+    "Phones": 71000,
+    "Windows": 71000,
+    "AP": 2250,
+    "Printers": 1550,
+    "Cameras": 1500,
+    "Badge_Readers": 800,
+    "TVs": 600,
+    "Linux": 500,
+    "UPS": 400,
+    "Powerstrips": 250,
+    "RFID_Readers": 150,
+}
+_ENTERPRISE_TOTAL = 150000
 _LOCKED_OUI = {
     "Phones": "00:04:f2",
     "AP": "9c:e3:30",
@@ -165,8 +180,10 @@ Phones → Wired_Voice, Printers → Wired_Printer, all other groups → Wired_D
 One Network Access policy set (not Device Admin). Dot1X → Internal Users.
 MAB → Internal Endpoints continue-if-not-found. Authorization first-match
 with rank-update resources. Terraform apply default endpoint_count=150000
-from endpoints_enterprise.csv. Lab endpoints.csv / endpoints.yaml stay 110
-(inventory only; not csvdecode'd by Terraform). Do not apply both."""
+from endpoints_enterprise.csv (NDO-225: 71k Phones + 71k Windows desks,
+plus 8k of the other 9 groups; no Wi-Fi clients). Lab endpoints.csv /
+endpoints.yaml stay 110 (inventory only; not csvdecode'd by Terraform).
+Do not apply both."""
     recommendation = """\
 Keep endpoint_count default 150000 (all endpoints_enterprise.csv rows).
 Groups-only is TF_VAR_endpoint_count=0. Cap with TF_VAR_endpoint_count.
@@ -552,6 +569,59 @@ NAD_RADIUS_SECRET."""
                 "(lab 110 is inventory only; do not apply both).",
                 "locals.tf",
             )
+
+        if not _ENTERPRISE_CSV.is_file():
+            add(
+                "endpoints_enterprise.csv is missing (150000 apply-path MACs).",
+                "endpoints_enterprise.csv",
+            )
+        else:
+            ent = _load_csv(_ENTERPRISE_CSV)
+            if len(ent) != _ENTERPRISE_TOTAL:
+                add(
+                    f"endpoints_enterprise.csv must have {_ENTERPRISE_TOTAL} rows "
+                    f"(got {len(ent)}). Small PAN ceiling. Not 300k. Not lab 110.",
+                    "endpoints_enterprise.csv",
+                )
+            ent_groups = Counter(r.get("endpoint_identity_group") for r in ent)
+            for name, want in _ENTERPRISE_GROUP_COUNTS.items():
+                if ent_groups.get(name) != want:
+                    add(
+                        f"endpoints_enterprise.csv group '{name}' must have {want} "
+                        f"rows (got {ent_groups.get(name)}). NDO-225 lock.",
+                        "endpoints_enterprise.csv",
+                        name,
+                    )
+            extra_ent = set(ent_groups) - set(_ENTERPRISE_GROUP_COUNTS)
+            if extra_ent:
+                add(
+                    f"endpoints_enterprise.csv has unknown groups {sorted(extra_ent)}. "
+                    "No Wi-Fi Clients group.",
+                    "endpoints_enterprise.csv",
+                )
+            if ent and len(ent) >= 2:
+                if (ent[0].get("endpoint_identity_group") != "Phones"
+                        or ent[1].get("endpoint_identity_group") != "Windows"):
+                    add(
+                        "First two enterprise rows must be Phones then Windows (same desk).",
+                        "endpoints_enterprise.csv",
+                    )
+                elif not (
+                    ent[0].get("desk")
+                    and ent[0].get("desk") == ent[1].get("desk")
+                    and ent[0].get("switch") == ent[1].get("switch")
+                    and ent[0].get("port") == ent[1].get("port")
+                    and ent[0].get("site") == ent[1].get("site")
+                ):
+                    add(
+                        "Phone and PC must share desk, switch, port, and site.",
+                        "endpoints_enterprise.csv",
+                    )
+            if len(ent) > 142000 and (ent[142000].get("desk") or "").strip():
+                add(
+                    "Non-desk enterprise rows must use an empty desk column.",
+                    "endpoints_enterprise.csv",
+                )
 
         blob = "\n".join(
             [
