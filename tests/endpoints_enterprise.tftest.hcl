@@ -2,6 +2,8 @@
 # Lab endpoints.csv stays 110 in Git and is not csvdecode'd by locals.tf.
 # mock_provider: no PAN. nad_count=0 and user_count=0 so this run plans
 # 150k ise_endpoint only (not 15k NADs + 8 users on top).
+# Per-group counts: O(1) index boundaries here. Full 150k scans belong in
+# python3 scripts/generate_enterprise_endpoints.py --verify and nac-validate.
 mock_provider "ise" {}
 
 run "enterprise_default_150000" {
@@ -97,13 +99,13 @@ run "enterprise_default_150000" {
   }
 
   assert {
-    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Phones"]) == 71000
-    error_message = "71000 Phones rows (NDO-225 desks)."
-  }
-
-  assert {
-    condition     = length([for e in local.endpoints : e if e.endpoint_identity_group == "Windows"]) == 71000
-    error_message = "71000 Windows rows (NDO-225 desks)."
+    condition = (
+      local.endpoints[141998].endpoint_identity_group == "Phones" &&
+      local.endpoints[141999].endpoint_identity_group == "Windows" &&
+      local.endpoints[141998].desk == "desk-071000" &&
+      local.endpoints[141999].desk == "desk-071000"
+    )
+    error_message = "Last desk is desk-071000 (71000 desks); phone+PC still paired."
   }
 
   assert {
@@ -139,11 +141,6 @@ run "enterprise_default_150000" {
   assert {
     condition     = local.endpoints[149999].endpoint_identity_group == "RFID_Readers"
     error_message = "Last enterprise row is RFID_Readers."
-  }
-
-  assert {
-    condition     = length(distinct([for e in local.endpoints : e.mac])) == 150000
-    error_message = "All 150000 enterprise MACs must be unique."
   }
 
   assert {

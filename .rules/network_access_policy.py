@@ -599,6 +599,12 @@ NAD_RADIUS_SECRET."""
                     "No Wi-Fi Clients group.",
                     "endpoints_enterprise.csv",
                 )
+            ent_macs = [r.get("mac") or "" for r in ent]
+            if ent_macs and len(ent_macs) != len(set(ent_macs)):
+                add(
+                    "endpoints_enterprise.csv MACs must be unique across 150000.",
+                    "endpoints_enterprise.csv",
+                )
             if ent and len(ent) >= 2:
                 if (ent[0].get("endpoint_identity_group") != "Phones"
                         or ent[1].get("endpoint_identity_group") != "Windows"):
