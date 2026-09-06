@@ -110,7 +110,9 @@ rows (Small PAN ceiling). **71,000** desks (phone + PC on the same switch
 port) plus **8,000** non-desk rows for the other 9 groups. No Wi-Fi
 clients; AP rows are Meraki access points. Generator:
 `scripts/generate_enterprise_endpoints.py`. Not hardware. Locked IEEE
-MA-L OUIs (same table as the lab 110). Desk placement is 14,200 of 15,000
+MA-L OUIs (same table as the lab 110), stored as uppercase colon-hex so
+the apply file matches ISE ERS (Robert). Terraform `upper()` stays as a
+safety net. Desk placement is 14,200 of 15,000
 `devices.csv` switches × 5 desks (`Gi1/0/1`–`Gi1/0/5`); last 800 switches
 have no desks. Non-desk devices use an empty `desk` column and port
 `Gi1/0/6` on the last 8,000 switches. Terraform `csvdecode`s this file.

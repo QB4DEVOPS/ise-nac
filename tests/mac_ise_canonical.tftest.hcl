@@ -1,6 +1,7 @@
-# ISE ERS stores MAC as uppercase colon-hex. Apply path must upper() the
-# lowercase enterprise CSV so refresh does not churn on case alone.
-# Two rows only — the 150k default plan lives in endpoints_enterprise.tftest.hcl.
+# ISE ERS stores MAC as uppercase colon-hex. endpoints_enterprise.csv is
+# already uppercase (Robert: file case matches ISE storage). Terraform
+# upper() stays as a safety net. Two rows only — the 150k default plan
+# lives in endpoints_enterprise.tftest.hcl.
 mock_provider "ise" {}
 
 run "ise_canonical_uppercase_mac" {
@@ -14,7 +15,7 @@ run "ise_canonical_uppercase_mac" {
 
   assert {
     condition     = ise_endpoint.this[0].mac == "00:04:F2:67:5C:B9"
-    error_message = "Apply-path MAC must be ISE uppercase (00:04:F2:67:5C:B9), not CSV lowercase."
+    error_message = "Apply-path MAC must be ISE uppercase (00:04:F2:67:5C:B9)."
   }
 
   assert {
@@ -33,8 +34,8 @@ run "ise_canonical_uppercase_mac" {
   }
 
   assert {
-    condition     = local.endpoints[0].mac == "00:04:f2:67:5c:b9"
-    error_message = "endpoints_enterprise.csv stays lowercase (generator house rule)."
+    condition     = local.endpoints[0].mac == "00:04:F2:67:5C:B9"
+    error_message = "endpoints_enterprise.csv must be ISE uppercase colon-hex (Robert: file case matches ISE storage)."
   }
 
   assert {

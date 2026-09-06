@@ -186,22 +186,22 @@ NDO-225 lock (CoS 2026-09-03): **150,000** rows (Small PAN ceiling). **71,000** 
 
 | Group | Rows | Notes |
 | --- | --- | --- |
-| Phones | 71,000 | Desk. IEEE MA-L `00:04:f2` Polycom. |
-| Windows | 71,000 | Desk. IEEE MA-L `10:e7:c6` Hewlett Packard. Same switch/port/site as the phone. |
-| AP | 2,250 | Meraki AP infrastructure (`9c:e3:30`). Not wireless clients. |
-| Printers | 1,550 | `9c:7b:ef` Hewlett Packard. |
-| Cameras | 1,500 | `00:40:8c` Axis Communications AB. |
-| Badge_Readers | 800 | `00:30:8e` Crossmatch/HID Global. |
-| TVs | 600 | `64:1b:2f` Samsung Electronics. |
-| Linux | 500 | `00:c0:4f` Dell Inc. |
-| UPS | 400 | `00:c0:b7` AMERICAN POWER CONVERSION (APC). |
-| Powerstrips | 250 | `00:0d:5d` Raritan Computer. |
+| Phones | 71,000 | Desk. IEEE MA-L `00:04:F2` Polycom. |
+| Windows | 71,000 | Desk. IEEE MA-L `10:E7:C6` Hewlett Packard. Same switch/port/site as the phone. |
+| AP | 2,250 | Meraki AP infrastructure (`9C:E3:30`). Not wireless clients. |
+| Printers | 1,550 | `9C:7B:EF` Hewlett Packard. |
+| Cameras | 1,500 | `00:40:8C` Axis Communications AB. |
+| Badge_Readers | 800 | `00:30:8E` Crossmatch/HID Global. |
+| TVs | 600 | `64:1B:2F` Samsung Electronics. |
+| Linux | 500 | `00:C0:4F` Dell Inc. |
+| UPS | 400 | `00:C0:B7` AMERICAN POWER CONVERSION (APC). |
+| Powerstrips | 250 | `00:0D:5D` Raritan Computer. |
 | RFID_Readers | 150 | `00:16:25` Impinj. |
 | **Total** | **150,000** | |
 
 | Object | Source |
 | --- | --- |
-| Apply CSV | `endpoints_enterprise.csv` — exactly 150000 data rows. `ise_endpoint` (`name`, `mac`, `group_id`, `static_group_assignment`, `static_profile_assignment`). Rebuild: `python3 scripts/generate_enterprise_endpoints.py`. Check: `python3 scripts/generate_enterprise_endpoints.py --verify`. |
+| Apply CSV | `endpoints_enterprise.csv` — exactly 150000 data rows. MACs/OUIs are uppercase colon-hex (ISE storage; Robert). `ise_endpoint` (`name`, `mac`, `group_id`, `static_group_assignment`, `static_profile_assignment`). Rebuild: `python3 scripts/generate_enterprise_endpoints.py`. Check: `python3 scripts/generate_enterprise_endpoints.py --verify`. |
 | ISE GUI/CSV import | `endpoints_ise_import.csv` — same 150000 MACs in ISE Context Visibility / inventory-export schema (31 columns). Convert: `python3 scripts/generate_ise_import_endpoints.py`. Terraform does **not** read this file. |
 | Lab inventory | `endpoints.csv` / `endpoints.yaml` / `scripts/generate_endpoints.py` — still 110. Terraform does **not** `csvdecode` this file. |
 

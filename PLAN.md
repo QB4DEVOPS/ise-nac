@@ -118,16 +118,16 @@ NDO-225 lock (CoS 2026-09-03). Total stays **150,000** (Small PAN ceiling). Not 
 
 | Group | Rows | Placement |
 | --- | --- | --- |
-| Phones (desk) | 71,000 | Same switch/port/site as the matching Windows row. `Gi1/0/1`–`Gi1/0/5`. OUI `00:04:f2` Polycom. |
-| Windows (desk) | 71,000 | Same switch/port/site as the matching Phones row. OUI `10:e7:c6` Hewlett Packard. |
-| AP | 2,250 | Meraki access points (infrastructure), not Wi-Fi *clients*. OUI `9c:e3:30`. |
-| Printers | 1,550 | Own port. OUI `9c:7b:ef` Hewlett Packard. |
-| Cameras | 1,500 | Own port. OUI `00:40:8c` Axis Communications AB. |
-| Badge_Readers | 800 | Own port. OUI `00:30:8e` Crossmatch/HID Global. |
-| TVs | 600 | Own port. OUI `64:1b:2f` Samsung Electronics. |
-| Linux | 500 | Own port. OUI `00:c0:4f` Dell Inc. |
-| UPS | 400 | Own port. OUI `00:c0:b7` AMERICAN POWER CONVERSION (APC). |
-| Powerstrips | 250 | Own port. OUI `00:0d:5d` Raritan Computer. |
+| Phones (desk) | 71,000 | Same switch/port/site as the matching Windows row. `Gi1/0/1`–`Gi1/0/5`. OUI `00:04:F2` Polycom. |
+| Windows (desk) | 71,000 | Same switch/port/site as the matching Phones row. OUI `10:E7:C6` Hewlett Packard. |
+| AP | 2,250 | Meraki access points (infrastructure), not Wi-Fi *clients*. OUI `9C:E3:30`. |
+| Printers | 1,550 | Own port. OUI `9C:7B:EF` Hewlett Packard. |
+| Cameras | 1,500 | Own port. OUI `00:40:8C` Axis Communications AB. |
+| Badge_Readers | 800 | Own port. OUI `00:30:8E` Crossmatch/HID Global. |
+| TVs | 600 | Own port. OUI `64:1B:2F` Samsung Electronics. |
+| Linux | 500 | Own port. OUI `00:C0:4F` Dell Inc. |
+| UPS | 400 | Own port. OUI `00:C0:B7` AMERICAN POWER CONVERSION (APC). |
+| Powerstrips | 250 | Own port. OUI `00:0D:5D` Raritan Computer. |
 | RFID_Readers | 150 | Own port. OUI `00:16:25` Impinj. |
 | **Total** | **150,000** | No Wi-Fi Clients group. |
 
