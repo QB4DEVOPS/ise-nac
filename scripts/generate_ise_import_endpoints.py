@@ -114,6 +114,7 @@ def convert_enterprise_row(src: dict[str, str]) -> dict[str, str]:
     group = src["endpoint_identity_group"]
     if group not in POLICY_BY_GROUP:
         raise SystemExit(f"unknown identity group {group!r}")
+    # Enterprise CSV is ISE uppercase; .upper() still matches if a row is not.
     mac = src["mac"].strip().upper()
     row = empty_row()
     row["MACAddress"] = mac

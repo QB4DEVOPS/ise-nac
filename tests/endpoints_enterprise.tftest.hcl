@@ -69,8 +69,8 @@ run "enterprise_default_150000" {
   }
 
   assert {
-    condition     = startswith(local.endpoints[0].mac, "00:04:f2:")
-    error_message = "endpoints_enterprise.csv keeps lowercase colon-hex (generator house rule)."
+    condition     = startswith(local.endpoints[0].mac, "00:04:F2:")
+    error_message = "endpoints_enterprise.csv must be ISE uppercase colon-hex (Robert: file case matches ISE storage)."
   }
 
   assert {

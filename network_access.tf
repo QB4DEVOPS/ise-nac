@@ -34,9 +34,10 @@ resource "ise_endpoint_identity_group" "this" {
 # 0.3.4 required: name, mac, static_group_assignment, static_profile_assignment.
 # group_id is the Identity Group ID (ise_endpoint_identity_group.id).
 # MACs use locked IEEE MA-L OUIs; last 3 octets are generated. Not hardware.
-# ISE ERS stores MAC as uppercase colon-hex (e.g. 00:04:F2:67:5C:B9). The
-# enterprise CSV stays lowercase (generator house rule). upper() so desired
-# state matches ISE refresh and plan/apply does not churn on case alone.
+# ISE ERS stores MAC as uppercase colon-hex (e.g. 00:04:F2:67:5C:B9).
+# endpoints_enterprise.csv is uppercase (Robert: file case matches ISE
+# storage). upper() stays as a safety net so desired state still matches
+# ISE refresh if a row is ever not already uppercase.
 resource "ise_endpoint" "this" {
   count = var.endpoint_count
 

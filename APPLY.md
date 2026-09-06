@@ -191,7 +191,7 @@ The small lab file `endpoints.csv` (**110**) stays in Git only. Terraform does n
 
 Do **not** apply 150,000 plus 110. A Small ISE tops out at 150,000.
 
-If state already has lowercase MACs from a prior apply, the next plan can show up to 150k in-place `name`/`mac` updates to uppercase (not destroy/recreate); first apply still creating them has no extra step (creates already go `upper()`), and after that one settle apply plans stay clean for case.
+`endpoints_enterprise.csv` MACs are uppercase colon-hex (same as ISE storage; Robert). Terraform `upper()` on `ise_endpoint` name/mac stays as a safety net. If state still has leftover lowercase MACs from a prior apply, the next plan can show up to 150k in-place `name`/`mac` updates (not destroy/recreate). After that one settle apply, plans stay clean for case.
 
 ## 10. Users are 8
 

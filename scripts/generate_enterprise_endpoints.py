@@ -32,6 +32,10 @@ Reuse lab vendor OUIs from generate_endpoints.py. Last 3 octets are hashed
 suffixes — unique across 150k, not 00:00:01–0A, not 02:00:GG, not copied
 from a NIC. Not a 150k YAML (GitHub size).
 
+MAC and OUI columns are uppercase colon-hex (ISE ERS storage). Robert
+ordered the apply CSV to match ISE, not only Terraform upper(). Lab
+endpoints.csv (110) stays lowercase.
+
 Rebuild:
   python3 scripts/generate_enterprise_endpoints.py
 Verify only (no write, no IEEE download):
@@ -65,16 +69,16 @@ IEEE_HEX_RE = re.compile(
 # Locked CoS mapping. Same IEEE MA-L OUIs as scripts/generate_endpoints.py.
 # Do not invent, randomize, or swap. Stop if IEEE MA-L disagrees.
 LOCKED_OUI = {
-    "Phones": ("00:04:f2", "Polycom"),
-    "AP": ("9c:e3:30", "Cisco Meraki"),
-    "Printers": ("9c:7b:ef", "Hewlett Packard"),
-    "TVs": ("64:1b:2f", "Samsung Electronics"),
-    "Badge_Readers": ("00:30:8e", "HID Global"),
-    "Cameras": ("00:40:8c", "Axis Communications"),
-    "UPS": ("00:c0:b7", "APC"),
-    "Powerstrips": ("00:0d:5d", "Raritan"),
-    "Linux": ("00:c0:4f", "Dell"),
-    "Windows": ("10:e7:c6", "Hewlett Packard"),
+    "Phones": ("00:04:F2", "Polycom"),
+    "AP": ("9C:E3:30", "Cisco Meraki"),
+    "Printers": ("9C:7B:EF", "Hewlett Packard"),
+    "TVs": ("64:1B:2F", "Samsung Electronics"),
+    "Badge_Readers": ("00:30:8E", "HID Global"),
+    "Cameras": ("00:40:8C", "Axis Communications"),
+    "UPS": ("00:C0:B7", "APC"),
+    "Powerstrips": ("00:0D:5D", "Raritan"),
+    "Linux": ("00:C0:4F", "Dell"),
+    "Windows": ("10:E7:C6", "Hewlett Packard"),
     "RFID_Readers": ("00:16:25", "Impinj"),
 }
 ORG_ALIASES = {
@@ -130,11 +134,11 @@ COLUMNS = [
     "port",
     "site",
 ]
-MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
+MAC_RE = re.compile(r"^([0-9A-F]{2}:){5}[0-9A-F]{2}$")
 DESK_ID_RE = re.compile(r"^desk-\d{6}$")
 # Documented inventory salt (not a secret). Different from the 110 lab salt.
 ENTERPRISE_SALT = "ise-nac-enterprise-ieee-mal-v1"
-TRIVIAL_LAST = {f"00:00:{n:02x}" for n in range(1, 11)}
+TRIVIAL_LAST = {f"00:00:{n:02X}" for n in range(1, 11)}
 DESCRIPTION = "Generated. Not hardware. IEEE MA-L."
 BANNED = ("password", "token", "secret")
 WIFI_NEEDLES = ("wi-fi", "wifi", "wireless client")
@@ -198,7 +202,7 @@ def parse_ieee_mal(text: str) -> dict[str, str]:
         m = IEEE_HEX_RE.match(line)
         if not m:
             continue
-        oui = m.group(1).lower().replace("-", ":")
+        oui = m.group(1).upper().replace("-", ":")
         mapping[oui] = m.group(2).strip()
     if not mapping:
         raise SystemExit("IEEE MA-L file parsed to zero (hex) assignments")
@@ -248,7 +252,7 @@ def is_trivial_nic_suffix(suffix: str) -> bool:
         return True
     if b == 0 and 1 <= c <= 10:
         return True
-    if suffix in {"00:00:00", "ff:ff:ff"}:
+    if suffix in {"00:00:00", "FF:FF:FF"}:
         return True
     return False
 
@@ -258,7 +262,7 @@ def nic_suffix(key: str, used: set[str]) -> str:
     n = 0
     while n < 4096:
         digest = hashlib.sha256(f"{ENTERPRISE_SALT}|{key}|{n}".encode("utf-8")).digest()
-        suffix = ":".join(f"{b:02x}" for b in digest[:3])
+        suffix = ":".join(f"{b:02X}" for b in digest[:3])
         if suffix not in used and not is_trivial_nic_suffix(suffix):
             used.add(suffix)
             return suffix
@@ -297,7 +301,7 @@ def lab_suffixes() -> set[str]:
         for row in csv.DictReader(f):
             mac = (row.get("mac") or "").strip()
             if mac:
-                used.add(":".join(mac.split(":")[3:]))
+                used.add(":".join(p.upper() for p in mac.split(":")[3:]))
     return used
 
 
@@ -546,7 +550,7 @@ def verify(rows: list[dict[str, str]], devices: list[dict[str, str]]) -> None:
             break
         oui, _locked = LOCKED_OUI[group]
         if not MAC_RE.fullmatch(mac):
-            errors.append(f"MAC not lowercase colon hex: {mac}")
+            errors.append(f"MAC not uppercase colon hex: {mac}")
             break
         if mac.startswith("02:00:"):
             errors.append(f"dropped 02:00:GG pattern still present: {mac}")

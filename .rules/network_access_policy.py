@@ -85,8 +85,8 @@ _LAB_ENDPOINTS_FILE = re.compile(r'file\("\$\{path\.module\}/endpoints\.csv"\)')
 _ENTERPRISE_ENDPOINTS_FILE = re.compile(
     r'file\("\$\{path\.module\}/endpoints_enterprise\.csv"\)'
 )
-# ISE ERS canonicalizes MAC to uppercase. Apply path must upper() CSV values
-# so refresh does not see lowercase CSV vs uppercase ISE as a perpetual change.
+# ISE ERS canonicalizes MAC to uppercase. Apply-path upper() stays as a
+# safety net (CSV is already uppercase; upper of upper is fine).
 _ENDPOINT_MAC_UPPER = re.compile(
     r"mac\s+=\s+upper\(local\.endpoints\[count\.index\]\.mac\)"
 )
@@ -94,6 +94,7 @@ _ENDPOINT_NAME_UPPER = re.compile(
     r"name\s+=\s+upper\(local\.endpoints\[count\.index\]\.mac\)"
 )
 _MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
+_ENTERPRISE_MAC_RE = re.compile(r"^([0-9A-F]{2}:){5}[0-9A-F]{2}$")
 _ENTERPRISE_GROUP_COUNTS = {
     "Phones": 71000,
     "Windows": 71000,
@@ -121,6 +122,7 @@ _LOCKED_OUI = {
     "Windows": "10:e7:c6",
     "RFID_Readers": "00:16:25",
 }
+_ENTERPRISE_LOCKED_OUI = {group: oui.upper() for group, oui in _LOCKED_OUI.items()}
 _ORG_NEEDLES = {
     "Phones": "polycom",
     "AP": "cisco meraki",
@@ -639,6 +641,34 @@ NAD_RADIUS_SECRET."""
                     "endpoints_enterprise.csv MACs must be unique across 150000.",
                     "endpoints_enterprise.csv",
                 )
+            for r in ent:
+                mac = (r.get("mac") or "").strip()
+                group = r.get("endpoint_identity_group") or ""
+                if not _ENTERPRISE_MAC_RE.fullmatch(mac):
+                    add(
+                        f"Enterprise MAC must be uppercase colon hex (got {mac!r}). "
+                        "ISE stores MACs uppercase; file case must match (Robert).",
+                        "endpoints_enterprise.csv",
+                        mac,
+                    )
+                    break
+                locked_oui = _ENTERPRISE_LOCKED_OUI.get(group)
+                if locked_oui and not mac.startswith(f"{locked_oui}:"):
+                    add(
+                        f"Enterprise MAC {mac} for {group} must start with locked "
+                        f"IEEE MA-L OUI {locked_oui}.",
+                        "endpoints_enterprise.csv",
+                        mac,
+                    )
+                    break
+                if locked_oui and (r.get("oui") or "") != locked_oui:
+                    add(
+                        f"endpoints_enterprise.csv oui for {group} must be "
+                        f"{locked_oui} (got {r.get('oui')!r}).",
+                        "endpoints_enterprise.csv",
+                        group,
+                    )
+                    break
             if ent and len(ent) >= 2:
                 if (ent[0].get("endpoint_identity_group") != "Phones"
                         or ent[1].get("endpoint_identity_group") != "Windows"):
