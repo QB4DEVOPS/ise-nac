@@ -202,13 +202,14 @@ NDO-225 lock (CoS 2026-09-03): **150,000** rows (Small PAN ceiling). **71,000** 
 | Object | Source |
 | --- | --- |
 | Apply CSV | `endpoints_enterprise.csv` — exactly 150000 data rows. `ise_endpoint` (`name`, `mac`, `group_id`, `static_group_assignment`, `static_profile_assignment`). Rebuild: `python3 scripts/generate_enterprise_endpoints.py`. Check: `python3 scripts/generate_enterprise_endpoints.py --verify`. |
+| ISE GUI/CSV import | `endpoints_ise_import.csv` — same 150000 MACs in ISE Context Visibility / inventory-export schema (31 columns). Convert: `python3 scripts/generate_ise_import_endpoints.py`. Terraform does **not** read this file. |
 | Lab inventory | `endpoints.csv` / `endpoints.yaml` / `scripts/generate_endpoints.py` — still 110. Terraform does **not** `csvdecode` this file. |
 
 Desk placement: 14,200 of 15,000 `devices.csv` access switches × 5 desks = 71,000 desks. Each desk uses one access port (`Gi1/0/1`–`Gi1/0/5`). The last 800 switches have no desks (not every switch needs 5). The Phones row and the Windows/PC row share that port, site, and switch. Column `desk` is `desk-NNNNNN`.
 
 Non-desk placement: one device each on the last 8,000 switches, port `Gi1/0/6` (above the desk range) at that switch's site. `desk` is **empty** on those rows. Exact split: AP through Linux (7,200) share a switch with desks; UPS + Powerstrips + RFID_Readers (800) sit on the 800 desk-less switches.
 
-**Default apply is 150k.** pan1 apply is `TF_VAR_endpoint_count` / default **150000** against `endpoints_enterprise.csv`. Do not apply the lab 110 with the 150k (Small PAN). No 150k YAML (GitHub size). `nac-validate` still runs on the existing YAML set (lab 110) and checks the enterprise CSV counts.
+**Default apply is 150k.** pan1 apply is `TF_VAR_endpoint_count` / default **150000** against `endpoints_enterprise.csv`. Do not apply the lab 110 with the 150k (Small PAN). Do not import `endpoints_ise_import.csv` onto a Small PAN that already has the Terraform 150k or the lab 110. No 150k YAML (GitHub size). `nac-validate` still runs on the existing YAML set (lab 110) and checks the enterprise CSV counts.
 
 Lab MACs use locked IEEE MA-L OUIs from https://standards-oui.ieee.org/oui/oui.txt plus generated last 3 octets (SHA-256 lab suffixes, unique across 110). Not `02:00:GG`. Not `00:00:01`–`00:00:0A`. CSV cites `oui` and IEEE `organization`. Documented as lab. Not copied from hardware.
 

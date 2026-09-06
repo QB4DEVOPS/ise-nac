@@ -117,6 +117,14 @@ have no desks. Non-desk devices use an empty `desk` column and port
 `endpoint_count` default **150000**. Lab `endpoints.csv` (110) stays in
 Git as inventory only; do not apply both. No 150k YAML.
 
+`endpoints_ise_import.csv` is the same 150,000 MACs converted into ISE
+GUI / Context Visibility CSV import (inventory-export style, 31 columns).
+It does **not** replace `endpoints_enterprise.csv`. Terraform still
+`csvdecode`s the enterprise file only. Convert:
+`python3 scripts/generate_ise_import_endpoints.py`. Do not apply or
+import both 150k files together with lab `endpoints.csv` (110) on a
+Small PAN.
+
 `tacacs_authz.csv` is TACACS authorization rules in ISE push order (first match
 wins), from PLAN.md only: T1–T4 against the NDG min-tier table, vendor (time-bound,
 NDG-scoped), contractor, auditor-internal (all four NDGs, read-only),
