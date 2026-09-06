@@ -191,6 +191,8 @@ The small lab file `endpoints.csv` (**110**) stays in Git only. Terraform does n
 
 Do **not** apply 150,000 plus 110. A Small ISE tops out at 150,000.
 
+If state already has lowercase MACs from a prior apply, the next plan can show up to 150k in-place `name`/`mac` updates to uppercase (not destroy/recreate); first apply still creating them has no extra step (creates already go `upper()`), and after that one settle apply plans stay clean for case.
+
 ## 10. Users are 8
 
 You do **not** set a user count. The Git default is **8**.
