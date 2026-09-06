@@ -69,13 +69,23 @@ run "enterprise_default_150000" {
   }
 
   assert {
-    condition     = startswith(ise_endpoint.this[0].mac, "00:04:f2:")
-    error_message = "First apply MAC is Phones IEEE MA-L 00:04:F2 (Polycom)."
+    condition     = startswith(local.endpoints[0].mac, "00:04:f2:")
+    error_message = "endpoints_enterprise.csv keeps lowercase colon-hex (generator house rule)."
   }
 
   assert {
-    condition     = startswith(ise_endpoint.this[1].mac, "10:e7:c6:")
-    error_message = "Second apply MAC is Windows IEEE MA-L 10:E7:C6 (Hewlett Packard)."
+    condition     = startswith(ise_endpoint.this[0].mac, "00:04:F2:")
+    error_message = "First apply MAC is Phones IEEE MA-L 00:04:F2 (Polycom), ISE uppercase."
+  }
+
+  assert {
+    condition     = startswith(ise_endpoint.this[1].mac, "10:E7:C6:")
+    error_message = "Second apply MAC is Windows IEEE MA-L 10:E7:C6 (Hewlett Packard), ISE uppercase."
+  }
+
+  assert {
+    condition     = ise_endpoint.this[0].mac == upper(local.endpoints[0].mac)
+    error_message = "ise_endpoint.mac must be ISE uppercase colon-hex (ERS canonical)."
   }
 
   assert {
@@ -124,8 +134,8 @@ run "enterprise_default_150000" {
   }
 
   assert {
-    condition     = startswith(ise_endpoint.this[142000].mac, "9c:e3:30:")
-    error_message = "AP MAC is IEEE MA-L 9C:E3:30 (Cisco Meraki)."
+    condition     = startswith(ise_endpoint.this[142000].mac, "9C:E3:30:")
+    error_message = "AP MAC is IEEE MA-L 9C:E3:30 (Cisco Meraki), ISE uppercase."
   }
 
   assert {
