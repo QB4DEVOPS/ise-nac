@@ -85,6 +85,14 @@ _LAB_ENDPOINTS_FILE = re.compile(r'file\("\$\{path\.module\}/endpoints\.csv"\)')
 _ENTERPRISE_ENDPOINTS_FILE = re.compile(
     r'file\("\$\{path\.module\}/endpoints_enterprise\.csv"\)'
 )
+# ISE ERS canonicalizes MAC to uppercase. Apply path must upper() CSV values
+# so refresh does not see lowercase CSV vs uppercase ISE as a perpetual change.
+_ENDPOINT_MAC_UPPER = re.compile(
+    r"mac\s+=\s+upper\(local\.endpoints\[count\.index\]\.mac\)"
+)
+_ENDPOINT_NAME_UPPER = re.compile(
+    r"name\s+=\s+upper\(local\.endpoints\[count\.index\]\.mac\)"
+)
 _MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
 _ENTERPRISE_GROUP_COUNTS = {
     "Phones": 71000,
@@ -533,6 +541,12 @@ NAD_RADIUS_SECRET."""
             add(
                 "ise_endpoint 0.3.4 requires static_group_assignment and "
                 "static_profile_assignment.",
+                "network_access.tf",
+            )
+        if not _ENDPOINT_MAC_UPPER.search(na_tf) or not _ENDPOINT_NAME_UPPER.search(na_tf):
+            add(
+                "ise_endpoint name and mac must upper() the CSV MAC so desired "
+                "state matches ISE ERS uppercase colon-hex (no case-only drift).",
                 "network_access.tf",
             )
         if not _ALLOWED_RES.search(na_tf):
