@@ -171,8 +171,8 @@ def write_yaml(rows: list[dict[str, str]]) -> None:
         "# One lab user per TACACS identity group (8). Not 150k. Not 300k.",
         "# Groups match tacacs_authz.csv: T1 T2 T3 T4 vendor contractor",
         "#   auditor-internal auditor-external (hyphens stay).",
-        "# CiscoDevNet/ise 0.3.4 ise_internal_user. Secrets stay in env.",
-        "# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/internal_user",
+        "# CiscoDevNet/ise 0.4.1 ise_internal_user. Secrets stay in env.",
+        "# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/internal_user",
         "users:",
     ]
     for r in rows:

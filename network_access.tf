@@ -1,5 +1,5 @@
 # Wired 802.1X + MAB Network Access policy. Not Device Admin (that stays in main.tf).
-# CiscoDevNet/ise 0.3.4 resources (verified, not invented):
+# CiscoDevNet/ise 0.4.1 resources (verified, not invented):
 #   ise_endpoint_identity_group
 #   ise_endpoint                   (name, mac, group_id, static_group_assignment, static_profile_assignment)
 #   ise_allowed_protocols          (Network Access; not ise_allowed_protocols_tacacs)
@@ -13,13 +13,13 @@
 # Lab endpoints.csv (110) is Git inventory only. Default endpoint_count=150000.
 # No guest. Do not apply both files.
 # Schema cites:
-#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
-#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint
-#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/allowed_protocols
-#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/authorization_profile
-#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_policy_set
-#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_authentication_rule
-#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_authorization_rule
+#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint_identity_group
+#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint
+#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/allowed_protocols
+#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/authorization_profile
+#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/network_access_policy_set
+#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/network_access_authentication_rule
+#   https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/network_access_authorization_rule
 
 resource "ise_endpoint_identity_group" "this" {
   for_each       = { for g in local.endpoint_identity_groups : g.name => g }
@@ -31,7 +31,9 @@ resource "ise_endpoint_identity_group" "this" {
 # Enterprise MACs from endpoints_enterprise.csv. Default endpoint_count=150000.
 # Groups-only (no MAC rows): TF_VAR_endpoint_count=0. Cap with TF_VAR_endpoint_count.
 # Lab endpoints.csv is not this resource (inventory only; do not apply both).
-# 0.3.4 required: name, mac, static_group_assignment, static_profile_assignment.
+# 0.4.1 required: name, mac, static_group_assignment, static_profile_assignment.
+# Keep static_group_assignment = true so group_id is ours (0.4.0: ISE fills
+# group_id/profile_id when static assignment is false — that drifts).
 # group_id is the Identity Group ID (ise_endpoint_identity_group.id).
 # MACs use locked IEEE MA-L OUIs; last 3 octets are generated. Not hardware.
 # ISE ERS stores MAC as uppercase colon-hex (e.g. 00:04:F2:67:5C:B9).
@@ -56,7 +58,7 @@ resource "ise_endpoint" "this" {
   }
 }
 
-# Required 0.3.4 booleans come from allowed_protocols.yaml. Optional inner-method
+# Required 0.4.1 booleans come from allowed_protocols.yaml. Optional inner-method
 # flags are null when the YAML row omits them (MAB has no EAP inner methods).
 resource "ise_allowed_protocols" "this" {
   for_each = { for p in local.allowed_protocols : p.name => p }
@@ -88,8 +90,8 @@ resource "ise_allowed_protocols" "this" {
   teap_eap_tls                   = try(each.value.teap_eap_tls, null)
 }
 
-# access_type / vlan_name_id / vlan_tag_id / voice_domain_permission are 0.3.4 fields.
-# dacl_name is a real 0.3.4 field; not set (no DACL objects in Git).
+# access_type / vlan_name_id / vlan_tag_id / voice_domain_permission are 0.4.1 fields.
+# dacl_name is a real 0.4.1 field; not set (no DACL objects in Git).
 resource "ise_authorization_profile" "this" {
   for_each                = { for p in local.authorization_profiles : p.name => p }
   name                    = each.value.name

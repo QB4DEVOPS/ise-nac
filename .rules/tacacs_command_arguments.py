@@ -247,7 +247,7 @@ Illegal: ver(sion)?.*  ip int(erface)? br(ief)?.*  .*
 Legal: version  ip interface brief  *  access vlan *
 Rebuild nac.yaml with python3 scripts/generate_nac.py."""
     references = [
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/tacacs_command_set",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/tacacs_command_set",
         "https://github.com/netascode/nac-validate",
     ]
 

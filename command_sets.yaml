@@ -1,5 +1,5 @@
 # IOS-XE access-switch TACACS command sets. Source for Terraform and nac.yaml.
-# CiscoDevNet/ise 0.3.4 ise_tacacs_command_set: grant, command, arguments.
+# CiscoDevNet/ise 0.4.1 ise_tacacs_command_set: grant, command, arguments.
 # ISE ERS does NOT accept PCRE in arguments (parentheses, ?, .*). Use a
 # command token plus literal arguments. * is the ISE wildcard.
 # command = first word only. grant PERMIT. permit_unmatched false except T4.

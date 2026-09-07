@@ -80,7 +80,7 @@ resource "ise_network_device_group" "site_location" {
 }
 
 # User identity groups from tacacs_authz.csv. Lab Internal Users join these
-# via ise_internal_user.identity_groups (0.3.4: comma-separated group IDs).
+# via ise_internal_user.identity_groups (0.4.1: comma-separated group IDs; sorted on read).
 # Names stay as applied (T1, auditor-internal). They are not in the TACACS
 # command-set + profile ISE name bag (T1_cs, T1_shell, …). Suffix only if
 # an identity group string later equals a command-set or profile ISE name.
@@ -106,7 +106,7 @@ resource "ise_tacacs_command_set" "this" {
   ]
 }
 
-# Shell profiles from shell_profiles.yaml. CiscoDevNet/ise 0.3.4:
+# Shell profiles from shell_profiles.yaml. CiscoDevNet/ise 0.4.1:
 # session_attributes = [{ type = "MANDATORY"|"OPTIONAL", name, value }].
 # T1/auditor_* priv-lvl 1; everyone else 15. Empty profiles 400 on ISE 3.5.
 # Look up by CSV key (T1). POST the YAML name: (T1_shell).

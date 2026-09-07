@@ -121,7 +121,7 @@ run "wired_8021x_mab_policy" {
 
   assert {
     condition     = length(ise_allowed_protocols.this) == 2
-    error_message = "Exactly two ise_allowed_protocols (0.3.4 Network Access). Not TACACS."
+    error_message = "Exactly two ise_allowed_protocols (0.4.1 Network Access). Not TACACS."
   }
 
   assert {
@@ -161,12 +161,12 @@ run "wired_8021x_mab_policy" {
 
   assert {
     condition     = ise_authorization_profile.this["Wired_Data"].access_type == "ACCESS_ACCEPT"
-    error_message = "Wired_Data access_type must be ACCESS_ACCEPT (0.3.4)."
+    error_message = "Wired_Data access_type must be ACCESS_ACCEPT (0.4.1)."
   }
 
   assert {
     condition     = ise_authorization_profile.this["Wired_Data"].vlan_name_id == "10"
-    error_message = "Wired_Data vlan_name_id must be 10 (0.3.4 vlan_name_id)."
+    error_message = "Wired_Data vlan_name_id must be 10 (0.4.1 vlan_name_id)."
   }
 
   assert {
@@ -181,7 +181,7 @@ run "wired_8021x_mab_policy" {
 
   assert {
     condition     = ise_authorization_profile.this["Wired_Voice"].voice_domain_permission == true
-    error_message = "Wired_Voice must set voice_domain_permission (0.3.4)."
+    error_message = "Wired_Voice must set voice_domain_permission (0.4.1)."
   }
 
   assert {
@@ -245,7 +245,7 @@ run "wired_8021x_mab_policy" {
     condition = alltrue([
       for p in ise_authorization_profile.this : p.vlan_tag_id == 0
     ])
-    error_message = "Every authorization profile vlan_tag_id must be 0 (0.3.4)."
+    error_message = "Every authorization profile vlan_tag_id must be 0 (0.4.1)."
   }
 
   assert {
@@ -255,7 +255,7 @@ run "wired_8021x_mab_policy" {
 
   assert {
     condition     = ise_network_access_policy_set.wired.service_name == "Wired_8021X"
-    error_message = "Policy set service_name must be Wired_8021X (0.3.4 binds one Allowed Protocols name)."
+    error_message = "Policy set service_name must be Wired_8021X (0.4.1 binds one Allowed Protocols name)."
   }
 
   assert {

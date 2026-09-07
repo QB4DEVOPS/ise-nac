@@ -374,7 +374,7 @@ def command_set_resource() -> dict[str, Any]:
 def profile_resource() -> dict[str, Any]:
     """Attributes of resource ise_tacacs_profile that Terraform POSTs.
 
-    CiscoDevNet/ise 0.3.4 session_attributes nested schema:
+    CiscoDevNet/ise 0.4.1 session_attributes nested schema:
     type (MANDATORY|OPTIONAL), name, value.
     """
     text = MAIN_TF.read_text(encoding="utf-8") if MAIN_TF.is_file() else ""

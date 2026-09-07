@@ -83,7 +83,7 @@ auditor-external). Hyphens stay. No password column. Login/enable
 secrets stay in `.env` (`USER_PASSWORD_DEFAULT`,
 `USER_ENABLE_PASSWORD_DEFAULT`). `user_count` default 8. Not 150k.
 ISE Internal User store max is 300,000. ERS POSTs one user per create
-(`ise_internal_user` 0.3.4).
+(`ise_internal_user` 0.4.1).
 
 Locked IEEE MA-L OUIs (https://standards-oui.ieee.org/oui/oui.txt), verified
 against the (hex) assignment — do not invent others:

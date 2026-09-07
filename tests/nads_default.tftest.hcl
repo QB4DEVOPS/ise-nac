@@ -45,7 +45,7 @@ run "default_pushes_all_devices" {
   }
 
   # First NAD: Huntsville, Alabama. Access + nested site Location only.
-  # network_device_groups is a set (CiscoDevNet/ise 0.3.4); compare as toset, not list.
+  # network_device_groups is a set (CiscoDevNet/ise 0.4.1); compare as toset, not list.
   assert {
     condition = ise_network_device.nad[0].network_device_groups == toset([
       "Access#All Access#access-marketing",

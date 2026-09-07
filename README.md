@@ -8,7 +8,7 @@ Robert: use PowerShell in this folder. The command is `terraform` (not `tf`).
 
 ## One-time setup
 
-1. Install Terraform from https://developer.hashicorp.com/terraform/install
+1. Install Terraform **1.15.x** (or later; `required_version >= 1.15.0`) from https://developer.hashicorp.com/terraform/install
 2. Open PowerShell in this folder.
 3. Copy the example env file and put the lab password in `.env` (this file is not in git):
 
@@ -32,7 +32,7 @@ For apply, set `ISE_USERNAME=terraform` in `.env`. `.env.example` still shows `i
 Run this in PowerShell **before** `terraform apply`. Python 3.10+ is required ([install Python](https://www.python.org/downloads/) if `pip` is missing).
 
 ```
-pip install nac-validate
+pip install nac-validate==2.0.0
 nac-validate nac.yaml sites.yaml location_ndgs.yaml endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml network_access.yaml users.yaml -s .schema.yaml -r .rules
 ```
 
@@ -45,7 +45,7 @@ That is Cisco Network as Code [`nac-validate`](https://github.com/netascode/nac-
 5. **Rule 105 FAILS** if any string is duplicated in the **combined** set of all command-set ISE names and all profile ISE names (one ERS namespace). Every TACACS object is suffixed (underscore only). Command sets: `T1_cs` `T2_cs` `T3_cs` `T4_cs` `vendor_cs` `contractor_cs` `auditor_internal_cs` `auditor_external_cs` `test_cs`. Profiles: `T1_shell` `T2_shell` `T3_shell` `T4_shell` `vendor_shell` `contractor_shell` `auditor_internal_shell` `auditor_external_shell`. No profile named `test_cs`. CSV keys stay `T1`. Identity groups, NDGs, and authz rule names are unchanged.
 6. **Rule 106 FAILS** if a user identity group name equals any string in that TACACS bag. Live groups (`T1`, `auditor-internal`) stay; `T1` does not collide with `T1_cs` / `T1_shell`. Suffix an identity group only when it would reuse a command-set or profile ISE name.
 7. **Rule 107 FAILS** unless wired 802.1X + MAB stays the CoS lock: eleven endpoint identity groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers). Lab `endpoints.yaml` / `endpoints.csv` stay 10 unique MACs per group (110 total) using locked IEEE MA-L OUIs plus generated last 3 octets. Terraform apply default `endpoint_count` **150000** from `endpoints_enterprise.csv` (not the lab 110 file). No `02:00:GG`. No `00:00:01`–`00:00:0A`. No guest. Two `ise_allowed_protocols` (802.1X EAP and MAB PAP/ASCII). ACCESS_ACCEPT VLANs 10–70 (seven profiles). First-match: Phones → VLAN 20 voice, Printers → VLAN 30, AP → VLAN 40, Cameras → VLAN 50, Badge_Readers/RFID_Readers → VLAN 60, UPS/Powerstrips → VLAN 70, TVs/Linux/Windows → VLAN 10. One Network Access policy set (not Device Admin). Dot1X → Internal Users; MAB → Internal Endpoints continue-if-not-found.
-8. **Rule 108 FAILS** unless `users.csv` / `users.yaml` is **8** lab Internal Users (one per TACACS identity group: T1, T2, T3, T4, vendor, contractor, `auditor-internal`, `auditor-external`). Terraform resource is `ise_internal_user` (CiscoDevNet/ise **0.3.4**, not `ise_user`). `user_count` default **8**. Secrets stay in `.env` (`USER_PASSWORD_DEFAULT` / `TF_VAR_user_password`). No password column in Git. Not 150k. ERS POSTs one user per create; ISE Internal User store max is 300,000.
+8. **Rule 108 FAILS** unless `users.csv` / `users.yaml` is **8** lab Internal Users (one per TACACS identity group: T1, T2, T3, T4, vendor, contractor, `auditor-internal`, `auditor-external`). Terraform resource is `ise_internal_user` (CiscoDevNet/ise **0.4.1**, not `ise_user`). `user_count` default **8**. Secrets stay in `.env` (`USER_PASSWORD_DEFAULT` / `TF_VAR_user_password`). No password column in Git. Not 150k. ERS POSTs one user per create; ISE Internal User store max is 300,000.
 
 If `nac-validate` prints errors, do not apply. Exit 0 means schema and these rules passed. It still does not talk to ISE.
 
@@ -143,7 +143,7 @@ Each NAD joins **both**:
 1. Access: **`access-marketing` only** (CoS lock). `devices.csv` has no Access column. Not a different default. Not round-robin. Not `hr` / `ceo` / `sourcecode` until Robert tags Access.
 2. Location: that device's state/city NDG (`Location#All Locations#{State}#{site_id}`). Not the type-level `regional` / `branch` / `hq` / `dc` groups.
 
-Shared secrets (never in git): `.env` `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET`. Both required whenever `nad_count>0`. One RADIUS secret for all NADs, same pattern as TACACS. NAD `authentication_network_protocol` is `RADIUS` (0.3.4 choices: `RADIUS` | `TACACS_PLUS`) so 802.1X can use the NAD. `tacacs_shared_secret` stays. CiscoDevNet/ise 0.3.4 field is `authentication_radius_shared_secret` (ERS `authenticationSettings.radiusSharedSecret`). `TF_VAR_nad_count=N` pushes the first N rows of `devices.csv`.
+Shared secrets (never in git): `.env` `NAD_TACACS_SECRET` and `NAD_RADIUS_SECRET`. Both required whenever `nad_count>0`. One RADIUS secret for all NADs, same pattern as TACACS. NAD `authentication_network_protocol` is `RADIUS` (0.4.1 choices: `RADIUS` | `TACACS_PLUS`) so 802.1X can use the NAD. `tacacs_shared_secret` stays. CiscoDevNet/ise 0.4.1 field is `authentication_radius_shared_secret` (ERS `authenticationSettings.radiusSharedSecret`). `TF_VAR_nad_count=N` pushes the first N rows of `devices.csv`.
 
 ## Location NDG names
 
@@ -168,12 +168,12 @@ HQ/DC city tags are **not** invented.
 
 Eleven groups and 110 lab MACs in Git. After merge, Robert pull / init / apply. This PR does **not** apply to ISE.
 
-| Object | Source | 0.3.4 resource |
+| Object | Source | 0.4.1 resource |
 | --- | --- | --- |
 | Endpoint identity groups | `endpoint_identity_groups.yaml` — Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS, Powerstrips, Linux, Windows, RFID_Readers. Drops Workstation / IP-Phone / Printer. | `ise_endpoint_identity_group` |
 | Lab endpoints | `endpoints.csv` / `endpoints.yaml` — 10 unique lab MACs per group (110 total). Pattern `{IEEE MA-L OUI}:{generated last 3 octets}`. Generator: `scripts/generate_endpoints.py`. Not hardware. Git inventory only. | not `ise_endpoint` (apply does not read this file) |
 | Allowed Protocols | `allowed_protocols.yaml` — `Wired_8021X` (EAP) and `Wired_MAB` (PAP/ASCII + Host Lookup) | `ise_allowed_protocols` (not `ise_allowed_protocols_tacacs`) |
-| Authorization profiles | `authorization_profiles.yaml` — ACCESS_ACCEPT VLANs 10–70: `Wired_Data` 10, `Wired_Voice` 20, `Wired_Printer` 30, `Wired_AP` 40, `Wired_Camera` 50, `Wired_Badge` 60, `Wired_Facilities` 70 | `ise_authorization_profile` (`access_type`, `vlan_name_id`, `vlan_tag_id`, `voice_domain_permission`). `dacl_name` exists in 0.3.4; omitted (no DACLs in Git). |
+| Authorization profiles | `authorization_profiles.yaml` — ACCESS_ACCEPT VLANs 10–70: `Wired_Data` 10, `Wired_Voice` 20, `Wired_Printer` 30, `Wired_AP` 40, `Wired_Camera` 50, `Wired_Badge` 60, `Wired_Facilities` 70 | `ise_authorization_profile` (`access_type`, `vlan_name_id`, `vlan_tag_id`, `voice_domain_permission`). `dacl_name` exists in 0.4.1; omitted (no DACLs in Git). |
 | Policy set | `network_access.yaml` — one Network Access set, not Device Admin | `ise_network_access_policy_set` |
 | Authentication | `network_access_authc.csv` — Dot1X → Internal Users; MAB → Internal Endpoints `CONTINUE` | `ise_network_access_authentication_rule` + `ise_network_access_authentication_rule_update_ranks` |
 | Authorization | `network_access_authz.csv` — first match: Phones → `Wired_Voice` (20), Printers → `Wired_Printer` (30), AP → `Wired_AP` (40), Cameras → `Wired_Camera` (50), Badge_Readers/RFID_Readers → `Wired_Badge` (60), UPS/Powerstrips → `Wired_Facilities` (70), TVs/Linux/Windows → `Wired_Data` (10) | `ise_network_access_authorization_rule` (`profiles`) + `ise_network_access_authorization_rule_update_ranks` |
@@ -221,12 +221,12 @@ TACACS device-admin stays (`*_cs` / `*_shell`, Device Admin policy set, GUI cana
 
 Lab Internal Users in Git. After merge, Robert pull / init / apply. This PR does **not** apply to ISE. Secrets never go in Git.
 
-| Object | Source | 0.3.4 resource / field |
+| Object | Source | 0.4.1 resource / field |
 | --- | --- | --- |
 | User identity groups | `tacacs_authz.csv` — T1, T2, T3, T4, vendor, contractor, `auditor-internal`, `auditor-external` (hyphens stay) | `ise_user_identity_group` |
 | Lab Internal Users | `users.csv` / `users.yaml` — 8 lab accounts, one per TACACS group. Generator: `scripts/generate_users.py`. Not 150k. | `ise_internal_user` |
 
-CiscoDevNet/ise **0.3.4** resource name is **`ise_internal_user`** (not `ise_user`). Schema fields this repo sets:
+CiscoDevNet/ise **0.4.1** resource name is **`ise_internal_user`** (not `ise_user`). Schema fields this repo sets:
 
 | Field | Source |
 | --- | --- |
@@ -236,17 +236,17 @@ CiscoDevNet/ise **0.3.4** resource name is **`ise_internal_user`** (not `ise_use
 | `change_password` | `false` (lab first login must work; provider default is `true`) |
 | `enabled` | CSV `enabled` |
 | `first_name` / `last_name` / `email` / `description` | CSV |
-| `identity_groups` | comma-separated **identity group IDs** from `ise_user_identity_group.this[group].id` |
+| `identity_groups` | comma-separated **identity group IDs** from `ise_user_identity_group.this[group].id` (0.4.1 sorts on read; do not fight that) |
 | `password_id_store` | `Internal Users` |
 | `password_never_expires` | `true` (lab; ISE 3.2+) |
 
-Not set: `account_name_alias`, `custom_attributes`.
+Not set: `account_name_alias`, `custom_attributes` (0.4.x type is a **map**, not `jsonencode`).
 
 CSV columns (no secret column): `username`, `identity_group`, `first_name`, `last_name`, `email`, `enabled`, `description`. `identity_group` must match a live TACACS identity group. Multiple groups can be comma-separated later; the lab CSV has one each.
 
 `user_count` default is **8** (house style: lab CSV length, same idea as `nad_count=15000` / `endpoint_count=150000`). Skip user rows: `TF_VAR_user_count=0`. Empty `USER_PASSWORD_DEFAULT` with `user_count>0` fails with a clear error. Do not generate 150k users.
 
-ERS creates **one user per POST** (`POST /ers/config/internaluser`). ISE Internal User store **max is 300,000** ([Performance and Scalability Guide](https://www.cisco.com/c/en/us/td/docs/security/ise/performance_and_scalability/b_ise_perf_and_scale.html)). This PR is the lab CSV only. Schema: [ise_internal_user 0.3.4](https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/internal_user). ERS: [Create User](https://developer.cisco.com/docs/identity-services-engine/latest/create-user/).
+ERS creates **one user per POST** (`POST /ers/config/internaluser`). ISE Internal User store **max is 300,000** ([Performance and Scalability Guide](https://www.cisco.com/c/en/us/td/docs/security/ise/performance_and_scalability/b_ise_perf_and_scale.html)). This PR is the lab CSV only. Schema: [ise_internal_user 0.4.1](https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/internal_user). ERS: [Create User](https://developer.cisco.com/docs/identity-services-engine/latest/create-user/).
 
 ## Provider
 

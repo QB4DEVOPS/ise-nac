@@ -1,6 +1,6 @@
 """ISE TACACS profiles must POST session_attributes (not an empty profile).
 
-CiscoDevNet/ise 0.3.4 ise_tacacs_profile nested schema:
+CiscoDevNet/ise 0.4.1 ise_tacacs_profile nested schema:
   type = MANDATORY | OPTIONAL
   name = priv-lvl
   value = 1 (T1, auditor_*) or 15 (everyone else)
@@ -74,7 +74,7 @@ def _check_entry(
                 message=(
                     f"TACACS profile '{name}' session attribute type '{typ}' "
                     f"is not MANDATORY or OPTIONAL ({source}). CiscoDevNet/ise "
-                    "0.3.4 only allows those two."
+                    "0.4.1 only allows those two."
                 ),
                 path=path,
                 details={"profile": name, "type": typ, "source": source},
@@ -140,7 +140,7 @@ class Rule(RuleBase):
     title = "TACACS PROFILE SESSION ATTRIBUTES"
     affected_items_label = "Profiles"
     explanation = """\
-ise_tacacs_profile (CiscoDevNet/ise 0.3.4) POSTs session_attributes as a
+ise_tacacs_profile (CiscoDevNet/ise 0.4.1) POSTs session_attributes as a
 list of {type, name, value}. type is MANDATORY or OPTIONAL. Empty profiles
 return HTTP 400 on ISE 3.5 (T1 and T4 failed create for that reason).
 T1 and auditor_* use priv-lvl 1; T2/T3/T4/vendor/contractor use 15.
@@ -153,7 +153,7 @@ Put session_attributes in shell_profiles.yaml:
 Wire them into resource.ise_tacacs_profile.session_attributes in main.tf.
 Rebuild nac.yaml with python3 scripts/generate_nac.py."""
     references = [
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/tacacs_profile",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/tacacs_profile",
     ]
 
     @classmethod
@@ -199,7 +199,7 @@ Rebuild nac.yaml with python3 scripts/generate_nac.py."""
                             "ise_tacacs_profile session_attributes must set "
                             'type = "MANDATORY" (or a.type from YAML) and '
                             'name = "priv-lvl" (or a.name from YAML) per '
-                            "CiscoDevNet/ise 0.3.4."
+                            "CiscoDevNet/ise 0.4.1."
                         ),
                         path=resource["path"],
                         details={"profile": "*", "source": "terraform"},

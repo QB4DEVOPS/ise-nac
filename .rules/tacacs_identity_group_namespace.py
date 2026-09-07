@@ -94,7 +94,7 @@ identity group when its name appears in the TACACS command-set +
 profile ISE name bag (T1_cs, T1_shell, test_cs, …)."""
     references = [
         "https://github.com/netascode/nac-validate",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/user_identity_group",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/user_identity_group",
     ]
 
     @classmethod

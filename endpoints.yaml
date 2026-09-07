@@ -4,9 +4,9 @@
 # Pattern: {IEEE MA-L OUI}:{generated last 3 octets}. Drop 02:00:GG.
 # IEEE MA-L source: https://standards-oui.ieee.org/oui/oui.txt
 # 11 groups × 10 MACs = 110. Last 3 octets hashed, unique, not 00:00:01–0A.
-# CiscoDevNet/ise 0.3.4 ise_endpoint: name, mac, group_id,
+# CiscoDevNet/ise 0.4.1 ise_endpoint: name, mac, group_id,
 # static_group_assignment, static_profile_assignment.
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint
 endpoints:
   - mac: 00:04:f2:b0:6c:56
     endpoint_identity_group: Phones

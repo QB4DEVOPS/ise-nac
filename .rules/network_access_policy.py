@@ -188,7 +188,7 @@ class Rule(RuleBase):
     title = "WIRED 802.1X AND MAB NETWORK ACCESS POLICY LOCK"
     affected_items_label = "Network Access policy"
     explanation = """\
-CoS lock for wired 802.1X + MAB on CiscoDevNet/ise 0.3.4. Eleven endpoint
+CoS lock for wired 802.1X + MAB on CiscoDevNet/ise 0.4.1. Eleven endpoint
 identity groups (Phones, AP, Printers, TVs, Badge_Readers, Cameras, UPS,
 Powerstrips, Linux, Windows, RFID_Readers). 10 unique lab MACs per group
 (110 total) using locked IEEE MA-L OUIs plus generated last 3 octets.
@@ -216,13 +216,13 @@ Lab endpoints.csv stays 110 in Git; do not apply it with the 150k file
 unchanged. NAD protocol is RADIUS; keep both NAD_TACACS_SECRET and
 NAD_RADIUS_SECRET."""
     references = [
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/allowed_protocols",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/authorization_profile",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_policy_set",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_authentication_rule",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_authorization_rule",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint_identity_group",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/allowed_protocols",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/authorization_profile",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/network_access_policy_set",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/network_access_authentication_rule",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/network_access_authorization_rule",
     ]
 
     @classmethod
@@ -421,14 +421,14 @@ NAD_RADIUS_SECRET."""
             if p.get("access_type") != "ACCESS_ACCEPT":
                 add(
                     f"Authorization profile '{name}' access_type must be ACCESS_ACCEPT "
-                    "(0.3.4 ise_authorization_profile.access_type).",
+                    "(0.4.1 ise_authorization_profile.access_type).",
                     "authorization_profiles.yaml",
                     name,
                 )
             if str(p.get("vlan_name_id")) != vlan:
                 add(
                     f"Authorization profile '{name}' vlan_name_id must be {vlan} "
-                    "(0.3.4 ise_authorization_profile.vlan_name_id).",
+                    "(0.4.1 ise_authorization_profile.vlan_name_id).",
                     "authorization_profiles.yaml",
                     name,
                 )
@@ -442,14 +442,14 @@ NAD_RADIUS_SECRET."""
             if tag is None or int(tag) != 0:
                 add(
                     f"Authorization profile '{name}' vlan_tag_id must be 0 "
-                    "(0.3.4 ise_authorization_profile.vlan_tag_id).",
+                    "(0.4.1 ise_authorization_profile.vlan_tag_id).",
                     "authorization_profiles.yaml",
                     name,
                 )
             if "dacl_name" in p:
                 add(
                     f"Authorization profile '{name}' must not set dacl_name "
-                    "(no DACL objects in Git; 0.3.4 field exists but is unused).",
+                    "(no DACL objects in Git; 0.4.1 field exists but is unused).",
                     "authorization_profiles.yaml",
                     name,
                 )
@@ -464,7 +464,7 @@ NAD_RADIUS_SECRET."""
         elif sets[0].get("service_name") != "Wired_8021X":
             add(
                 "The Network Access policy set service_name must be Wired_8021X "
-                "(0.3.4 service_name binds one Allowed Protocols name).",
+                "(0.4.1 service_name binds one Allowed Protocols name).",
                 "network_access.yaml",
                 str(sets[0].get("name") or ""),
             )
@@ -529,19 +529,19 @@ NAD_RADIUS_SECRET."""
             )
         if not _ENDPOINT_RES.search(na_tf):
             add(
-                "network_access.tf must declare ise_endpoint (0.3.4: name, mac, group_id, "
+                "network_access.tf must declare ise_endpoint (0.4.1: name, mac, group_id, "
                 "static_group_assignment, static_profile_assignment). 110 lab MACs.",
                 "network_access.tf",
             )
         if "group_id" not in na_tf:
             add(
                 "ise_endpoint must set group_id from ise_endpoint_identity_group.id "
-                "(0.3.4 Identity Group ID).",
+                "(0.4.1 Identity Group ID).",
                 "network_access.tf",
             )
         if "static_group_assignment" not in na_tf or "static_profile_assignment" not in na_tf:
             add(
-                "ise_endpoint 0.3.4 requires static_group_assignment and "
+                "ise_endpoint 0.4.1 requires static_group_assignment and "
                 "static_profile_assignment.",
                 "network_access.tf",
             )
@@ -553,7 +553,7 @@ NAD_RADIUS_SECRET."""
             )
         if not _ALLOWED_RES.search(na_tf):
             add(
-                "network_access.tf must use ise_allowed_protocols (0.3.4 Network Access). "
+                "network_access.tf must use ise_allowed_protocols (0.4.1 Network Access). "
                 "Do not fake a resource name.",
                 "network_access.tf",
             )
@@ -582,7 +582,7 @@ NAD_RADIUS_SECRET."""
         if not _NAD_PROTO.search(nads_tf):
             add(
                 'NAD authentication_network_protocol must be "RADIUS" '
-                "(0.3.4 choices: RADIUS | TACACS_PLUS) so 802.1X can use the NAD.",
+                "(0.4.1 choices: RADIUS | TACACS_PLUS) so 802.1X can use the NAD.",
                 "nads.tf",
             )
         if not _NAD_TACACS_SECRET.search(nads_tf):
