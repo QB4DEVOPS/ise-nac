@@ -139,8 +139,8 @@ Profiles are T1_shell. Canary ise_tacacs_command_set.test POSTs test_cs.
 Keep CSV keys as T1."""
     references = [
         "https://github.com/netascode/nac-validate",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/tacacs_profile",
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/tacacs_command_set",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/tacacs_profile",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/tacacs_command_set",
     ]
 
     @classmethod

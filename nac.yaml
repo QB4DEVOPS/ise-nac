@@ -4365,7 +4365,7 @@ network_access_authz:
     profile: Wired_Data
 
 # IOS-XE access-switch TACACS command sets. Source for Terraform and nac.yaml.
-# CiscoDevNet/ise 0.3.4 ise_tacacs_command_set: grant, command, arguments.
+# CiscoDevNet/ise 0.4.1 ise_tacacs_command_set: grant, command, arguments.
 # ISE ERS does NOT accept PCRE in arguments (parentheses, ?, .*). Use a
 # command token plus literal arguments. * is the ISE wildcard.
 # command = first word only. grant PERMIT. permit_unmatched false except T4.
@@ -4624,7 +4624,7 @@ command_sets:
         arguments: inventory
 
 # TACACS shell profiles. Source for Terraform and nac.yaml.
-# CiscoDevNet/ise 0.3.4 ise_tacacs_profile session_attributes:
+# CiscoDevNet/ise 0.4.1 ise_tacacs_profile session_attributes:
 #   type MANDATORY|OPTIONAL, name, value (strings).
 # YAML name: is the ISE POST name. Command sets are T1_cs; profiles are T1_shell.
 # CSV keys stay T1. No two ISE names may match. No profile named test_cs.
@@ -4680,8 +4680,8 @@ shell_profiles:
         value: "1"
 
 # Endpoint identity groups. 11 groups. Guest stays out.
-# CiscoDevNet/ise 0.3.4: ise_endpoint_identity_group (name, description, system_defined).
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
+# CiscoDevNet/ise 0.4.1: ise_endpoint_identity_group (name, description, system_defined).
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint_identity_group
 # Replaces Workstation / IP-Phone / Printer. 10 lab MACs each in endpoints.csv.
 # Default endpoint_count=110. Groups-only: TF_VAR_endpoint_count=0.
 endpoint_identity_groups:
@@ -4725,9 +4725,9 @@ endpoint_identity_groups:
 # Pattern: {IEEE MA-L OUI}:{generated last 3 octets}. Drop 02:00:GG.
 # IEEE MA-L source: https://standards-oui.ieee.org/oui/oui.txt
 # 11 groups × 10 MACs = 110. Last 3 octets hashed, unique, not 00:00:01–0A.
-# CiscoDevNet/ise 0.3.4 ise_endpoint: name, mac, group_id,
+# CiscoDevNet/ise 0.4.1 ise_endpoint: name, mac, group_id,
 # static_group_assignment, static_profile_assignment.
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint
 endpoints:
   - mac: 00:04:f2:b0:6c:56
     endpoint_identity_group: Phones
@@ -5281,15 +5281,15 @@ endpoints:
     description: "Lab MAC. Not hardware. IEEE MA-L OUI 00:16:25 (Impinj, Inc.). Last 3 octets generated; not copied from a device."
 
 # Network Access Allowed Protocols. Not TACACS (that is ise_allowed_protocols_tacacs).
-# CiscoDevNet/ise 0.3.4: ise_allowed_protocols.
+# CiscoDevNet/ise 0.4.1: ise_allowed_protocols.
 # Schema (required): name, process_host_lookup, allow_pap_ascii, allow_chap,
 # allow_ms_chap_v1, allow_ms_chap_v2, allow_eap_md5, allow_leap, allow_eap_tls,
 # allow_eap_ttls, allow_eap_fast, allow_peap, allow_teap,
 # allow_preferred_eap_protocol, allow_weak_ciphers_for_eap, eap_tls_l_bit,
 # require_message_auth.
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/allowed_protocols
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/allowed_protocols
 #
-# Two lists, one policy set: 0.3.4 ise_network_access_policy_set.service_name
+# Two lists, one policy set: 0.4.1 ise_network_access_policy_set.service_name
 # binds a single Allowed Protocols name. Wired_8021X is that service.
 # process_host_lookup is also true on Wired_8021X so the MAB authentication
 # rule in the same set can fire. Wired_MAB stays PAP/ASCII + Host Lookup only.
@@ -5338,12 +5338,12 @@ allowed_protocols:
     require_message_auth: false
 
 # Network Access authorization profiles. ACCESS_ACCEPT. Lab VLANs 10–70.
-# CiscoDevNet/ise 0.3.4: ise_authorization_profile.
+# CiscoDevNet/ise 0.4.1: ise_authorization_profile.
 # Schema used: name, description, access_type (ACCESS_ACCEPT|ACCESS_REJECT),
 # vlan_name_id (VLAN name or ID), vlan_tag_id (0-31), voice_domain_permission.
-# dacl_name exists on 0.3.4 but is omitted — no DACL objects in Git.
+# dacl_name exists on 0.4.1 but is omitted — no DACL objects in Git.
 # Do not invent fields.
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/authorization_profile
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/authorization_profile
 authorization_profiles:
   - name: Wired_Data
     description: ACCESS_ACCEPT data. Lab VLAN 10.
@@ -5389,10 +5389,10 @@ authorization_profiles:
     voice_domain_permission: false
 
 # One Network Access policy set. Not Device Admin (that stays ise_device_admin_policy_set).
-# CiscoDevNet/ise 0.3.4: ise_network_access_policy_set.
+# CiscoDevNet/ise 0.4.1: ise_network_access_policy_set.
 # service_name is one Allowed Protocols name (Wired_8021X).
 # Condition: Radius NAS-Port-Type equals Ethernet (wired).
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/network_access_policy_set
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/network_access_policy_set
 network_access_policy_sets:
   - name: Wired 802.1X MAB
     description: Wired 802.1X then MAB from Git. Not Device Admin.
@@ -5412,8 +5412,8 @@ network_access_policy_sets:
 # One lab user per TACACS identity group (8). Not 150k. Not 300k.
 # Groups match tacacs_authz.csv: T1 T2 T3 T4 vendor contractor
 #   auditor-internal auditor-external (hyphens stay).
-# CiscoDevNet/ise 0.3.4 ise_internal_user. Secrets stay in env.
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/internal_user
+# CiscoDevNet/ise 0.4.1 ise_internal_user. Secrets stay in env.
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/internal_user
 users:
   - username: lab-t1
     identity_group: T1

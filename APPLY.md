@@ -204,7 +204,7 @@ Passwords come from `.env` (`USER_PASSWORD_DEFAULT`). Not from Git.
 Do this in the **same** window **before** step 8, after step 6. Skip if Python is not installed. This does **not** talk to ISE. Step 7 is the required ISE preflight.
 
 ```
-pip install nac-validate
+pip install nac-validate==2.0.0
 nac-validate nac.yaml sites.yaml location_ndgs.yaml endpoint_identity_groups.yaml endpoints.yaml allowed_protocols.yaml authorization_profiles.yaml network_access.yaml users.yaml -s .schema.yaml -r .rules
 ```
 

@@ -1,10 +1,10 @@
 # Network Access authorization profiles. ACCESS_ACCEPT. Lab VLANs 10–70.
-# CiscoDevNet/ise 0.3.4: ise_authorization_profile.
+# CiscoDevNet/ise 0.4.1: ise_authorization_profile.
 # Schema used: name, description, access_type (ACCESS_ACCEPT|ACCESS_REJECT),
 # vlan_name_id (VLAN name or ID), vlan_tag_id (0-31), voice_domain_permission.
-# dacl_name exists on 0.3.4 but is omitted — no DACL objects in Git.
+# dacl_name exists on 0.4.1 but is omitted — no DACL objects in Git.
 # Do not invent fields.
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/authorization_profile
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/authorization_profile
 authorization_profiles:
   - name: Wired_Data
     description: ACCESS_ACCEPT data. Lab VLAN 10.

@@ -95,17 +95,17 @@ run "lab_internal_users" {
 
   assert {
     condition     = ise_internal_user.this[0].enabled == true
-    error_message = "Lab Internal Users must be enabled (0.3.4 enabled)."
+    error_message = "Lab Internal Users must be enabled (0.4.1 enabled)."
   }
 
   assert {
     condition     = ise_internal_user.this[0].password_id_store == "Internal Users"
-    error_message = "password_id_store must be Internal Users (0.3.4)."
+    error_message = "password_id_store must be Internal Users (0.4.1)."
   }
 
   assert {
     condition     = ise_internal_user.this[0].password_never_expires == true
-    error_message = "Lab Internal Users set password_never_expires (0.3.4, ISE 3.2+)."
+    error_message = "Lab Internal Users set password_never_expires (0.4.1, ISE 3.2+)."
   }
 
   assert {

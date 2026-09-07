@@ -1,6 +1,6 @@
 # Endpoint identity groups. 11 groups. Guest stays out.
-# CiscoDevNet/ise 0.3.4: ise_endpoint_identity_group (name, description, system_defined).
-# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint_identity_group
+# CiscoDevNet/ise 0.4.1: ise_endpoint_identity_group (name, description, system_defined).
+# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint_identity_group
 # Replaces Workstation / IP-Phone / Printer. 10 lab MACs each in endpoints.csv.
 # Default endpoint_count=110. Groups-only: TF_VAR_endpoint_count=0.
 endpoint_identity_groups:

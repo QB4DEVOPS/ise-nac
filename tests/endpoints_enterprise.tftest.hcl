@@ -90,12 +90,12 @@ run "enterprise_default_150000" {
 
   assert {
     condition     = ise_endpoint.this[0].name == ise_endpoint.this[0].mac
-    error_message = "ise_endpoint.name must be the MAC (0.3.4)."
+    error_message = "ise_endpoint.name must be the MAC (0.4.1)."
   }
 
   assert {
     condition     = ise_endpoint.this[0].static_group_assignment == true
-    error_message = "ise_endpoint.static_group_assignment must be true (0.3.4 required)."
+    error_message = "ise_endpoint.static_group_assignment must be true (0.4.1 required)."
   }
 
   assert {

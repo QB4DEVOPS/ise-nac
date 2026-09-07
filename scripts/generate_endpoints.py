@@ -295,9 +295,9 @@ def write_yaml(rows: list[dict[str, str]]) -> None:
         "# Pattern: {IEEE MA-L OUI}:{generated last 3 octets}. Drop 02:00:GG.",
         f"# IEEE MA-L source: {IEEE_OUI_URL}",
         "# 11 groups × 10 MACs = 110. Last 3 octets hashed, unique, not 00:00:01–0A.",
-        "# CiscoDevNet/ise 0.3.4 ise_endpoint: name, mac, group_id,",
+        "# CiscoDevNet/ise 0.4.1 ise_endpoint: name, mac, group_id,",
         "# static_group_assignment, static_profile_assignment.",
-        "# https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/endpoint",
+        "# https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/endpoint",
         "endpoints:",
     ]
     for r in rows:

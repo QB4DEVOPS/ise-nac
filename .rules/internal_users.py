@@ -1,7 +1,7 @@
 """FAIL unless lab Internal Users match the TACACS identity-group lock.
 
 users.csv / users.yaml are the Git source of truth. Terraform POSTs
-ise_internal_user (CiscoDevNet/ise 0.3.4). Secrets stay in env.
+ise_internal_user (CiscoDevNet/ise 0.4.1). Secrets stay in env.
 Lab is 8 users (one per TACACS identity group). Not 150k. Not 300k.
 """
 
@@ -47,7 +47,7 @@ _ENDPOINT_DEFAULT = re.compile(r'variable\s+"endpoint_count"[\s\S]*?default\s+=\
 _NAD_DEFAULT = re.compile(r'variable\s+"nad_count"[\s\S]*?default\s+=\s+15000', re.M)
 _IDG_RES = re.compile(r'resource\s+"ise_user_identity_group"\s+')
 _PROVIDER = re.compile(r'source\s+=\s+"CiscoDevNet/ise"')
-_PROVIDER_VER = re.compile(r'version\s+=\s+"~> 0\.3\.4"')
+_PROVIDER_VER = re.compile(r'version\s+=\s+"~> 0\.4\.1"')
 
 
 def _load_yaml(path: Path, key: str) -> list[dict[str, Any]]:
@@ -70,7 +70,7 @@ class Rule(RuleBase):
     description = (
         "FAIL unless users.csv/users.yaml is 8 lab Internal Users wired to "
         "existing TACACS identity groups, Terraform uses ise_internal_user "
-        "0.3.4, and secrets stay in env."
+        "0.4.1, and secrets stay in env."
     )
     severity = "HIGH"
     title = "LAB INTERNAL USERS MUST MATCH TACACS IDENTITY GROUPS"
@@ -86,7 +86,7 @@ Rebuild with python3 scripts/generate_users.py. Keep user_count default
 8. Skip users with TF_VAR_user_count=0. Do not invent 150k rows. Do not
 put secrets in users.csv."""
     references = [
-        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.3.4/docs/resources/internal_user",
+        "https://registry.terraform.io/providers/CiscoDevNet/ise/0.4.1/docs/resources/internal_user",
         "https://developer.cisco.com/docs/identity-services-engine/latest/create-user/",
         "https://www.cisco.com/c/en/us/td/docs/security/ise/performance_and_scalability/b_ise_perf_and_scale.html",
     ]
@@ -211,13 +211,13 @@ put secrets in users.csv."""
             add("users.tf is missing.", "users.tf")
         if not _USER_RES.search(users_tf):
             add(
-                "users.tf must declare ise_internal_user (CiscoDevNet/ise 0.3.4). "
+                "users.tf must declare ise_internal_user (CiscoDevNet/ise 0.4.1). "
                 "Not ise_user.",
                 "users.tf",
             )
         if _WRONG_RES.search(users_tf) or _WRONG_RES.search(main_tf):
             add(
-                "Do not use resource ise_user. 0.3.4 name is ise_internal_user.",
+                "Do not use resource ise_user. 0.4.1 name is ise_internal_user.",
                 "users.tf",
             )
         for field in (
@@ -236,14 +236,14 @@ put secrets in users.csv."""
         ):
             if field not in users_tf:
                 add(
-                    f"ise_internal_user must set 0.3.4 field {field}.",
+                    f"ise_internal_user must set 0.4.1 field {field}.",
                     "users.tf",
                     field,
                 )
         if "ise_user_identity_group.this" not in users_tf or ".id" not in users_tf:
             add(
                 "identity_groups must be comma-separated ISE identity group IDs "
-                "from ise_user_identity_group.this[...].id (0.3.4).",
+                "from ise_user_identity_group.this[...].id (0.4.1).",
                 "users.tf",
             )
         if "var.user_password" not in users_tf:
@@ -273,7 +273,7 @@ put secrets in users.csv."""
         if not _IDG_RES.search(main_tf):
             add("Keep ise_user_identity_group for TACACS identity groups.", "main.tf")
         if not _PROVIDER.search(versions) or not _PROVIDER_VER.search(versions):
-            add("Provider stays CiscoDevNet/ise ~> 0.3.4.", "versions.tf")
+            add("Provider stays CiscoDevNet/ise ~> 0.4.1.", "versions.tf")
 
         env_ex = _ENV_EXAMPLE.read_text(encoding="utf-8") if _ENV_EXAMPLE.is_file() else ""
         load_env = _LOAD_ENV.read_text(encoding="utf-8") if _LOAD_ENV.is_file() else ""

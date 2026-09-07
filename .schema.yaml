@@ -109,7 +109,7 @@ endpoint:
   organization: str(required=False)
   description: str(required=False)
 
-# CiscoDevNet/ise 0.3.4 ise_allowed_protocols required booleans.
+# CiscoDevNet/ise 0.4.1 ise_allowed_protocols required booleans.
 allowed_protocol:
   name: str()
   description: str(required=False)
@@ -136,7 +136,7 @@ allowed_protocol:
   teap_eap_ms_chap_v2: bool(required=False)
   teap_eap_tls: bool(required=False)
 
-# CiscoDevNet/ise 0.3.4 ise_authorization_profile: access_type, vlan_name_id,
+# CiscoDevNet/ise 0.4.1 ise_authorization_profile: access_type, vlan_name_id,
 # vlan_tag_id, voice_domain_permission. dacl_name exists but is not used.
 authorization_profile:
   name: str()
@@ -179,7 +179,7 @@ network_access_authz_rule:
   endpoint_identity_group: str()
   profile: str()
 
-# Lab Internal Users. CiscoDevNet/ise 0.3.4 ise_internal_user.
+# Lab Internal Users. CiscoDevNet/ise 0.4.1 ise_internal_user.
 # identity_group must match a TACACS identity group from tacacs_authz.csv.
 # Secrets are not in this file (env only).
 internal_user:

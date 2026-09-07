@@ -2,9 +2,11 @@
 # normal apply pushes every row. Policy-only (no switches): TF_VAR_nad_count=0.
 # TACACS secret from TF_VAR_nad_tacacs_secret / NAD_TACACS_SECRET (env only).
 # RADIUS secret from TF_VAR_nad_radius_secret / NAD_RADIUS_SECRET (env only).
-# Provider field (CiscoDevNet/ise 0.3.4): authentication_radius_shared_secret.
+# Provider field (CiscoDevNet/ise 0.4.1): authentication_radius_shared_secret.
 # Protocol is RADIUS so 802.1X/MAB can use the NAD. Keep tacacs_shared_secret.
-# 0.3.4 authentication_network_protocol choices: RADIUS | TACACS_PLUS.
+# 0.4.1 authentication_network_protocol choices: RADIUS | TACACS_PLUS.
+# Do not set coa_port or snmp_polling_interval — 0.4.1 dropped provider
+# defaults that drifted against ISE (coa_port 0 vs 1700; snmp 0 = disabled).
 # sample_nads.csv is an optional 8-row reference slice; nad_count does not read it.
 #
 # Each NAD joins exactly two groups:
