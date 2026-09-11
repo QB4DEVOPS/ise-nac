@@ -1,0 +1,22 @@
+﻿ndg,description,placeholder,parent
+regional,Largest-city type folder.,false,
+branch,Branch depot type folder.,false,
+hq,World HQ type folder (Houston control campus).,false,
+dc,Data-center type folder (Dallas fabric).,false,
+Texas,US state Texas.,false,
+us-houston,Site folder Location#All Locations#Texas#us-houston,false,Texas
+us-dallas,Site folder Location#All Locations#Texas#us-dallas,false,Texas
+Washington,US state Washington.,false,
+us-seattle,Site folder Location#All Locations#Washington#us-seattle,false,Washington
+Illinois,US state Illinois.,false,
+us-chicago,Site folder Location#All Locations#Illinois#us-chicago,false,Illinois
+gb,Country gb.,false,
+gb-london,Site folder Location#All Locations#gb#gb-london,false,gb
+Oregon,US state Oregon.,false,
+us-portland-or,Site folder Location#All Locations#Oregon#us-portland-or,false,Oregon
+Wisconsin,US state Wisconsin.,false,
+us-milwaukee,Site folder Location#All Locations#Wisconsin#us-milwaukee,false,Wisconsin
+de,Country de.,false,
+de-berlin,Site folder Location#All Locations#de#de-berlin,false,de
+jp,Country jp.,false,
+jp-tokyo,Site folder Location#All Locations#jp#jp-tokyo,false,jp

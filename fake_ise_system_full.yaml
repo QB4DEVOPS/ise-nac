@@ -1,0 +1,1430 @@
+# =============================================================================
+# Stellar Express Courier — FULL showcase shell (demo only)
+# =============================================================================
+# Thin Network-as-Code shell for the made-up overnight courier. GitHub cannot
+# host a literal 150k-endpoint YAML, so THIS file keeps policy rich and
+# inventories small. Companion samples live under fake_stellar/ as
+# stellar_express_*.csv (never production names). Those CSVs are NOT
+# consumed by Terraform. Scale counts are not CoS-locked; the generator
+# can emit production-ish volumes locally (--full). Do not commit a
+# 150k endpoints CSV until CoS confirms.
+#
+# All 17 .schema.yaml top-level keys are present. Optional fields are
+# populated. Cross-refs inside this YAML must resolve for objects that stay
+# here; they do not point at fake_stellar/ rows.
+#
+# Keep fake_ise_system.yaml as the light nine-site demo. This file is the
+# buckboard-proud full-system showcase. Do not terraform apply. Do not
+# contact a live ISE. Production nac.yaml, TF, generators, CSVs, .rules,
+# and the light demo stay untouched.
+#
+# Safety: no passwords, tokens, keys, or certificates. Management IPs are
+# RFC 5737 documentation ranges only (192.0.2.0/24, 198.51.100.0/24,
+# 203.0.113.0/24). MACs are synthetic uppercase colon-hex. Emails are
+# @example.com only. Rebuild sample CSVs (default) or local full scale:
+#   python3 fake_stellar/scripts/generate_stellar_inventory.py
+#   python3 fake_stellar/scripts/generate_stellar_inventory.py --full
+#
+# Cross-references (must resolve inside this file):
+#   devices.site -> sites.id
+#   tacacs_authz.ndg -> ndgs.ndg
+#   tacacs_authz.command_set -> command_sets.name
+#   tacacs_authz.shell_profile -> shell_profiles.name
+#   users.identity_group -> identity groups used in tacacs_authz
+#   endpoints.endpoint_identity_group -> endpoint_identity_groups.name
+#   network_access_authz.endpoint_identity_group -> endpoint_identity_groups.name
+#   network_access_authz.profile -> authorization_profiles.name
+#   network_access_policy_sets.service_name -> allowed_protocols.name
+#   location_ndgs.parent -> location_ndgs.ndg (when set)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# lab — single fictional PAN (Policy Administration Node). vSphere fields are
+# placeholders for a never-applied lab; no credentials.
+# -----------------------------------------------------------------------------
+lab:
+  pan:
+    count: 1
+    hostname: stellar-pan1
+    datastore: lab-datastore-stellar
+    network: lab-mgmt-docnet
+    cpu_reservation: false
+    memory_reservation: false
+    ova: Cisco-vISE-300-3.5.0.527.ova
+
+# -----------------------------------------------------------------------------
+# ndgs — four Access Network Device Groups (device-admin scope). min_tier is
+# the lowest TACACS identity group that may administer NADs in that NDG.
+# Depots = T1+, warehouse = T2+, dispatch = T3+, control tower = T4 only.
+# -----------------------------------------------------------------------------
+ndgs:
+  - ndg: access-depots
+    description: Neighborhood depots and retail drop boxes. T1 and above may administer.
+    min_tier: T1
+  - ndg: access-warehouse
+    description: Regional sortation warehouses. T2 and above may administer.
+    min_tier: T2
+  - ndg: access-dispatch
+    description: Fleet dispatch floors. T3 and above may administer.
+    min_tier: T3
+  - ndg: access-controltower
+    description: Global control-tower switches. T4 only.
+    min_tier: T4
+
+# -----------------------------------------------------------------------------
+# location_ndgs — ISE Location tree. Type-level folders (regional/branch/hq/dc)
+# sit under All Locations. State/country folders hold site folders. parent
+# points at another location_ndg name when set. hq/dc are real here (Houston
+# HQ, Dallas DC). Sample tree is fake_stellar/stellar_express_location_ndgs_sample.csv.
+# Production nac.yaml leaves hq/dc as placeholders with no tagged sites.
+# -----------------------------------------------------------------------------
+location_ndgs:
+  - ndg: regional
+    description: Largest-city type folder (Pacific / Midwest / Europe hubs).
+    placeholder: false
+  - ndg: branch
+    description: Branch depot type folder.
+    placeholder: false
+  - ndg: hq
+    description: World HQ type folder (Houston control campus).
+    placeholder: false
+  - ndg: dc
+    description: Data-center type folder (Dallas fabric).
+    placeholder: false
+  - ndg: Texas
+    description: US state Texas (HQ + DC).
+    placeholder: false
+  - ndg: Washington
+    description: US state Washington (Pacific regional).
+    placeholder: false
+  - ndg: Illinois
+    description: US state Illinois (Midwest regional).
+    placeholder: false
+  - ndg: Oregon
+    description: US state Oregon (Portland branch).
+    placeholder: false
+  - ndg: Wisconsin
+    description: US state Wisconsin (Milwaukee branch).
+    placeholder: false
+  - ndg: gb
+    description: Country gb (London regional).
+    placeholder: false
+  - ndg: de
+    description: Country de (Berlin branch).
+    placeholder: false
+  - ndg: jp
+    description: Country jp (Tokyo branch).
+    placeholder: false
+  - ndg: us-houston
+    description: Site folder Location#All Locations#Texas#us-houston
+    placeholder: false
+    parent: Texas
+  - ndg: us-dallas
+    description: Site folder Location#All Locations#Texas#us-dallas
+    placeholder: false
+    parent: Texas
+  - ndg: us-seattle
+    description: Site folder Location#All Locations#Washington#us-seattle
+    placeholder: false
+    parent: Washington
+  - ndg: us-chicago
+    description: Site folder Location#All Locations#Illinois#us-chicago
+    placeholder: false
+    parent: Illinois
+  - ndg: us-portland-or
+    description: Site folder Location#All Locations#Oregon#us-portland-or
+    placeholder: false
+    parent: Oregon
+  - ndg: us-milwaukee
+    description: Site folder Location#All Locations#Wisconsin#us-milwaukee
+    placeholder: false
+    parent: Wisconsin
+  - ndg: gb-london
+    description: Site folder Location#All Locations#gb#gb-london
+    placeholder: false
+    parent: gb
+  - ndg: de-berlin
+    description: Site folder Location#All Locations#de#de-berlin
+    placeholder: false
+    parent: de
+  - ndg: jp-tokyo
+    description: Site folder Location#All Locations#jp#jp-tokyo
+    placeholder: false
+    parent: jp
+
+# -----------------------------------------------------------------------------
+# sites — courier campuses that stay in YAML (thin shell). Real city names,
+# fictional Stellar Express roles. type enum: regional | branch | hq | dc.
+# Houston is HQ, Dallas is DC, London is a regional hub (Stellar overrides;
+# production sites.csv types differ). Sample list is
+# fake_stellar/stellar_express_sites_sample.csv.
+# -----------------------------------------------------------------------------
+sites:
+  - id: us-houston
+    city: Houston
+    admin1: Texas
+    cc: us
+    type: hq
+  - id: us-dallas
+    city: Dallas
+    admin1: Texas
+    cc: us
+    type: dc
+  - id: us-seattle
+    city: Seattle
+    admin1: Washington
+    cc: us
+    type: regional
+  - id: us-chicago
+    city: Chicago
+    admin1: Illinois
+    cc: us
+    type: regional
+  - id: gb-london
+    city: London
+    admin1: England
+    cc: gb
+    type: regional
+  - id: us-portland-or
+    city: Portland
+    admin1: Oregon
+    cc: us
+    type: branch
+  - id: us-milwaukee
+    city: Milwaukee
+    admin1: Wisconsin
+    cc: us
+    type: branch
+  - id: de-berlin
+    city: Berlin
+    admin1: Berlin
+    cc: de
+    type: branch
+  - id: jp-tokyo
+    city: Tokyo
+    admin1: Tokyo
+    cc: jp
+    type: branch
+
+# -----------------------------------------------------------------------------
+# tacacs_authc — Device Admin authentication. One Internal Users rule, same
+# shape as tacacs_authc.csv. No AD assumed. Ordered first-match.
+# -----------------------------------------------------------------------------
+tacacs_authc:
+  - order: 1
+    name: TACACS Internal Users
+    protocol: TACACS
+    identity_source: ISE Internal Users
+    if_auth_fail: REJECT
+    if_user_not_found: REJECT
+    if_process_fail: DROP
+
+# -----------------------------------------------------------------------------
+# tacacs_authz — Device Admin authorization, first-match (lowest order wins).
+# Four staff tiers (T1–T4) plus vendor, contractor, auditor-internal, and
+# auditor-external. command_set / shell_profile are the ISE object names in
+# this file (T1_cs / T1_shell), not the production CSV keys (T1). Vendors
+# and external auditors are time_bound: "yes".
+# -----------------------------------------------------------------------------
+tacacs_authz:
+  - order: 1
+    name: auditor-external-access-depots
+    identity_group: auditor-external
+    ndg: access-depots
+    command_set: auditor_external_cs
+    shell_profile: auditor_external_shell
+    time_bound: "yes"
+  - order: 2
+    name: auditor-external-access-warehouse
+    identity_group: auditor-external
+    ndg: access-warehouse
+    command_set: auditor_external_cs
+    shell_profile: auditor_external_shell
+    time_bound: "yes"
+  - order: 3
+    name: auditor-external-access-dispatch
+    identity_group: auditor-external
+    ndg: access-dispatch
+    command_set: auditor_external_cs
+    shell_profile: auditor_external_shell
+    time_bound: "yes"
+  - order: 4
+    name: auditor-external-access-controltower
+    identity_group: auditor-external
+    ndg: access-controltower
+    command_set: auditor_external_cs
+    shell_profile: auditor_external_shell
+    time_bound: "yes"
+  - order: 5
+    name: auditor-internal-access-depots
+    identity_group: auditor-internal
+    ndg: access-depots
+    command_set: auditor_internal_cs
+    shell_profile: auditor_internal_shell
+    time_bound: "no"
+  - order: 6
+    name: auditor-internal-access-warehouse
+    identity_group: auditor-internal
+    ndg: access-warehouse
+    command_set: auditor_internal_cs
+    shell_profile: auditor_internal_shell
+    time_bound: "no"
+  - order: 7
+    name: auditor-internal-access-dispatch
+    identity_group: auditor-internal
+    ndg: access-dispatch
+    command_set: auditor_internal_cs
+    shell_profile: auditor_internal_shell
+    time_bound: "no"
+  - order: 8
+    name: auditor-internal-access-controltower
+    identity_group: auditor-internal
+    ndg: access-controltower
+    command_set: auditor_internal_cs
+    shell_profile: auditor_internal_shell
+    time_bound: "no"
+  - order: 9
+    name: vendor-access-depots
+    identity_group: vendor
+    ndg: access-depots
+    command_set: vendor_cs
+    shell_profile: vendor_shell
+    time_bound: "yes"
+  - order: 10
+    name: vendor-access-warehouse
+    identity_group: vendor
+    ndg: access-warehouse
+    command_set: vendor_cs
+    shell_profile: vendor_shell
+    time_bound: "yes"
+  - order: 11
+    name: vendor-access-dispatch
+    identity_group: vendor
+    ndg: access-dispatch
+    command_set: vendor_cs
+    shell_profile: vendor_shell
+    time_bound: "yes"
+  - order: 12
+    name: vendor-access-controltower
+    identity_group: vendor
+    ndg: access-controltower
+    command_set: vendor_cs
+    shell_profile: vendor_shell
+    time_bound: "yes"
+  - order: 13
+    name: contractor-access-depots
+    identity_group: contractor
+    ndg: access-depots
+    command_set: contractor_cs
+    shell_profile: contractor_shell
+    time_bound: "no"
+  - order: 14
+    name: contractor-access-warehouse
+    identity_group: contractor
+    ndg: access-warehouse
+    command_set: contractor_cs
+    shell_profile: contractor_shell
+    time_bound: "no"
+  - order: 15
+    name: contractor-access-dispatch
+    identity_group: contractor
+    ndg: access-dispatch
+    command_set: contractor_cs
+    shell_profile: contractor_shell
+    time_bound: "no"
+  - order: 16
+    name: contractor-access-controltower
+    identity_group: contractor
+    ndg: access-controltower
+    command_set: contractor_cs
+    shell_profile: contractor_shell
+    time_bound: "no"
+  - order: 17
+    name: t4-access-depots
+    identity_group: T4
+    ndg: access-depots
+    command_set: T4_cs
+    shell_profile: T4_shell
+    time_bound: "no"
+  - order: 18
+    name: t4-access-warehouse
+    identity_group: T4
+    ndg: access-warehouse
+    command_set: T4_cs
+    shell_profile: T4_shell
+    time_bound: "no"
+  - order: 19
+    name: t4-access-dispatch
+    identity_group: T4
+    ndg: access-dispatch
+    command_set: T4_cs
+    shell_profile: T4_shell
+    time_bound: "no"
+  - order: 20
+    name: t4-access-controltower
+    identity_group: T4
+    ndg: access-controltower
+    command_set: T4_cs
+    shell_profile: T4_shell
+    time_bound: "no"
+  - order: 21
+    name: t3-access-depots
+    identity_group: T3
+    ndg: access-depots
+    command_set: T3_cs
+    shell_profile: T3_shell
+    time_bound: "no"
+  - order: 22
+    name: t3-access-warehouse
+    identity_group: T3
+    ndg: access-warehouse
+    command_set: T3_cs
+    shell_profile: T3_shell
+    time_bound: "no"
+  - order: 23
+    name: t3-access-dispatch
+    identity_group: T3
+    ndg: access-dispatch
+    command_set: T3_cs
+    shell_profile: T3_shell
+    time_bound: "no"
+  - order: 24
+    name: t2-access-depots
+    identity_group: T2
+    ndg: access-depots
+    command_set: T2_cs
+    shell_profile: T2_shell
+    time_bound: "no"
+  - order: 25
+    name: t2-access-warehouse
+    identity_group: T2
+    ndg: access-warehouse
+    command_set: T2_cs
+    shell_profile: T2_shell
+    time_bound: "no"
+  - order: 26
+    name: t1-access-depots
+    identity_group: T1
+    ndg: access-depots
+    command_set: T1_cs
+    shell_profile: T1_shell
+    time_bound: "no"
+
+# -----------------------------------------------------------------------------
+# devices — access switches that stay in YAML (role sw, type access). IPs are
+# RFC 5737 documentation addresses (/32 loopbacks), unique in this file.
+# Hostname pattern: {cc}{3–4 char site}-sw-{nn}. Scale list (~15,000 NADs)
+# is fake_stellar/stellar_express_devices_sample.csv (RFC 5737 only; not 10.x).
+# --full can emit ~15k site-local RFC 5737 overlays locally (not in this PR).
+# -----------------------------------------------------------------------------
+devices:
+  # Houston HQ — 192.0.2.0/24
+  - hostname: ushou-sw-01
+    site: us-houston
+    mgmt_ip: 192.0.2.1/32
+    role: sw
+    type: access
+  - hostname: ushou-sw-02
+    site: us-houston
+    mgmt_ip: 192.0.2.2/32
+    role: sw
+    type: access
+  - hostname: ushou-sw-03
+    site: us-houston
+    mgmt_ip: 192.0.2.3/32
+    role: sw
+    type: access
+  - hostname: ushou-sw-04
+    site: us-houston
+    mgmt_ip: 192.0.2.4/32
+    role: sw
+    type: access
+  # Dallas DC — 192.0.2.0/24
+  - hostname: usdal-sw-01
+    site: us-dallas
+    mgmt_ip: 192.0.2.11/32
+    role: sw
+    type: access
+  - hostname: usdal-sw-02
+    site: us-dallas
+    mgmt_ip: 192.0.2.12/32
+    role: sw
+    type: access
+  - hostname: usdal-sw-03
+    site: us-dallas
+    mgmt_ip: 192.0.2.13/32
+    role: sw
+    type: access
+  - hostname: usdal-sw-04
+    site: us-dallas
+    mgmt_ip: 192.0.2.14/32
+    role: sw
+    type: access
+  # Seattle / Chicago regional — 198.51.100.0/24
+  - hostname: ussea-sw-01
+    site: us-seattle
+    mgmt_ip: 198.51.100.1/32
+    role: sw
+    type: access
+  - hostname: ussea-sw-02
+    site: us-seattle
+    mgmt_ip: 198.51.100.2/32
+    role: sw
+    type: access
+  - hostname: ussea-sw-03
+    site: us-seattle
+    mgmt_ip: 198.51.100.3/32
+    role: sw
+    type: access
+  - hostname: uschi-sw-01
+    site: us-chicago
+    mgmt_ip: 198.51.100.11/32
+    role: sw
+    type: access
+  - hostname: uschi-sw-02
+    site: us-chicago
+    mgmt_ip: 198.51.100.12/32
+    role: sw
+    type: access
+  - hostname: uschi-sw-03
+    site: us-chicago
+    mgmt_ip: 198.51.100.13/32
+    role: sw
+    type: access
+  # Portland / Milwaukee branch — 198.51.100.0/24
+  - hostname: uspdx-sw-01
+    site: us-portland-or
+    mgmt_ip: 198.51.100.21/32
+    role: sw
+    type: access
+  - hostname: uspdx-sw-02
+    site: us-portland-or
+    mgmt_ip: 198.51.100.22/32
+    role: sw
+    type: access
+  - hostname: uspdx-sw-03
+    site: us-portland-or
+    mgmt_ip: 198.51.100.23/32
+    role: sw
+    type: access
+  - hostname: usmil-sw-01
+    site: us-milwaukee
+    mgmt_ip: 198.51.100.31/32
+    role: sw
+    type: access
+  - hostname: usmil-sw-02
+    site: us-milwaukee
+    mgmt_ip: 198.51.100.32/32
+    role: sw
+    type: access
+  - hostname: usmil-sw-03
+    site: us-milwaukee
+    mgmt_ip: 198.51.100.33/32
+    role: sw
+    type: access
+  # London / Berlin / Tokyo — 203.0.113.0/24
+  - hostname: gblon-sw-01
+    site: gb-london
+    mgmt_ip: 203.0.113.1/32
+    role: sw
+    type: access
+  - hostname: gblon-sw-02
+    site: gb-london
+    mgmt_ip: 203.0.113.2/32
+    role: sw
+    type: access
+  - hostname: gblon-sw-03
+    site: gb-london
+    mgmt_ip: 203.0.113.3/32
+    role: sw
+    type: access
+  - hostname: deber-sw-01
+    site: de-berlin
+    mgmt_ip: 203.0.113.11/32
+    role: sw
+    type: access
+  - hostname: deber-sw-02
+    site: de-berlin
+    mgmt_ip: 203.0.113.12/32
+    role: sw
+    type: access
+  - hostname: deber-sw-03
+    site: de-berlin
+    mgmt_ip: 203.0.113.13/32
+    role: sw
+    type: access
+  - hostname: jptyo-sw-01
+    site: jp-tokyo
+    mgmt_ip: 203.0.113.21/32
+    role: sw
+    type: access
+  - hostname: jptyo-sw-02
+    site: jp-tokyo
+    mgmt_ip: 203.0.113.22/32
+    role: sw
+    type: access
+  - hostname: jptyo-sw-03
+    site: jp-tokyo
+    mgmt_ip: 203.0.113.23/32
+    role: sw
+    type: access
+
+# -----------------------------------------------------------------------------
+# command_sets — ISE TACACS command-set POST names (*_cs). IOS first-word
+# command + literal arguments (* wildcard only; no PCRE). T4 permits unmatched.
+# Vendor/contractor deny reload. Names share an ISE namespace with shell
+# profiles, so they must not collide (T1_cs vs T1_shell).
+# -----------------------------------------------------------------------------
+command_sets:
+  - name: T1_cs
+    description: Read-only depot ops (show, ping, traceroute). No configure.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: version
+      - grant: PERMIT
+        command: show
+        arguments: ip interface brief
+      - grant: PERMIT
+        command: show
+        arguments: running-config
+      - grant: PERMIT
+        command: show
+        arguments: logging
+      - grant: PERMIT
+        command: show
+        arguments: cdp neighbors
+      - grant: PERMIT
+        command: ping
+        arguments: "*"
+      - grant: PERMIT
+        command: traceroute
+        arguments: "*"
+      - grant: DENY
+        command: configure
+        arguments: "*"
+  - name: T2_cs
+    description: T1 plus access-port description, shutdown, and access VLAN.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: version
+      - grant: PERMIT
+        command: show
+        arguments: ip interface brief
+      - grant: PERMIT
+        command: show
+        arguments: running-config
+      - grant: PERMIT
+        command: show
+        arguments: logging
+      - grant: PERMIT
+        command: ping
+        arguments: "*"
+      - grant: PERMIT
+        command: traceroute
+        arguments: "*"
+      - grant: PERMIT
+        command: configure
+        arguments: terminal
+      - grant: PERMIT
+        command: config
+        arguments: terminal
+      - grant: PERMIT
+        command: interface
+        arguments: "*"
+      - grant: PERMIT
+        command: description
+        arguments: "*"
+      - grant: PERMIT
+        command: shutdown
+        arguments: ""
+      - grant: PERMIT
+        command: "no"
+        arguments: shutdown
+      - grant: PERMIT
+        command: switchport
+        arguments: "access vlan *"
+      - grant: PERMIT
+        command: end
+        arguments: ""
+      - grant: PERMIT
+        command: exit
+        arguments: ""
+      - grant: DENY
+        command: reload
+        arguments: "*"
+  - name: T3_cs
+    description: T2 plus VLAN, spanning-tree, and copy run start.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: version
+      - grant: PERMIT
+        command: show
+        arguments: ip interface brief
+      - grant: PERMIT
+        command: show
+        arguments: running-config
+      - grant: PERMIT
+        command: show
+        arguments: logging
+      - grant: PERMIT
+        command: ping
+        arguments: "*"
+      - grant: PERMIT
+        command: traceroute
+        arguments: "*"
+      - grant: PERMIT
+        command: configure
+        arguments: terminal
+      - grant: PERMIT
+        command: config
+        arguments: terminal
+      - grant: PERMIT
+        command: interface
+        arguments: "*"
+      - grant: PERMIT
+        command: description
+        arguments: "*"
+      - grant: PERMIT
+        command: shutdown
+        arguments: ""
+      - grant: PERMIT
+        command: "no"
+        arguments: shutdown
+      - grant: PERMIT
+        command: "no"
+        arguments: "spanning-tree *"
+      - grant: PERMIT
+        command: "no"
+        arguments: "vlan *"
+      - grant: PERMIT
+        command: switchport
+        arguments: "access vlan *"
+      - grant: PERMIT
+        command: vlan
+        arguments: "*"
+      - grant: PERMIT
+        command: spanning-tree
+        arguments: "*"
+      - grant: PERMIT
+        command: copy
+        arguments: running-config startup-config
+      - grant: PERMIT
+        command: end
+        arguments: ""
+      - grant: PERMIT
+        command: exit
+        arguments: ""
+      - grant: DENY
+        command: reload
+        arguments: "*"
+  - name: T4_cs
+    description: Full device-admin. Unmatched IOS commands permitted (privilege 15).
+    permit_unmatched: true
+    commands: []
+  - name: vendor_cs
+    description: Show plus interface description. No shutdown, wr mem, or reload.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: "*"
+      - grant: PERMIT
+        command: configure
+        arguments: terminal
+      - grant: PERMIT
+        command: config
+        arguments: terminal
+      - grant: PERMIT
+        command: interface
+        arguments: "*"
+      - grant: PERMIT
+        command: description
+        arguments: "*"
+      - grant: PERMIT
+        command: end
+        arguments: ""
+      - grant: PERMIT
+        command: exit
+        arguments: ""
+      - grant: DENY
+        command: reload
+        arguments: "*"
+      - grant: DENY_ALWAYS
+        command: username
+        arguments: "*"
+  - name: contractor_cs
+    description: Same as T2. Access-port work only. No wr mem.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: version
+      - grant: PERMIT
+        command: show
+        arguments: ip interface brief
+      - grant: PERMIT
+        command: show
+        arguments: running-config
+      - grant: PERMIT
+        command: show
+        arguments: logging
+      - grant: PERMIT
+        command: ping
+        arguments: "*"
+      - grant: PERMIT
+        command: traceroute
+        arguments: "*"
+      - grant: PERMIT
+        command: configure
+        arguments: terminal
+      - grant: PERMIT
+        command: config
+        arguments: terminal
+      - grant: PERMIT
+        command: interface
+        arguments: "*"
+      - grant: PERMIT
+        command: description
+        arguments: "*"
+      - grant: PERMIT
+        command: shutdown
+        arguments: ""
+      - grant: PERMIT
+        command: "no"
+        arguments: shutdown
+      - grant: PERMIT
+        command: switchport
+        arguments: "access vlan *"
+      - grant: PERMIT
+        command: end
+        arguments: ""
+      - grant: PERMIT
+        command: exit
+        arguments: ""
+      - grant: DENY
+        command: reload
+        arguments: "*"
+  - name: auditor_internal_cs
+    description: Internal auditor read-only. show run, version, inventory, logging.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: running-config
+      - grant: PERMIT
+        command: show
+        arguments: version
+      - grant: PERMIT
+        command: show
+        arguments: inventory
+      - grant: PERMIT
+        command: show
+        arguments: logging
+  - name: auditor_external_cs
+    description: External auditor. show version and inventory only. No show run.
+    permit_unmatched: false
+    commands:
+      - grant: PERMIT
+        command: show
+        arguments: version
+      - grant: PERMIT
+        command: show
+        arguments: inventory
+
+# -----------------------------------------------------------------------------
+# shell_profiles — ISE TACACS profile POST names (*_shell). priv_lvl plus
+# session_attributes (MANDATORY priv-lvl). T1 and auditors are privilege 1;
+# everyone else is privilege 15.
+# -----------------------------------------------------------------------------
+shell_profiles:
+  - name: T1_shell
+    description: Read-only device admin (privilege 1).
+    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"
+      - type: OPTIONAL
+        name: timeout
+        value: "15"
+  - name: T2_shell
+    description: Access-switch interface admin (privilege 15).
+    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
+      - type: OPTIONAL
+        name: timeout
+        value: "30"
+  - name: T3_shell
+    description: Access-switch VLAN and spanning-tree admin (privilege 15).
+    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
+      - type: OPTIONAL
+        name: timeout
+        value: "30"
+  - name: T4_shell
+    description: Full device-admin (privilege 15).
+    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
+      - type: OPTIONAL
+        name: timeout
+        value: "60"
+  - name: vendor_shell
+    description: Vendor interface-description admin (privilege 15).
+    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
+      - type: OPTIONAL
+        name: timeout
+        value: "15"
+  - name: contractor_shell
+    description: Contractor interface admin, same as T2 (privilege 15).
+    priv_lvl: 15
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "15"
+      - type: OPTIONAL
+        name: timeout
+        value: "20"
+  - name: auditor_internal_shell
+    description: Internal auditor read-only (privilege 1).
+    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"
+      - type: OPTIONAL
+        name: timeout
+        value: "15"
+  - name: auditor_external_shell
+    description: External auditor read-only (privilege 1).
+    priv_lvl: 1
+    session_attributes:
+      - type: MANDATORY
+        name: priv-lvl
+        value: "1"
+      - type: OPTIONAL
+        name: timeout
+        value: "10"
+
+# -----------------------------------------------------------------------------
+# endpoint_identity_groups — the 11 wired groups this repo uses (no Guest).
+# VLANs 10–70 match authorization_profiles below.
+# -----------------------------------------------------------------------------
+endpoint_identity_groups:
+  - name: Phones
+    description: Wired IP phones. Voice VLAN 20.
+    system_defined: false
+  - name: AP
+    description: Access points. VLAN 40.
+    system_defined: false
+  - name: Printers
+    description: Wired MAB printers. VLAN 30.
+    system_defined: false
+  - name: TVs
+    description: Sort-bay displays. Data VLAN 10.
+    system_defined: false
+  - name: Badge_Readers
+    description: Badge readers. VLAN 60.
+    system_defined: false
+  - name: Cameras
+    description: Cameras. VLAN 50.
+    system_defined: false
+  - name: UPS
+    description: UPS. VLAN 70.
+    system_defined: false
+  - name: Powerstrips
+    description: Power strips. VLAN 70.
+    system_defined: false
+  - name: Linux
+    description: Linux hosts. Data VLAN 10.
+    system_defined: false
+  - name: Windows
+    description: Windows hosts. Data VLAN 10.
+    system_defined: false
+  - name: RFID_Readers
+    description: RFID readers on parcel belts. VLAN 60.
+    system_defined: false
+
+# -----------------------------------------------------------------------------
+# endpoints — two synthetic lab MACs per group that stay in YAML (22 total,
+# not 150k). IEEE MA-L OUI + generated last 3 octets. Uppercase colon-hex.
+# 5E:C1:xx NIC suffix marks the FULL showcase shell (light demo uses 5E:C0).
+# Sample list is fake_stellar/stellar_express_endpoints_sample.csv. Not hardware.
+# Not copied from a device. No 02:00:GG. No 00:00:01–00:00:0A. No guest.
+# -----------------------------------------------------------------------------
+endpoints:
+  - mac: 00:04:F2:5E:C1:10
+    endpoint_identity_group: Phones
+    oui: 00:04:F2
+    organization: Polycom
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express phone. IEEE MA-L OUI 00:04:F2 (Polycom)."
+  - mac: 00:04:F2:5E:C1:11
+    endpoint_identity_group: Phones
+    oui: 00:04:F2
+    organization: Polycom
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express phone. IEEE MA-L OUI 00:04:F2 (Polycom)."
+  - mac: 9C:E3:30:5E:C1:20
+    endpoint_identity_group: AP
+    oui: 9C:E3:30
+    organization: Cisco Meraki
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express AP. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki)."
+  - mac: 9C:E3:30:5E:C1:21
+    endpoint_identity_group: AP
+    oui: 9C:E3:30
+    organization: Cisco Meraki
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express AP. IEEE MA-L OUI 9C:E3:30 (Cisco Meraki)."
+  - mac: 9C:7B:EF:5E:C1:30
+    endpoint_identity_group: Printers
+    oui: 9C:7B:EF
+    organization: Hewlett Packard
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express printer. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard)."
+  - mac: 9C:7B:EF:5E:C1:31
+    endpoint_identity_group: Printers
+    oui: 9C:7B:EF
+    organization: Hewlett Packard
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express printer. IEEE MA-L OUI 9C:7B:EF (Hewlett Packard)."
+  - mac: 64:1B:2F:5E:C1:40
+    endpoint_identity_group: TVs
+    oui: 64:1B:2F
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express display. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd)."
+  - mac: 64:1B:2F:5E:C1:41
+    endpoint_identity_group: TVs
+    oui: 64:1B:2F
+    organization: "Samsung Electronics Co.,Ltd"
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express display. IEEE MA-L OUI 64:1B:2F (Samsung Electronics Co.,Ltd)."
+  - mac: 00:30:8E:5E:C1:50
+    endpoint_identity_group: Badge_Readers
+    oui: 00:30:8E
+    organization: Crossmatch Technologies/HID Global
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express badge reader. IEEE MA-L OUI 00:30:8E (HID Global)."
+  - mac: 00:30:8E:5E:C1:51
+    endpoint_identity_group: Badge_Readers
+    oui: 00:30:8E
+    organization: Crossmatch Technologies/HID Global
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express badge reader. IEEE MA-L OUI 00:30:8E (HID Global)."
+  - mac: 00:40:8C:5E:C1:60
+    endpoint_identity_group: Cameras
+    oui: 00:40:8C
+    organization: Axis Communications AB
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express camera. IEEE MA-L OUI 00:40:8C (Axis Communications AB)."
+  - mac: 00:40:8C:5E:C1:61
+    endpoint_identity_group: Cameras
+    oui: 00:40:8C
+    organization: Axis Communications AB
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express camera. IEEE MA-L OUI 00:40:8C (Axis Communications AB)."
+  - mac: 00:C0:B7:5E:C1:70
+    endpoint_identity_group: UPS
+    oui: 00:C0:B7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express UPS. IEEE MA-L OUI 00:C0:B7 (APC)."
+  - mac: 00:C0:B7:5E:C1:71
+    endpoint_identity_group: UPS
+    oui: 00:C0:B7
+    organization: AMERICAN POWER CONVERSION CORP
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express UPS. IEEE MA-L OUI 00:C0:B7 (APC)."
+  - mac: 00:0D:5D:5E:C1:80
+    endpoint_identity_group: Powerstrips
+    oui: 00:0D:5D
+    organization: "Raritan Computer, Inc"
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express power strip. IEEE MA-L OUI 00:0D:5D (Raritan)."
+  - mac: 00:0D:5D:5E:C1:81
+    endpoint_identity_group: Powerstrips
+    oui: 00:0D:5D
+    organization: "Raritan Computer, Inc"
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express power strip. IEEE MA-L OUI 00:0D:5D (Raritan)."
+  - mac: 00:C0:4F:5E:C1:90
+    endpoint_identity_group: Linux
+    oui: 00:C0:4F
+    organization: Dell Inc.
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express Linux host. IEEE MA-L OUI 00:C0:4F (Dell Inc.)."
+  - mac: 00:C0:4F:5E:C1:91
+    endpoint_identity_group: Linux
+    oui: 00:C0:4F
+    organization: Dell Inc.
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express Linux host. IEEE MA-L OUI 00:C0:4F (Dell Inc.)."
+  - mac: 10:E7:C6:5E:C1:A0
+    endpoint_identity_group: Windows
+    oui: 10:E7:C6
+    organization: Hewlett Packard
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express Windows host. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard)."
+  - mac: 10:E7:C6:5E:C1:A1
+    endpoint_identity_group: Windows
+    oui: 10:E7:C6
+    organization: Hewlett Packard
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express Windows host. IEEE MA-L OUI 10:E7:C6 (Hewlett Packard)."
+  - mac: 00:16:25:5E:C1:B0
+    endpoint_identity_group: RFID_Readers
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express RFID reader. IEEE MA-L OUI 00:16:25 (Impinj, Inc.)."
+  - mac: 00:16:25:5E:C1:B1
+    endpoint_identity_group: RFID_Readers
+    oui: 00:16:25
+    organization: "Impinj, Inc."
+    description: "Full-pack lab MAC. Not hardware. Synthetic Stellar Express RFID reader. IEEE MA-L OUI 00:16:25 (Impinj, Inc.)."
+
+# -----------------------------------------------------------------------------
+# allowed_protocols — wired 802.1X EAP list (also Host Lookup so MAB can
+# fire in the same policy set) plus a PAP/ASCII MAB-only list. Bound via
+# network_access_policy_sets.service_name.
+# -----------------------------------------------------------------------------
+allowed_protocols:
+  - name: Wired_8021X
+    description: Wired 802.1X EAP. Bound to the Network Access policy set. Host Lookup on so MAB can fire.
+    process_host_lookup: true
+    allow_pap_ascii: false
+    allow_chap: false
+    allow_ms_chap_v1: false
+    allow_ms_chap_v2: false
+    allow_eap_md5: false
+    allow_leap: false
+    allow_eap_tls: true
+    allow_eap_ttls: true
+    allow_eap_fast: false
+    allow_peap: true
+    allow_teap: true
+    allow_preferred_eap_protocol: false
+    allow_weak_ciphers_for_eap: false
+    eap_tls_l_bit: false
+    require_message_auth: false
+    peap_allow_peap_eap_ms_chap_v2: true
+    peap_allow_peap_eap_tls: true
+    eap_ttls_pap_ascii: true
+    eap_ttls_ms_chap_v2: true
+    teap_eap_ms_chap_v2: true
+    teap_eap_tls: true
+  - name: Wired_MAB
+    description: Wired MAB. Process Host Lookup and PAP/ASCII only. Bound to the monitor specialist set.
+    process_host_lookup: true
+    allow_pap_ascii: true
+    allow_chap: false
+    allow_ms_chap_v1: false
+    allow_ms_chap_v2: false
+    allow_eap_md5: false
+    allow_leap: false
+    allow_eap_tls: false
+    allow_eap_ttls: false
+    allow_eap_fast: false
+    allow_peap: false
+    allow_teap: false
+    allow_preferred_eap_protocol: false
+    allow_weak_ciphers_for_eap: false
+    eap_tls_l_bit: false
+    require_message_auth: false
+    peap_allow_peap_eap_ms_chap_v2: false
+    peap_allow_peap_eap_tls: false
+    eap_ttls_pap_ascii: false
+    eap_ttls_ms_chap_v2: false
+    teap_eap_ms_chap_v2: false
+    teap_eap_tls: false
+
+# -----------------------------------------------------------------------------
+# authorization_profiles — ACCESS_ACCEPT VLANs 10–70 (same mapping as this
+# repo) plus ACCESS_REJECT quarantine (unused by first-match rules; shows
+# the reject enum). No DACL objects.
+# -----------------------------------------------------------------------------
+authorization_profiles:
+  - name: Wired_Data
+    description: ACCESS_ACCEPT data. Lab VLAN 10 (Linux, Windows, TVs).
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "10"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Voice
+    description: ACCESS_ACCEPT voice. Lab VLAN 20 (Phones).
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "20"
+    vlan_tag_id: 0
+    voice_domain_permission: true
+  - name: Wired_Printer
+    description: ACCESS_ACCEPT MAB. Lab VLAN 30 (Printers).
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "30"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_AP
+    description: ACCESS_ACCEPT access points. Lab VLAN 40.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "40"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Camera
+    description: ACCESS_ACCEPT cameras. Lab VLAN 50.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "50"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Badge
+    description: ACCESS_ACCEPT badge and RFID readers. Lab VLAN 60.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "60"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Facilities
+    description: ACCESS_ACCEPT UPS and powerstrips. Lab VLAN 70.
+    access_type: ACCESS_ACCEPT
+    vlan_name_id: "70"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+  - name: Wired_Quarantine
+    description: ACCESS_REJECT fallback. Lab VLAN 99. Not used by first-match authz.
+    access_type: ACCESS_REJECT
+    vlan_name_id: "99"
+    vlan_tag_id: 0
+    voice_domain_permission: false
+
+# -----------------------------------------------------------------------------
+# network_access_policy_sets — live wired set (NAS-Port-Type Ethernet) plus a
+# monitor-only MAB specialist so both allowed_protocols names are bound.
+# service_name must resolve to allowed_protocols.name in this file.
+# -----------------------------------------------------------------------------
+network_access_policy_sets:
+  - name: Wired 802.1X MAB
+    description: Wired 802.1X then MAB for Stellar Express. Not Device Admin. Live first-match set.
+    is_proxy: false
+    rank: 0
+    service_name: Wired_8021X
+    state: enabled
+    condition_type: ConditionAttributes
+    condition_is_negate: false
+    condition_dictionary_name: Radius
+    condition_attribute_name: NAS-Port-Type
+    condition_operator: equals
+    condition_attribute_value: Ethernet
+  - name: Wired MAB Specialist
+    description: Monitor-only MAB specialist list (Wired_MAB). Not the live first-match set.
+    is_proxy: false
+    rank: 1
+    service_name: Wired_MAB
+    state: monitor
+    condition_type: ConditionAttributes
+    condition_is_negate: false
+    condition_dictionary_name: Radius
+    condition_attribute_name: NAS-Port-Type
+    condition_operator: equals
+    condition_attribute_value: Ethernet
+
+# -----------------------------------------------------------------------------
+# network_access_authc — Dot1X then MAB. MAB continues if the endpoint is
+# not yet in Internal Endpoints (same continue-if-not-found as this repo).
+# -----------------------------------------------------------------------------
+network_access_authc:
+  - order: 1
+    name: Dot1X
+    protocol: 802.1X
+    identity_source: ISE Internal Users
+    if_auth_fail: REJECT
+    if_user_not_found: REJECT
+    if_process_fail: DROP
+    condition_dictionary_name: Radius
+    condition_attribute_name: Service-Type
+    condition_operator: equals
+    condition_attribute_value: Framed
+  - order: 2
+    name: MAB
+    protocol: MAB
+    identity_source: ISE Internal Endpoints
+    if_auth_fail: REJECT
+    if_user_not_found: CONTINUE
+    if_process_fail: DROP
+    condition_dictionary_name: Network Access
+    condition_attribute_name: UseCase
+    condition_operator: equals
+    condition_attribute_value: Host Lookup
+
+# -----------------------------------------------------------------------------
+# network_access_authz — first-match by endpoint identity group. Phones go
+# to voice; printers/AP/cameras/badge/RFID/facilities get their VLANs;
+# TVs/Linux/Windows share data VLAN 10. No guest.
+# -----------------------------------------------------------------------------
+network_access_authz:
+  - order: 1
+    name: phones
+    endpoint_identity_group: Phones
+    profile: Wired_Voice
+  - order: 2
+    name: printers
+    endpoint_identity_group: Printers
+    profile: Wired_Printer
+  - order: 3
+    name: ap
+    endpoint_identity_group: AP
+    profile: Wired_AP
+  - order: 4
+    name: cameras
+    endpoint_identity_group: Cameras
+    profile: Wired_Camera
+  - order: 5
+    name: badge_readers
+    endpoint_identity_group: Badge_Readers
+    profile: Wired_Badge
+  - order: 6
+    name: rfid_readers
+    endpoint_identity_group: RFID_Readers
+    profile: Wired_Badge
+  - order: 7
+    name: ups
+    endpoint_identity_group: UPS
+    profile: Wired_Facilities
+  - order: 8
+    name: powerstrips
+    endpoint_identity_group: Powerstrips
+    profile: Wired_Facilities
+  - order: 9
+    name: tvs
+    endpoint_identity_group: TVs
+    profile: Wired_Data
+  - order: 10
+    name: linux
+    endpoint_identity_group: Linux
+    profile: Wired_Data
+  - order: 11
+    name: windows
+    endpoint_identity_group: Windows
+    profile: Wired_Data
+
+# -----------------------------------------------------------------------------
+# users — two Internal Users per TACACS identity group, plus one disabled
+# account to show enabled: false. Secrets are not in this file. Emails are
+# @example.com only. identity_group must match a tacacs_authz identity_group.
+# Not 150k. ISE Internal User store max is 300,000; this showcase stays tiny.
+# -----------------------------------------------------------------------------
+users:
+  - username: nova-t1
+    identity_group: T1
+    first_name: Nova
+    last_name: Lane
+    email: nova.lane@example.com
+    enabled: true
+    description: Stellar Express T1 depot operator. Lab Internal User. Not a production account.
+  - username: sol-t1
+    identity_group: T1
+    first_name: Sol
+    last_name: Kim
+    email: sol.kim@example.com
+    enabled: true
+    description: Stellar Express T1 night-shift depot operator. Lab Internal User. Not a production account.
+  - username: comet-t2
+    identity_group: T2
+    first_name: Comet
+    last_name: Reyes
+    email: comet.reyes@example.com
+    enabled: true
+    description: Stellar Express T2 warehouse technician. Lab Internal User. Not a production account.
+  - username: nimbus-t2
+    identity_group: T2
+    first_name: Nimbus
+    last_name: Shah
+    email: nimbus.shah@example.com
+    enabled: true
+    description: Stellar Express T2 sort-bay technician. Lab Internal User. Not a production account.
+  - username: aurora-t3
+    identity_group: T3
+    first_name: Aurora
+    last_name: Patel
+    email: aurora.patel@example.com
+    enabled: true
+    description: Stellar Express T3 dispatch lead. Lab Internal User. Not a production account.
+  - username: quasar-t3
+    identity_group: T3
+    first_name: Quasar
+    last_name: Okeke
+    email: quasar.okeke@example.com
+    enabled: true
+    description: Stellar Express T3 fleet-floor lead. Lab Internal User. Not a production account.
+  - username: orion-t4
+    identity_group: T4
+    first_name: Orion
+    last_name: Hale
+    email: orion.hale@example.com
+    enabled: true
+    description: Stellar Express T4 control-tower admin. Lab Internal User. Not a production account.
+  - username: vela-t4
+    identity_group: T4
+    first_name: Vela
+    last_name: Morse
+    email: vela.morse@example.com
+    enabled: true
+    description: Stellar Express T4 backup control-tower admin. Lab Internal User. Not a production account.
+  - username: lumen-vendor
+    identity_group: vendor
+    first_name: Lumen
+    last_name: Ortiz
+    email: lumen.ortiz@example.com
+    enabled: true
+    description: Time-bound scanner-vendor access. Lab Internal User. Not a production account.
+  - username: helix-vendor
+    identity_group: vendor
+    first_name: Helix
+    last_name: Cho
+    email: helix.cho@example.com
+    enabled: true
+    description: Time-bound belt-vendor access. Lab Internal User. Not a production account.
+  - username: kepler-contractor
+    identity_group: contractor
+    first_name: Kepler
+    last_name: Nguyen
+    email: kepler.nguyen@example.com
+    enabled: true
+    description: Contractor interface admin. Lab Internal User. Not a production account.
+  - username: atlas-contractor
+    identity_group: contractor
+    first_name: Atlas
+    last_name: Freire
+    email: atlas.freire@example.com
+    enabled: true
+    description: Contractor access-port admin. Lab Internal User. Not a production account.
+  - username: lyra-auditor
+    identity_group: auditor-internal
+    first_name: Lyra
+    last_name: Okonkwo
+    email: lyra.okonkwo@example.com
+    enabled: true
+    description: Internal SOX auditor (read-only). Lab Internal User. Not a production account.
+  - username: altair-auditor
+    identity_group: auditor-internal
+    first_name: Altair
+    last_name: Singh
+    email: altair.singh@example.com
+    enabled: true
+    description: Internal compliance auditor (read-only). Lab Internal User. Not a production account.
+  - username: vega-auditor
+    identity_group: auditor-external
+    first_name: Vega
+    last_name: Berg
+    email: vega.berg@example.com
+    enabled: true
+    description: External auditor (time-bound, read-only). Lab Internal User. Not a production account.
+  - username: deneb-auditor
+    identity_group: auditor-external
+    first_name: Deneb
+    last_name: Rossi
+    email: deneb.rossi@example.com
+    enabled: true
+    description: External partner auditor (time-bound, read-only). Lab Internal User. Not a production account.
+  - username: retired-t1
+    identity_group: T1
+    first_name: Mira
+    last_name: Sol
+    email: mira.sol@example.com
+    enabled: false
+    description: Disabled former T1 account. Lab Internal User. Not a production account.
