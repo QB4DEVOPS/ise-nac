@@ -1,0 +1,10 @@
+﻿id,city,admin1,cc,type,facility
+us-houston,Houston,Texas,us,hq,world-hq-control-campus
+us-dallas,Dallas,Texas,us,dc,sortation-fabric
+us-seattle,Seattle,Washington,us,regional,pacific-hub
+us-chicago,Chicago,Illinois,us,regional,midwest-hub
+gb-london,London,England,gb,regional,europe-hub
+us-portland-or,Portland,Oregon,us,branch,neighborhood-depot
+us-milwaukee,Milwaukee,Wisconsin,us,branch,neighborhood-depot
+de-berlin,Berlin,Berlin,de,branch,neighborhood-depot
+jp-tokyo,Tokyo,Tokyo,jp,branch,neighborhood-depot

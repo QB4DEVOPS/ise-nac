@@ -1,0 +1,8 @@
+# Local --full output. Scale is not CoS-locked; do not commit these.
+# Samples (*_sample.csv) are the files that belong in git.
+stellar_express_sites.csv
+stellar_express_devices.csv
+stellar_express_endpoints.csv
+stellar_express_location_ndgs.csv
+__pycache__/
+*.pyc
