@@ -48,16 +48,17 @@ CoS locks scale. They still use the `stellar_express_` prefix.
 python3 fake_stellar/scripts/generate_stellar_inventory.py --full
 ```
 
-| File (gitignored) | Target rows | Expected size (approx.) |
+| File (gitignored) | Target rows | Measured size (`--full`) |
 | --- | ---: | --- |
-| `stellar_express_sites.csv` | 400 | ~20 KB |
-| `stellar_express_devices.csv` | 15,000 | ~1.3 MB |
-| `stellar_express_endpoints.csv` | 150,000 | ~19 MB |
-| `stellar_express_location_ndgs.csv` | ~550 | ~40 KB |
+| `stellar_express_sites.csv` | 400 | 24,115 B (0.02 MiB) |
+| `stellar_express_devices.csv` | 15,000 | 1,286,621 B (1.23 MiB) |
+| `stellar_express_endpoints.csv` | 150,000 | 21,181,828 B (20.20 MiB) |
+| `stellar_express_location_ndgs.csv` | 555 | 36,947 B (0.04 MiB) |
 
-150k endpoints at ~19 MB is under GitHub’s 100 MB file limit, but it is **not**
-in this PR. If CoS later wants the giant file published, attach a **GitHub
-Release zip** — do not rename it to `endpoints_enterprise.csv`.
+150k endpoints at **20.20 MiB** is under GitHub’s 50 MB warning and 100 MB
+limit, but it is **not** in this PR until CoS locks scale. If CoS later wants
+that file published, attach a **GitHub Release zip** — do not rename it to
+`endpoints_enterprise.csv`.
 
 `--full` reads public city names from repo-root `sites.csv` (Census/GeoNames
 catalog already in this repo) and does **not** write that file. Houston is
